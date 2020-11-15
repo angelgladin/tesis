@@ -1,0 +1,84 @@
+\documentclass[letterpaper,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[]{enumitem}
+\usepackage[]{hyperref}
+\pagestyle{empty}
+\usepackage[left=2cm,right=2cm,top=1.2cm,bottom=1.2cm]{geometry}
+
+
+\begin{document}
+\noindent
+\large
+\textbf{Análisis algoritmo Knuth-Morris-Pratt puramente funcional} \\\\
+\textbf{Ángel Iván Gladín García} \\
+\normalsize Resumen de Proyecto de Tesis       \hfill No. cuenta: 313112470\\
+\hfill 3 de noviembre de 2020.\\
+
+\vspace*{-15pt}
+
+\section{Resumen}
+Los algoritmos de búsqueda de subcadenas son una clase de algoritmos de cadenas que tratan de buscar un(os)
+\emph{patrones} en una cadena o texto. Normalmente cuando es una cadena grande se busca mejorar el desempeño del mismo.
+El algoritmo de Knuth-Morris-Pratt es útil para buscar un patrón (con longitud $m$) en un texto (de longitud $n$) con una
+complejidad en tiempo de $\Theta(n + m)$.
+
+Se hará un analisis de versión puramente funcional así como su implementación, y finalmente se compará su desempeño con
+la parte imperativa.
+
+\section{Índice tentativo}
+
+\begin{enumerate}
+
+    \item Introducción
+    \begin{itemize}
+        \item Programación funcional
+        \item Definicionees inductivas y recursivas
+        \item Razonamiento ecuacional
+        \item Definiciones de listas
+        \item Principio de Fusión
+    \end{itemize}
+
+    \item Analisis de tiempo
+    \begin{itemize}
+        \item Notación asintótica
+        \item Estimando tiempo
+        \item Tiempo amortizado
+    \end{itemize}
+
+    \item String Matching (Algoritmo de búsqueda de subcadenas)
+    \begin{itemize}
+        \item Motivación
+        \item Notación y terminología
+        \item Algoritmo de búsqueda de subcadenas ingenuo (\textit{naïve})
+        \item Diferentes tipos de algoritmos en cadenas
+    \end{itemize}
+
+    \item Análisis versión funcional
+    \begin{itemize}
+        \item Primer acercamiento
+        \item Refinamiento de los datos
+        \item Árboles
+        \item Ejemplos
+    \end{itemize}
+
+    \item Algoritmo Knuth-Morris-Pratt
+    \begin{itemize}
+        \item Versión impertiva
+        \item Versión funcional
+    \end{itemize}
+    
+    \item \textit{Benchmarks}: versión imperativa contra versión funcional 
+
+\end{enumerate}
+
+\section{Bibliografía básica}
+
+\begin{enumerate}[label={[\arabic*]}]
+\item Bird, R. (2010). Pearls of Functional Algorithm Design. Cambridge: Cambridge University Press.
+\item Bird, R., \& Gibbons, J. (2020). Algorithm Design with Haskell. Cambridge: Cambridge University Press.
+\item Bird, R. (2014). Thinking Functionally with Haskell. Cambridge: Cambridge University Press.
+\item Introduction to Algorithms T. Cormen, C. Leiserson, R. Rivest, and C. Stein. The MIT Press, 3rd Edition.
+\end{enumerate}
+
+\end{document}
