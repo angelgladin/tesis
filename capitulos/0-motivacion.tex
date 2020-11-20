@@ -1,1 +1,34 @@
-\lipsum[1-5]
+En mi camino aprendiendo y escribiendo programas usando programación funcional, es algo común ver un programa
+que aunque sea corto y legible, muchas veces es algo ineficiente. Entonces es ahí cuando Richard Bird tiene
+en mente que un programa debe actuar como la especificación formal del problema, pero también por medio del
+razonamiento ecuacional poder calcular uno más eficiente.
+Uno de los factores que ayudó al crecimiento en el interés de la programación funcional, fue que en los años
+1990's se dieron cuenta que estos lenguajes son buenos para hacer razonamiento ecuacional.
+De hecho el lenguaje funcional Gofer, inventado por Mark Jones capturó este pensamiento como un acrónimo 
+(\textit{Good for equational reasoning}).
+\newline
+
+Lo que se abordará en este trabajo es primero empezar con una especificación en Haskell y después proseguir a
+calcular una versión más eficiente por medio de razonamiento ecuacional.
+La razón de este trabajo es ver hasta donde el diseño de un algoritmo puede estar encajado en una forma
+matemática de calcular un resultando usando principios matemáticos bien establedicos como definiciones, 
+teoremas, y \textit{``leyes''}.
+Curiosamente, es generalmente verdadero que en matemáticas los cálculos están diseñados para simplificar
+cosas complicadas, en el diseño de algoritmos usualmente es al revés.
+\begin{quote}
+Simples, pero ineficientes programas son transformados en versiones más eficientes que puedes ser
+completamente opacas en su implementación.
+\end{quote}
+Explicando las ideas detrás de un algoritmo es mucho más fácil en un estilo funcional, en vez de un
+procedimental. Las funciones pueden ser separadas fácilemente, cada una es sucinta y capturan patrones
+de cómputo.
+\newline
+
+Los algoritmos de búsqueda de subcadenas (\textit{String Matching Algorithms}) son usados frecuentemente en:
+programas de edición de texto para encontrar todas las ocurrencias de un patrón en un texto, para encontrar
+patrones particulares en una cadenas de ADN, o también en algunos motores de búsqueda los utilizan para
+encontrar páginas web en búsquedas, entre otras aplicaciones. Algoritmos efecientes para atacar este tipo de
+problemas nos ayudan gratamente para mejorar el tiempo de la búsqueda.
+\newline
+
+TODO
