@@ -1,0 +1,33 @@
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+
+\usepackage{geometry} % Márgenes en las páginas
+\usepackage[backend=biber]{biblatex} % Poder agregar la bibliografia con un .bib
+\usepackage{graphicx} % Para poder agregar las imágenes con y usar \graphicspath
+\usepackage{lipsum} % Usar texto dummy para llenar hojas
+\usepackage{minted} % Para agregar código
+\usepackage[ruled, vlined, linesnumbered]{algorithm2e} % Incluir pseudocódigo
+\usepackage{newunicodechar} % Poder usar (pero debemos declarar también) caracteres unicode en código
+%\usepackage{amsmath}
+%\usepackage{amssymb}
+%\usepackage[normalem]{ulem}
+%\usepackage{hyperref}
+%\usepackage{float}
+%\usepackage[Sonny]{fncychap}
+%\usepackage{algorithm}
+%\usepackage{algpseudocode}
+%\usepackage[table,xcdraw]{xcolor}
+%\usepackage[export]{adjustbox}
+%\usepackage[all]{nowidow}
+
+\geometry{bindingoffset=3cm}
+
+\addbibresource{referencias.bib}
+\graphicspath{{imagenes/}}
+
+% Símbolos unicode que usaré en código que está en \minted
+\newunicodechar{⊑}{\ensuremath{\sqsubseteq}}
+\newunicodechar{↓}{\ensuremath{\downarrow}}
+
+% Macro para código inline de Haskell
+\newcommand{\hsCode}[1]{\mintinline{haskell}|#1|}

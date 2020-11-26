@@ -1,31 +1,7 @@
 \documentclass{book}
 
-\usepackage[utf8]{inputenc}
-\usepackage[spanish]{babel}
-\usepackage{geometry} % Márgenes en las páginas
-\usepackage[backend=biber]{biblatex} % Poder agregar la bibliografia con un .bib
-\usepackage{graphicx} % Para poder agregar las imágenes con y usar \graphicspath
-\usepackage{lipsum} % Usar texto dummy para llenar hojas
+\usepackage{defs-config-macros}
 
-\usepackage[ruled, vlined, linesnumbered]{algorithm2e} % Incluir pseudocódigo
-
-%\usepackage{amsmath}
-%\usepackage{amssymb}
-%\usepackage[normalem]{ulem}
-%\usepackage{hyperref}
-%\usepackage{float}
-%\usepackage[Sonny]{fncychap}
-%\usepackage{algorithm}
-%\usepackage{algpseudocode}
-%\usepackage[table,xcdraw]{xcolor}
-%\usepackage[export]{adjustbox}
-%\usepackage[all]{nowidow}
-
-
-\geometry{bindingoffset=3cm}
-
-\addbibresource{referencias.bib}
-\graphicspath{{imagenes/}}
 
 \begin{document}
 
@@ -71,7 +47,6 @@
 
     \chapter{Conclusiones}
         \input{capitulos/7-conclusiones}
-    
 
 
 \backmatter
