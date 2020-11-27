@@ -1,13 +1,135 @@
-\lipsum[1-1]
+% TODO: Sacar más info del Boyer-Moore más
+
+Como se mencionó en la motivación de este trabajo, lo que se hará es dar una especificación en Haskell para
+despues irlo mejorando. Empecemos con esta definición
+
+\begin{minted}{haskell}
+endswith ws xs = ws ∈ tails xs
+\end{minted}
+
+%% Poner un ejemplo aquí de endswith
+
+% Poner lo del BoOyer More y primera definición de matches.
+
+% FIXME: está bien culero explicado, mejorar
+Tomemos estas funciones, y la que debemos dee haceer es buscar funciones \hsCode{p} y \hsCode{op} y un valor \hsCode{e},
+tal que \hsCode{endswith ws = p . foldl op e}.
+
+Entonces see tiene que,
+
+\inputminted{haskell}{definiciones/kmp/1-matches.hs}
+
+Donde \hsCode{matches ws xs} es una lista de enteros, en la cual cada entero \hsCode{n} dice si el patrón \hsCode{ws} aparece en el texto
+\hsCode{xs} acabando en la posición $n$.
+
+%TODO poner ejemplo aquí de matches
+
+Dadas \hsCode{p} y \hsCode{op} que tomen tiempo constante, a al menos tiempo constante amortizado, \texttt{matches} tomará $\Theta(n + m)$ pasos, donde
+el patrón tiene una longitud de $m$ y el texto una longitud de $n$.
+
+% TODO poner aquí una explicación de como se irá mejorando la complejidad.
 
 \section{Primer acercamiento}
-\lipsum[2-4]
 
-\section{Refinamiento de los datos}
-\lipsum[2-4]
+Se puede escribir a \hsCode{endswith ws} como una composición funciones,
 
-\section{Árboles}
-\lipsum[2-4]
+\begin{minted}{haskell}
+endswith ws = not . null . filter (= ws) . tails
+\end{minted}
 
-\section{Ejemplos}
-\lipsum[2-4]
+Pero no es una buena idea definir a \hsCode{filter (= ws) . tails} con una función de plegado \hsCode{foldl}
+porque regresaria o bien una lista vacia o \hsCode{[ws]}, lo cual sería información insuficiente
+para definir esa función inductivamente.
+
+Para ejemplificar esto hagamos esa función,
+\begin{minted}{haskell}
+f ws = foldl (\ys xs -> if xs == ws then xs:ys else ys) [] . tails
+\end{minted}
+
+%% TODO ejemplo donde regrese [] o [ws]
+
+
+Consideremos la función prefijo $(\sqsubseteq)$ definida como:
+
+\inputminted{haskell}{definiciones/prefix.hs}
+
+Teniendo la función prefijo, se ve más útil la función \hsCode{filter (⊑ ws) . tails} porque
+se podría obtener más ``información'' inductivamente.
+
+Donde \hsCode{tails} está definida como,
+
+\inputminted{haskell}{definiciones/tails.hs}
+
+% Poner ejemplo de tails
+
+Aplicando \hsCode{xs} a la función \hsCode{filter (⊑ ws) . tails}, regresará en orden decreciente sobre la longitud de
+todas la colas de \hsCode{xs} los que sean prefijos de \hsCode{ws}.
+
+% Poner ejemplo
+
+Entonces, el primer elemento de la lista es \hsCode{ws} si y solo si \hsCode{endswith ws xs} es verdadero. Por tanto,
+
+\begin{minted}{haskell}
+endswith ws = (= ws) . head . filter (⊑ ws) . tails
+\end{minted}
+
+%%%%%%% TODO: HASTA AQUÍ ESTÁ MEDIO BIEN
+
+La primera función \hsCode{(= ws)} no es función que tome tiempo constante. Ese problema es resulto generalizando la función
+\hsCode{filter (^^ ws) . tails} a una función \hsCode{split} definida porque
+
+% split ws xs = head [(us, ws ↓ us) | us ← tails xs, us ⊑ ws]
+
+\hsCode{(us ++ vs) ↓ us = vs}
+%split “endnote” “append” = (“end”, “note”)
+%poner ejemplo pendejo aquí
+
+%endswith ws = null . snd . split ws
+
+Se quiere encontrar \hsCode{e} y \hsCode{op} tal que satisfagan lo siguiente
+
+\begin{minted}{haskell}
+    split ws [] = e
+    split ws (xs ++ [x]) = op (split ws xs) x
+\end{minted}
+
+%\inputminted{haskell}{definiciones/kmp/1.hs}
+%\inputminted{haskell}{definiciones/kmp/3.hs}
+
+% splitws[] = e
+%split ws (xs + [x]) = op (split ws xs) x
+%
+
+% split ws xs = (us,vs) ⇒ split ws (xs + [x]) = split ws (us + [x])
+
+
+%\mint{haskell}|endswith ws = (= ws) . head . filter (⊑ ws) . tails|
+%sdsd s \mintinline{haskell}|endswith ws = (= ws) . head . filter| sdfs sdf sd
+
+% splitwsxs = if xs⊑ws then (xs,ws↓xs) else splitws(tailxs)
+
+TODO: hacer plantilla pendeja para razonamiento ecuacinoal
+%-- split ws xs = (us, vs), so ws = us + vs, we reason:
+
+
+%\inputminted{haskell}{definiciones/kmp/1-op-raz-eq.hs}
+
+Y todo ese cálculo nos da la definición de 
+%\hsCode{op :: ([a], [a]) -> a -> ([a], [a])}.
+
+%\inputminted{haskell}{definiciones/kmp/KJ.hs}
+
+Quedando así (la primera versión) hasta ahora:
+
+%\inputminted{haskell}{definiciones/kmp/chido.hs}
+
+Programa que ya jala chido
+
+%\inputminted{haskell}{codigo/haskell/1-first-steps.hs}
+\inputminted{haskell}{definiciones/kmp/1-op-raz-eq.hs}
+
+%\section{Refinamiento de los datos}
+
+%\section{Árboles}
+
+%\section{Ejemplos}

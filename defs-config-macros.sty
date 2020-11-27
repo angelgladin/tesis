@@ -25,9 +25,22 @@
 \addbibresource{referencias.bib}
 \graphicspath{{imagenes/}}
 
+% Usando caracteres unicode, en el pdf le pone unn rectángulo como si fuera una referencia,
+% entonces con este hack se quita eso.
+% Fuente: https://tex.stackexchange.com/questions/343494/minted-red-box-around-greek-characters
+\usepackage{etoolbox,xpatch}
+\makeatletter
+\AtBeginEnvironment{minted}{\dontdofcolorbox}
+\def\dontdofcolorbox{\renewcommand\fcolorbox[4][]{##4}}
+\xpatchcmd{\inputminted}{\minted@fvset}{\minted@fvset\dontdofcolorbox}{}{}
+\xpatchcmd{\mintinline}{\minted@fvset}{\minted@fvset\dontdofcolorbox}{}{} % see https://tex.stackexchange.com/a/401250/
+\makeatother
+%
+
 % Símbolos unicode que usaré en código que está en \minted
 \newunicodechar{⊑}{\ensuremath{\sqsubseteq}}
 \newunicodechar{↓}{\ensuremath{\downarrow}}
+\newunicodechar{∈}{\ensuremath{\in}}
 
 % Macro para código inline de Haskell
 \newcommand{\hsCode}[1]{\mintinline{haskell}|#1|}
