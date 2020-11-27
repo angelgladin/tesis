@@ -1,3 +1,3 @@
 tails :: [a] -> [[a]]
 tails []     = [[]]
-tails (x:xs) = (x:xs):tails xs
+tails (x:xs) = (x : xs) : tails xs

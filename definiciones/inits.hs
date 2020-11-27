@@ -1,3 +1,3 @@
 inits :: [a] -> [[a]]
 inits []     = [[]]
-inits (x:xs) = [] : map (x:) (inits xs)
+inits (x:xs) = [] : map (x :) (inits xs)
