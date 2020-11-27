@@ -12,10 +12,8 @@
 \begin{algorithm}[H]
     \SetKwProg{Fn}{NAIVE-STRING-MATCHER($T,P$)}{}{}
     \Fn{}{
-        $n = T.length$
-
-        $m = T.length$
-    
+        $n = T.length$\\
+        $m = T.length$\\
         \For{$s = 0 $ \KwTo $n-m$}{
             \If{$P[1\ldots m] == T[s+1 \ldots s+m]$}{
                 $print$ ``Pattern occurs with shift'' $s$

@@ -1,16 +1,139 @@
-\lipsum[1-1]
+En este capítulo se verá como, dado un conjunto de definiciones de funciones, por medio de razonamiento ecuacional podemos llegar a otras definiciones y/o probarlas. Las pruebas aquí se harán mediantte inducción.
+
+Muchas veces es algo engorroso probar funciones similares repetidamente, por eso veremos una forma de hacer pruebas (en algunos casos) más cortas,
+presentando unas \textit{funciones de orden superior} que encapsulan patrones comunes de cómputo. Y así, probar resultados más generales y apelar a ellos.
+
+Al final se verá que la eficiencia también importa, porque se mostrarán algunos ejemplos; como un problema famoso llamado \textit{``The maximum segment sum''}
+y una mejora de la función \texttt{scanr}. Y todo esto se logrará como consecuencia de lo dicho anteriormente.
+
+\subsection{Inducción sobre listas}
+Recordemos que toda lista finita es de la forma; una lista vacía \texttt{[]} ó \texttt{x:xs} donde \texttt{xs} es una lista finita. Por consiguiente, para probar que $P(xs)$ se mantiene para todas las lista finitas $xs$,
+se tiene que probar que:
+
+\begin{enumerate}
+    \item $P([])$ se cumple
+    \item Para toda $x$ y para todas las listas finitas $xs$, que $P(x:xs)$ se cumple dado que $P(xs)$ también.
+\end{enumerate}
+
+Tomemos la definición de concatenación \texttt{(++)},
+\inputminted{haskell}{definiciones/concatenation.hs}
+
+Y ahora probemos que (++) es asociativa para todas las listas finitas $xs$, es decir:
+
+(xs ++ ys) ++ zs = xs ++ (ys ++ zs)
+
+Por inducción sobre $xs$:
+
+%{\displaystyle x+5} is the left-hand side (LHS) and {\displaystyle y+8}{\displaystyle y+8} is the right-hand side (RHS).
+%FIXME: si caben dos eucaciones por lado lo hago en columnas.
+
+\begin{itemize}
+\item Caso []
+\begin{minted}{haskell}
+(LHS)
+
+([] ++ ys) ++ zs
+=   {++.1}
+ys ++ zs
+\end{minted}
+
+\begin{minted}{haskell}
+(RHS)
+
+[] ++ (ys ++ zs)
+=   {++.1}
+ys ++ zs
+\end{minted}
+
+\item Caso (x:xs)
+\begin{minted}{haskell}
+(LHS)
+
+((x:xs) ++ ys) ++ zs
+=   {++.2}
+(x:(xs ++ ys)) ++ zs
+=   {++.2}
+x:((xs ++ ys) ++ zs)
+\end{minted}
+
+\begin{minted}{haskell}
+(RHS)
+
+(x:xs) ++ (ys ++ zs)
+=   {++.2}
+x:(xs ++ (ys ++ zs))
+=   {induction}
+x:((xs ++ ys) ++ zs)
+\end{minted}
+
+\end{itemize}
+
+\subsection*{La función \texttt{foldr}}
+\subsection*{La función \texttt{scanl}}
+
+\begin{minted}{haskell}
+scanl (@) e [x, y, z, ...] = [e, e@x,(e@x)@y,((e@x)@y)@z,...]
+
+\end{minted}
+
+
 
 \section{Programación funcional}
-\lipsum[2-4]
+De forma muy general y resumiendo, la programación funcional:
+\begin{itemize}
+    \item es un método de construcción de un programa que hace énfasis en las funciones y sus aplicaciones
+    en vez de cómandos y sus ejecuciones.
 
-\section{Definicionees inductivas y recursivas}
-\lipsum[2-4]
+    \item usa notación matemática simple que permite que los problemas sean descritos de manera clara
+    y consisa.
+    \item tiene bases matemáticas que fundamentan el razonamiento ecuacional acerca de las propiedades de
+    los programas.
+\end{itemize}
+
+\section{Definiciones inductivas y recursivas}
+%TODO
 
 \section{Razonamiento ecuacional}
-\lipsum[2-4]
+%TODO
+
 
 \section{Definiciones de listas}
-\lipsum[2-4]
+%TODO
 
 \section{Principio de Fusión}
-\lipsum[2-4]
+\begin{minted}{haskell}
+f . foldr g a = foldr h b
+\end{minted}
+
+\begin{itemize}
+    \item $f$ es una función estricta.
+    \item $f a = b$
+    \item $f(g y x) = h (f y) x$ para toda $x$ y $y$.w
+\end{itemize}
+
+\section{\textit{The maximum segment sum}}
+
+TODO: ver que es eso del point-free
+partial list
+undefined
+transparencia referencial
+orden superior
+ver mas casos de porque es chida la programación funcional
+
+
+definicion de listas
+
+Dara formato chido a haskell
+% https://github.com/jaspervdj/stylish-haskell
+
+Encontrar símbolos
+% http://detexify.kirelabs.org/classify.html
+
+% https://en.wikibooks.org/wiki/LaTeX/Macros
+
+% Definicinoes de haskell en Data.List
+% https://hackage.haskell.org/package/base-4.14.0.0/docs/src/GHC.List.html#scanr
+% https://en.wikipedia.org/wiki/Sides_of_an_equation
+% https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted
+% https://hackage.haskell.org/package/base-4.14.0.0/docs/Data-List.html
+% TODO: ver que es eso: Note that tails has the following strictness property: tails _|_ = _|_ : _|_
