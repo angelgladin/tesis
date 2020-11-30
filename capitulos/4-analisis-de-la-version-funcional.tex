@@ -75,61 +75,172 @@ endswith ws = (= ws) . head . filter (⊑ ws) . tails
 
 %%%%%%% TODO: HASTA AQUÍ ESTÁ MEDIO BIEN
 
-La primera función \hsCode{(= ws)} no es función que tome tiempo constante. Ese problema es resulto generalizando la función
-\hsCode{filter (^^ ws) . tails} a una función \hsCode{split} definida porque
-
-% split ws xs = head [(us, ws ↓ us) | us ← tails xs, us ⊑ ws]
-
-\hsCode{(us ++ vs) ↓ us = vs}
-%split “endnote” “append” = (“end”, “note”)
-%poner ejemplo pendejo aquí
-
-%endswith ws = null . snd . split ws
-
-Se quiere encontrar \hsCode{e} y \hsCode{op} tal que satisfagan lo siguiente
+La primera función \hsCode{(= ws)} no es función que tome tiempo constante (por obvias razones). Ese problema es resulto generalizando la función
+\hsCode{filter (⊑ ws) . tails} a una función \hsCode{split} definida como,
 
 \begin{minted}{haskell}
-    split ws [] = e
-    split ws (xs ++ [x]) = op (split ws xs) x
+split ws xs = head [(us, ws ↓ us) | us <- tails xs, us ⊑ ws]
 \end{minted}
 
-%\inputminted{haskell}{definiciones/kmp/1.hs}
-%\inputminted{haskell}{definiciones/kmp/3.hs}
+La función \hsCode{↓} de forma abstracta está definida como \hsCode{(us + vs) ↓ us = vs}. De ahí que \hsCode{split ws xs} separa \hsCode{ws} (el patrón)
+en dos listas \hsCode{us} y \hsCode{vs} tal que \hsCode{us ++ vs = ws}.
 
-% splitws[] = e
-%split ws (xs + [x]) = op (split ws xs) x
-%
+\textbf{El valor de \hsCode{us} es el sufijo más largo de \hsCode{xs} que es prefijo de \hsCode{ws}.} Por ejemplo,
 
-% split ws xs = (us,vs) ⇒ split ws (xs + [x]) = split ws (us + [x])
+\mint{haskell}| > split "endnote" "append" = ("end", "note") |
 
+% TODO: poner paso a paso de la ejecución de split
 
-%\mint{haskell}|endswith ws = (= ws) . head . filter (⊑ ws) . tails|
-%sdsd s \mintinline{haskell}|endswith ws = (= ws) . head . filter| sdfs sdf sd
+Tenemos que \hsCode{endswith ws = null . snd . split ws}.
+Se quiere encontrar \hsCode{e} y \hsCode{op} tal que satisfagan lo siguiente \hsCode{split ws = foldl op e}.
 
-% splitwsxs = if xs⊑ws then (xs,ws↓xs) else splitws(tailxs)
+\inputminted{haskell}{definiciones/kmp/1-split-eq.hs}
 
-TODO: hacer plantilla pendeja para razonamiento ecuacinoal
+Se tiene que \hsCode{split ws [] = ([], ws)}, lo que nos da \hsCode{e}. Falta descubrir \hsCode{op}.
+
+Checar que,
+
+\hsCode{split ws xs = (us,vs)} $\quad\Longrightarrow\quad$ \hsCode{split ws (xs ++ [x]) = split ws (us ++ [x])}
+
+Recursivamente
+
+\mint{haskell}| split ws xs = if xs ⊑ ws then (xs, ws ↓ xs) else split ws (tail xs) |
+
 %-- split ws xs = (us, vs), so ws = us + vs, we reason:
+\hsCode{split ws xs = (us, vs)} \hsCode{ws = us ++ vs}
 
-
-%\inputminted{haskell}{definiciones/kmp/1-op-raz-eq.hs}
+\inputminted{haskell}{definiciones/kmp/1-op-raz-eq.hs}
 
 Y todo ese cálculo nos da la definición de 
-%\hsCode{op :: ([a], [a]) -> a -> ([a], [a])}.
+\hsCode{op :: ([a], [a]) -> a -> ([a], [a])}.
 
-%\inputminted{haskell}{definiciones/kmp/KJ.hs}
+\inputminted{haskell}{definiciones/kmp/1-op.hs}
 
 Quedando así (la primera versión) hasta ahora:
 
-%\inputminted{haskell}{definiciones/kmp/chido.hs}
+\inputminted{haskell}{definiciones/kmp/1-final.hs}
 
 Programa que ya jala chido
 
-%\inputminted{haskell}{codigo/haskell/1-first-steps.hs}
-\inputminted{haskell}{definiciones/kmp/1-op-raz-eq.hs}
+\inputminted{haskell}{codigo/haskell/1-first-steps.hs}
 
-%\section{Refinamiento de los datos}
+\section{Refinamiento de los datos}
 
-%\section{Árboles}
+\begin{minted}{haskell}
+abs :: Rep ([a], [a]) -> ([a], [a])
+rep :: ([a], [a]) -> Rep ([a], [a])
+\end{minted}
+
+
+\begin{minted}{haskell}
+foldl op ([], ws) = abs . foldl op' (rep ([], ws))  -- (17.1)
+\end{minted}
+
+\begin{minted}{haskell}
+matches ws = map fst . filter (null . snd . abs . snd) .
+             scanl step (0, rep ([], ws))
+step (n, r) x = (n + 1, op' r x)    
+\end{minted}
+
+\begin{minted}{haskell}
+op' r = rep . op (abs r)
+\end{minted}
+
+\begin{minted}{haskell}
+abs (op' r x) = abs (rep (op (abs r) x)) = op (abs r) x
+\end{minted}
+
+\begin{minted}{haskell}
+op' r x | [x] ⊑ vs = rep (us ++ [x],tail vs)
+        | null us = rep ([],ws)
+        | otherwise = op' (rep (split ws (tail us))) x
+        where (us, vs) = abs r
+\end{minted}
+
+\section{Árboles}
+
+\begin{minted}{haskell}
+data Rep a = Null | Node a (Rep a) (Rep a)
+\end{minted}
+
+\begin{minted}{haskell}
+abs (Node (us, vs) lr) = (us,vs) -- (17.3)
+\end{minted}
+
+\begin{minted}{haskell}
+rep (us, vs) = Node (us, vs) (left us vs) (right us vs) -- (17.4)
+\end{minted}
+
+\begin{minted}{haskell}
+left [] vs = Null
+left (u : us) vs = rep (split ws us)
+right us [] = Null
+right us (v:vs) = rep(us ++ [v], vs)
+\end{minted}
+
+\begin{minted}{haskell}
+op' (Node (us, vs) l r) x | [x] ⊑ vs = r
+                          | null us = root
+                          | otherwise = op' l x
+\end{minted}
+
+\begin{minted}{haskell}
+op' (Node (us, vs) l r) x
+= {definition of op' in the case [x] ⊑ vs}
+rep (us ++ [x], tail vs)
+= {definition of right and x = head vs}
+right us vs
+= {definition of rep}
+r
+\end{minted}
+
+\begin{minted}{haskell}
+op' Null x = root
+op' (Node (us, vs) l r) x | [x] ⊑ vs = r
+                          | otherwise = op' l x
+\end{minted}
+
+\begin{minted}{haskell}
+rep (us, vs) = grep (left us vs) (us, vs)
+\end{minted}
+
+\begin{minted}{haskell}
+right us (v:vs) = rep (us ++ [v], vs)
+                = grep (left (us ++ [v]) vs) (us ++ [v], vs)
+\end{minted}
+
+\begin{minted}{haskell}
+left ([] ++ [v]) vs
+= {definition of left}
+rep (split ws [])
+= {definition of split}
+rep ([], ws)
+= {definition of root}
+root
+\end{minted}
+
+\begin{minted}{haskell}
+left (u : us ++ [v]) vs
+= {definition of left}
+rep (split ws (us ++ [v]))
+= {definition of split}
+rep (op (split ws us) v)
+= {definition (17.2) of op'}
+op' (rep (split ws us)) v
+= {definition of left}
+op' (left (u : us) vs) v
+\end{minted}
+
+\begin{minted}{haskell}
+left (us ++ [v]) vs = if null us then root else op' (left us vs) v
+\end{minted}
+
+\begin{minted}{haskell}
+grep l (us, []) = Node(us, []) l Null
+grep l (us, v:vs) = Node(us, v:vs) l
+                    (grep (op' l v) (us ++ [v], vs))
+\end{minted}
+
+%% HASTA AQUÍ CODIGO PAG 133!!!
 
 %\section{Ejemplos}
