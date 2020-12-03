@@ -1,169 +1,206 @@
-% Quizá aquí poner una sección de introducción ???
+Como ya hemos explicado anteriormente, el problema de \textit{string matching} se trata de buscar
+todas las ocurrencias de una cadena no vacía, que se le denominará \textbf{patrón} en un texto
+llamado \textbf{texto}. 
 
-Como ya hemos explicado anteriormente, el problema de \textit{string matching} se trata de buscar todas las ocurrencias de una cadena no vacía, que se le denominará \textbf{patrón} en un texto llamado \textbf{texto}.
-Empecemos con una especificación muy básica, por ahora sin preocuparnos en la complejidad,
+La notación usada en todo este capítulo será:
+\begin{itemize}
+    \item \texttt{ws} que denotará al patrón y
+    \item \texttt{xs} el texto.
+\end{itemize}
+
+Como se mencionó en la motivación de este trabajo, lo que se hará es dar una especificación en
+Haskell para despues irlo ``optimizando''. Empecemos con esta especificación muy básica,
 
 \begin{minted}{haskell}
 matches :: Eq a => [a] -> [a] -> [Int]
 matches ws = map length . filter (endswith ws) . inits
 \end{minted}
 
-Donde definiremos a \hsCode{endswith} como:
+Donde \hsCode{endswith}, \hsCode{inits} y \hsCode{tails} se definen respectivamente como:
 
 \begin{minted}{haskell}
+endswith :: Eq a => [a] -> [a] -> Bool
 endswith ws xs = ws `elem` tails xs
 \end{minted}
 
-La función \hsCode{inits} regresa una lista los prefijos de una lista en orden creciente como se puede ver a continuación
+\inputminted{haskell}{definiciones/inits.hs}
+
+\inputminted{haskell}{definiciones/tails.hs}
+
+Donde \hsCode{tails} está definida como, %% TODO acomodar esto
+
+La función \hsCode{inits} regresa una lista con los prefijos de una lista en orden creciente como se 
+puede ver a continuación,
+
 \begin{minted}{haskell}
-> inits [2,3,5]
-  [[],[2],[2,3],[2,3,5]]
+>>> inits [2,3,5]
+    [[],[2],[2,3],[2,3,5]]
 \end{minted}
 
-La función \hsCode{endswith ws xs} checa si el patrón \hsCode{ws} es un sufijo de \hsCode{xs}.
-Entonces \hsCode{matches ws xs} regresa una lista de enteros donde cada entero \hsCode{n} indica que \hsCode{ws} aparece en \hsCode{xs} terminando en posición \hsCode{n} (siendo 1-indexados). Por ejemplo:
+% FIXME: explicar bien tails y acomodarlo con las definiciones de arriba
+Ejemplo,
 
 \begin{minted}{haskell}
-> matches "abcab" "ababcabcab"
-  [7, 10]
+>>> tails [2,3,5,7]
+    [[2,3,5,7],[3,5,7],[5,7],[7],[]]
 \end{minted}
 
-La función \hsCode{matches} es polimórfica, así que cualquier algoritmo tiene que depender en esta función de igualdad \hsCode{(==) :: a -> a -> Bool} acerca de elementos de dos listas.
-Asumiendo que toma tiempo constante hacer la función de igualdad, la complejidad en tiempo de \hsCode{matches ws xs} es de $\Theta(mn)$ pasos en el peor de los casos, donde $m$ el la longitud de \hsCode{ws} y $n$ la de \hsCode{xs}.
+% FIXME: Explicar mejor endwith y hacer una ejecución
+La función \hsCode{endswith ws xs} checa si el patrón \texttt{ws} es un algún sufijo de \texttt{xs}.
 
-% TODO, explicar porqué esa complejidad y checar todo lo que escribí hasta aquí. 
+Entonces \hsCode{matches ws xs} regresa una lista de enteros donde cada entero $n$ indica que
+\texttt{ws} aparece en \texttt{xs} terminando en la posición $n$ (siendo 1-indexado). Por ejemplo:
 
-% Quizá mover esto hasta arriba ???
-Como se mencionó en la motivación de este trabajo, lo que se hará es dar una especificación en Haskell para
-despues irlo mejorando. Empecemos con esta definición
+% FIXME: PONER UNA EJECUCIÓN
+\begin{minted}{haskell}
+>>> matches "abcab" "ababcabcab"
+    [7, 10]
+\end{minted}
 
-% FIXME: está bien culero explicado, mejorar
-Por ahora se debe de tener en mente que se debe buscar funciones \hsCode{p} y \hsCode{op} y un valor \hsCode{e},
-tal que \hsCode{endswith ws = p . foldl op e}.
+La función \hsCode{matches} es polimórfica, así que cualquier algoritmo que se use tiene que
+depender de esta función de igualdad \hsCode{(==) :: a -> a -> Bool} sobre elementos de dos listas.
+Asumiendo que toma tiempo constante hacer la función de igualdad, la complejidad en tiempo de
+\hsCode{matches ws xs} es de $\Theta(mn)$ pasos, donde $m$ el la longitud de \texttt{ws} y $n$ la
+de \texttt{xs}.
+
+% FIXME: Hacer el análisis formal de la complejidad.
+\section{Introducción}
+
+% TODO: Ver el articulo y ver porque usan ese patrón
+Por ahora se debe de tener en mente que se deben buscar funciones \hsCode{p} y \hsCode{op} y un
+valor \hsCode{e}, tal que \hsCode{endswith ws = p . foldl op e}.
 
 Entonces se tiene que,
 
 \inputminted{haskell}{definiciones/kmp/1-matches.hs}
 
-Donde \hsCode{matches ws xs} es una lista de enteros, en la cual cada entero \hsCode{n} dice si el patrón \hsCode{ws} aparece en el texto
-\hsCode{xs} acabando en la posición $n$.
+% TODO: esto es muy repetitivo a cuando lo puse en la primera definición de matches
+Donde \hsCode{matches ws xs} es una lista de enteros, en la cual cada entero $n$ dice si el patrón
+\texttt{ws} aparece en el texto \texttt{xs} acabando en la posición $n$.
 
-Dadas \hsCode{p} y \hsCode{op} que tomen tiempo constante, a al menos tiempo constante amortizado, \texttt{matches} tomará $\Theta(n + m)$ pasos, donde
+Dadas \hsCode{p} y \hsCode{op} que tomen tiempo constante, o al menos tiempo constante amortizado,
+\hsCode{matches} tomará $\Theta(n + m)$ pasos calcular las apariciones del patrón en el texto, donde
 el patrón tiene una longitud de $m$ y el texto una longitud de $n$.
-
-%% TODO, hasta aquí todo luce bien. checarlo
 
 \section{Primer acercamiento}
 
 Se puede escribir a \hsCode{endswith ws} como una composición funciones,
-
 \begin{minted}{haskell}
 endswith ws = not . null . filter (= ws) . tails
 \end{minted}
 
-Pero no es una buena idea definir a \hsCode{filter (= ws) . tails} con una función de plegado \hsCode{foldl}
-porque regresaria o bien una lista vacia o \hsCode{[ws]}, lo cual sería información insuficiente
-para definir esa función inductivamente.
+Pero no es una buena idea definir a \hsCode{filter (= ws) . tails} con una función de plegado
+\hsCode{foldl} porque regresaria o bien una lista vacia o \hsCode{[ws]}, lo cual sería información
+insuficiente para definir ésa función inductivamente.
 
-Para ejemplificar esto hagamos esa función,
+Para ejemplificar esto, hagamos esa función,
 \begin{minted}{haskell}
 f ws = foldl (\ys xs -> if xs == ws then xs:ys else ys) [] . tails
 \end{minted}
 
 \begin{minted}{haskell}
-> f "nea" "Atenea"
-  ["nea"]
+>>> f "nea" "Atenea"
+    ["nea"]
 
-> f "ene" "Atenea"
-  []
+>>> f "ene" "Atenea"
+    []
 \end{minted}
 
 Consideremos la función prefijo $(\sqsubseteq)$ definida como:
 
 \inputminted{haskell}{definiciones/prefix.hs}
 
-Teniendo la función prefijo, se ve más prometedora la función \hsCode{filter (⊑ ws) . tails} porque
-se podría obtener más ``información'' inductivamente.
+Teniendo la función prefijo $(\sqsubseteq)$, se ve más prometedora la función
+\hsCode{filter (⊑ ws) . tails} porque se podría obtener más ``información'' inductivamente.
 
-Donde \hsCode{tails} está definida como,
-
-\inputminted{haskell}{definiciones/tails.hs}
-
-Ejemplo,
-
-\begin{minted}{haskell}
-> tails [2,3,5,7]
-  [[2,3,5,7],[3,5,7],[5,7],[7],[]]
-\end{minted}
-
-Aplicando \hsCode{xs} a la función \hsCode{filter (⊑ ws) . tails}, regresará en orden decreciente sobre la longitud de
-todas la colas de \hsCode{xs} los que sean prefijos de \hsCode{ws}.
+Aplicando \texttt{xs} a la función \hsCode{filter (⊑ ws) . tails}, regresará en orden decreciente
+sobre la longitud de todas la colas de \texttt{xs}, todas las que sean prefijos de \texttt{ws}.
 
 % Poner ejemplo
 
-Entonces, el primer elemento de la lista es \hsCode{ws} si y solo si \hsCode{endswith ws xs} es verdadero. De ahí que,
+Entonces, el primer elemento de la lista es \texttt{ws} si y solo si \hsCode{endswith ws xs} es
+verdadero, porque como \hsCode{tails} regresa las colas en orden decreciente y si \texttt{ws} no 
+fuera el primer elemento entonces había otra \texttt{ws'} con una longitud menor a \texttt{ws}, lo
+cual no podría ser.
+
+De ahí que se puede definir a \hsCode{endswith} como una composición de la composición de funciones
+\hsCode{filter (⊑ ws) . tails} propuesta anteriormente como,
 
 \begin{minted}{haskell}
 endswith ws = (= ws) . head . filter (⊑ ws) . tails
 \end{minted}
 
-%%%%%%% TODO: HASTA AQUÍ ESTÁ MEDIO BIEN
-
-La primera función \hsCode{(= ws)} no es función que tome tiempo constante (por obvias razones). Ese problema es resulto generalizando la función
-\hsCode{filter (⊑ ws) . tails} a una función \hsCode{split} definida como,
+La primera función \hsCode{(= ws)} no es función que tome tiempo constante (por obvias razones). 
+Ese problema es resulto generalizando la función \hsCode{filter (⊑ ws) . tails} a una función
+\hsCode{split} definida como,
 
 \begin{minted}{haskell}
 split ws xs = head [(us, ws ↓ us) | us <- tails xs, us ⊑ ws]
 \end{minted}
 
-La función \hsCode{↓} de forma abstracta está definida como \hsCode{(us + vs) ↓ us = vs}. De ahí que \hsCode{split ws xs} separa \hsCode{ws} (el patrón)
-en dos listas \hsCode{us} y \hsCode{vs} tal que \hsCode{us ++ vs = ws}.
+La función \hsCode{(↓)} de forma abstracta está definida como \hsCode{(us ++ vs) ↓ us = vs} y
+concrétamente como,
 
 \inputminted{haskell}{definiciones/kmp/1-down-arrow.hs}
 
+De ahí que \hsCode{split ws xs} separa \texttt{ws} en dos listas \texttt{us} y \texttt{vs} tal que
+\texttt{us ++ vs = ws}.
+
 \begin{center}
-\textbf{El valor de \hsCode{us} es el sufijo más largo de \hsCode{xs} que es prefijo de \hsCode{ws}.}
+\textbf{El valor de \texttt{us} es el sufijo más largo de \texttt{xs} que es prefijo de \texttt{ws}.}
 \end{center}
+
+Donde \texttt{ws = "{}endnote"} y \texttt{xs = "{}append"}, y en \texttt{ws} el pefijo más largo
+es \texttt{"\color{purple}{}end\color{black}note"} y en \texttt{xs} el sufijo es
+\texttt{"{}app\color{purple}end\color{black}"}.
 
 Por ejemplo,
 \begin{minted}{haskell}
->>> split "endnote" "append" = ("end", "note")
-\end{minted}
-
-% TODO: seguir estándar de ejecución del libro
-\begin{minted}{haskell}
->>> split "endnote" "append" = ("end", "note")
-    head [(us, ws ↓ us) | us <- ["append","ppend","pend","end","nd","d",""], us ⊑ ws]
+>>> split "endnote" "append"
+    head [(us, ws ↓ us) | us <- tails "append", us ⊑ "endnote"]
+    head [(us, ws ↓ us) | us <- ["append","ppend","pend","end",
+                                 "nd","d",""],
+                          us ⊑ "endnote"]
     head [("end","note"), ("","endnote")]
     ("end","note")
 \end{minted}
 
-% FIXME: Muy repetitivo, mejorar
+Recordando que la función \hsCode{null . snd} regresa \hsCode{Bool} dependiendo si el segundo valor
+de una tupla es vacío o no. Se utilizará compuesta con \hsCode{split ws} para indicar que si se
+puede separar \texttt{ws} como se enseñó anteriormente, y así indicar si \texttt{ws} es un sufijo
+de \texttt{xs}. Teniendo así que \hsCode{endswith ws = null . snd . split ws}.
 
-Ahora tenemos que \hsCode{endswith ws = null . snd . split ws}.
-Queda a encontrar \hsCode{op} y \hsCode{e} tal que \hsCode{split ws = foldl op e}.
-De forma equivalente, se quiere encontrar \hsCode{e} y \hsCode{op} tal que satisfagan, 
+Queda a encontrar \hsCode{op} y \hsCode{e} tal que \hsCode{split ws = foldl op e}. De forma
+equivalente, se quiere encontrar \hsCode{e} y \hsCode{op} tal que satisfagan, 
 
 \inputminted{haskell}{definiciones/kmp/1-split-eq.hs}
 
-% Explicar por que split ws [] = ([], ws) = e
-Se tiene que \hsCode{split ws [] = ([], ws)}, lo que nos da \hsCode{e}. Falta descubrir \hsCode{op}.
-
-La siguiente observación es crucial,
-
-\hsCode{split ws xs = (us,vs)} $\quad\Longrightarrow\quad$ \hsCode{split ws (xs ++ [x]) = split ws (us ++ [x])}
-
-Que se interpreta como, el sufijo más largo de \hsCode{xs ++ [x]} es un prefijo de \hsCode{ws} es un sufijo de \hsCode{us ++ [x]}.
-
-Para descubiri \hsCode{op}, primero se debe expresar e a \hsCode{split} recursivamente,
-
+Se tiene que \hsCode{split ws [] = ([], ws)} porque, 
 \begin{minted}{haskell}
-split ws xs = if xs ⊑ ws then (xs, ws ↓ xs) else split ws (tail xs)
+split ws []
+= head [(us, ws ↓ us) | us <- tails [], us ⊑ ws]
+= head [(us, ws ↓ us) | us <- [[]], us ⊑ ws]
+= head [([], ws ↓ []) | [] ⊑ ws]
+= ([], ws)
 \end{minted}
 
-% Explicar por que es equivalente a la versión por comprensión de listas
+teniendo así que \hsCode{e = ([], ws)}.
 
-Ahora, como se sabe que \hsCode{split ws xs = (us, vs)} y que \hsCode{ws = us ++ vs}, se puede hacer el razonamiento:
+Faltando solo descubrir \hsCode{op}. La siguiente observación es crucial,
+
+\hsCode{split ws xs = (us,vs)} $\quad\Longrightarrow\quad$ 
+\hsCode{split ws (xs ++ [x]) = split ws (us ++ [x])  -- (ec.3)}
+
+Que se interpreta como, el sufijo más largo de \hsCode{xs ++ [x]} es un prefijo de \hsCode{ws} es un
+sufijo de \hsCode{us ++ [x]}.
+
+Para descubir \hsCode{op}, primero se debe expresar a \hsCode{split} recursivamente como,
+\begin{minted}{haskell}
+split ws xs = if xs ⊑ ws then (xs, ws ↓ xs) else split ws (tail xs)  -- (ec.4)
+\end{minted}
+
+Como \hsCode{split ws xs = (us, vs)} donde\hsCode{ ws = us ++ vs} por definición de \hsCode{split},
+se hace el razonamiento:
 
 \inputminted{haskell}{definiciones/kmp/1-op-raz-eq.hs}
 
@@ -171,32 +208,46 @@ Y todo ese cálculo nos da la definición de \hsCode{op :: ([a], [a]) -> a -> ([
 
 \inputminted{haskell}{definiciones/kmp/1-op.hs}
 
-Quedando así (la primera versión) hasta ahora:
+% TODO: Explicar porque
+% split ws (tail us ++ [x]) = op (split ws (tail us)) x
+Quedando así (la primera versión) hasta ahora como:
 
 \inputminted{haskell}{definiciones/kmp/1-final.hs}
 
 % TODO poner la explicación que falta justo antes de Data refinement
 
-%% FIXME: cambiar esto por algo más aca chido
-evaluación  la función \hsCode{matches} se ve así:
-
 % Poner el ejmeplo y su ejecución
 
-Juntando todo lo anterior, el primer acercamiento que se puede utilizar quedaría como:
+Juntando todo lo anterior, el código del primer acercamiento quedaría como:
 
 \inputminted{haskell}{codigo/haskell/1-first-steps.hs}
 
+% FIXME: Explicar el funcionamiento, está justo arriba de first steps
+
 \section{Refinamiento de los datos}
+
+Una manera de mejorar la eficiencia es buscar un cambio en la representación del primer argumento de \hsCode{op}, es decir el separación (\hsCode{split}) actual sobre el patrón \hsCode{ws}.
+
+Supongamos funciones \hsCode{abs} y \hsCode{rep} con tipos,
 
 \begin{minted}{haskell}
 abs :: Rep ([a], [a]) -> ([a], [a])
 rep :: ([a], [a]) -> Rep ([a], [a])
 \end{minted}
 
+para algún tipo de dato \hsCode{Rep}.
 
+La función \hsCode{rep} es la función de representación, es decir, ``encapsula'' \hsCode{([a], [a])}, mientras que \hsCode{abs} es la función de abstacción.
+
+Se quiere también que \hsCode{abs . rep = id}, es decir \hsCode{abs} es la inversa derecha de \hsCode{rep}. Esta condición establece que el valor abstracto puede ser recuperado de cualquier representación de esta.
+%La otra dirección \hsCode{rep . abs = id} solo se mantendría si fuera una biyección
+
+Si se encontrarán las siguientes funciones que asegurarán que,
 \begin{minted}{haskell}
-foldl op ([], ws) = abs . foldl op' (rep ([], ws))  -- (17.1)
+foldl op ([], ws) = abs . foldl op' (rep ([], ws))  -- (eq.3)
 \end{minted}
+
+Y también si aseguramos que \hsCode{abs} y \hsCode{op'} toman tiempo constante, se puede redefinir \hsCode{marthces} a leer,
 
 \begin{minted}{haskell}
 matches ws = map fst . filter (null . snd . abs . snd) .
@@ -204,101 +255,157 @@ matches ws = map fst . filter (null . snd . abs . snd) .
 step (n, r) x = (n + 1, op' r x)    
 \end{minted}
 
+% Ver si se traduce así fusion law, hacer como una liga a cada una de las tres condiciones necesarias
+Para encontrar \hsCode{abs}, \hsCode{op'} y \hsCode{rep} que satisfagan (eq.3) recurriremos a la ley de fusión de \hsCode{fold}.
+Para la primera condición no se necesita si queremos afirmar que la ley de fusión se mantiene solo para todas las listas finitas.
+La cosa interesante aquí es que que queremos aplicar la ley de fusión de manera ``inversa'', dividiendo el \hsCode{fold} en dos partes.
+
+La segunda condición es inmediata porque \hsCode{abs (rep ([],ws)) = ([],ws)} %Explicar porque es obvio XDDD
+Y hay una definición obvia de \hsCode{op'} que satisface la tercera condición de fusión, específicamente
 \begin{minted}{haskell}
-op' r = rep . op (abs r)
+op' r = rep . op (abs r)  -- (eq.4)
 \end{minted}
 
+Entonces se tiene que,
+% Poner más pasos intermedios
 \begin{minted}{haskell}
 abs (op' r x) = abs (rep (op (abs r) x)) = op (abs r) x
 \end{minted}
 
+Usando la definición de \hsCode{op} en (eq.4) se obtiene,
+% Explicar ahí donde use esa ecuación (eq.4)
+
+% (eq.666)
 \begin{minted}{haskell}
-op' r x | [x] ⊑ vs = rep (us ++ [x],tail vs)
+op' r x | [x] ⊑ vs = rep (us ++ [x], tail vs)
         | null us = rep ([],ws)
         | otherwise = op' (rep (split ws (tail us))) x
         where (us, vs) = abs r
 \end{minted}
 
+Teniendo esas representaciones abtractas, aún queda escoger \hsCode{Rep} y las dos funciones \hsCode{abs} y \hsCode{rep}.
+
+% FIXME: echarle unas revisadas a esta sección
+
 \section{Árboles}
+%Poner como referencia lo de los functional arrays,
+En la programación funcional, muchas representaciones un ábrol de cierto tipo, y en este caso no es diferente. Definamos,
 
 \begin{minted}{haskell}
 data Rep a = Null | Node a (Rep a) (Rep a)
 \end{minted}
 
+Teniendo así que \hsCode{Rep} es un árbol binario.
+
+La función \hsCode{abs} está definida por,
 \begin{minted}{haskell}
-abs (Node (us, vs) lr) = (us,vs) -- (17.3)
+abs (Node (us, vs) lr) = (us,vs) -- (eq.5)
 \end{minted}
 
-\begin{minted}{haskell}
-rep (us, vs) = Node (us, vs) (left us vs) (right us vs) -- (17.4)
-\end{minted}
+Y claramente toma tiempo constante.
+
+La función \hsCode{rep} está definida por,
 
 \begin{minted}{haskell}
-left [] vs = Null
-left (u : us) vs = rep (split ws us)
-right us [] = Null
-right us (v:vs) = rep(us ++ [v], vs)
+rep (us, vs) = Node (us, vs) (left us vs) (right us vs) -- (eq.6)
 \end{minted}
 
+donde,
+
 \begin{minted}{haskell}
-op' (Node (us, vs) l r) x | [x] ⊑ vs = r
-                          | null us = root
+left [] vs       = Null
+left (u : us) vs = rep (split ws us) -- (eq.678)
+right us []      = Null
+right us (v:vs)  = rep (us ++ [v], vs) -- (eq.123)
+\end{minted}
+
+La razón de elegir \hsCode{rep}
+
+\begin{minted}{haskell}
+op' (Node (us, vs) l r) x | [x] ⊑ vs  = r
+                          | null us   = root
                           | otherwise = op' l x
 \end{minted}
 
+donde \hsCode{root = rep([], ws) -- (eq.2964)}. La primera cláusula es justificada por,
+
+% Razonamiento ecuacional
 \begin{minted}{haskell}
 op' (Node (us, vs) l r) x
-= {definition of op' in the case [x] ⊑ vs}
+=  -- {definition of op' in the case [x] ⊑ vs} FIXME, poner que me refiero a (eq.666)
 rep (us ++ [x], tail vs)
-= {definition of right and x = head vs}
+=  -- {definition of right and x = head vs} FIXME,  (eq.123)
 right us vs
-= {definition of rep}
+=  -- {definition of rep} FIXME, ver (eq.6)
 r
 \end{minted}
 
+% TODO, analizar este caso
+Las otras cláusulas son simiilares, Si ponemos \hsCode{op' Null x = root}, entonces \hsCode{op'} toma una forma más sencilla.
 \begin{minted}{haskell}
 op' Null x = root
 op' (Node (us, vs) l r) x | [x] ⊑ vs = r
                           | otherwise = op' l x
 \end{minted}
 
+% TODO poner bien la explicación de pag 131.
+
+La idea es especificar una versión generalizanda, digamos \hsCode{grep} de \hsCode{rep}.
+
 \begin{minted}{haskell}
 rep (us, vs) = grep (left us vs) (us, vs)
 \end{minted}
 
-\begin{minted}{haskell}
-right us (v:vs) = rep (us ++ [v], vs)
-                = grep (left (us ++ [v]) vs) (us ++ [v], vs)
-\end{minted}
+Ahora, por definición de \hsCode{right}, se tiene que \hsCode{right us [] = Null} y,
 
 \begin{minted}{haskell}
+right us (v:vs) = rep (us ++ [v], vs)
+                = grep (left (us ++ [v]) vs) (us ++ [v], vs) (eq.998)
+\end{minted}
+
+% Decir por que se hace inducción estructurada.
+Para simplificar \hsCode{left (us ++ [v]) vs} se necesitas hacer análisis de casos en \hsCode{us}. En el caso \hsCode{us = []}
+
+% Ponerlo aca más chido como en incisos
+% Este caso us = []
+\begin{minted}{haskell}
+(left (us ++ [v]) vs)
+ = -- Sustituyendo el valor en (eq.998)
 left ([] ++ [v]) vs
-= {definition of left}
-rep (split ws [])
+left [v] vs -- por (++.1) 
+  =  -- {definition of left}
+rep (split ws []) -- (eq.678)
 = {definition of split}
 rep ([], ws)
-= {definition of root}
+= {definition of root} -- (eq.2964)
 root
 \end{minted}
 
+Caso inductivo de \hsCode{u:us} se tiene:
+
+% PONER PASOS INTERMEDIOS Y EXPLICAR MÁS CHIDO
 \begin{minted}{haskell}
-left (u : us ++ [v]) vs
+left ((u:us) ++ [v]) vs
 = {definition of left}
 rep (split ws (us ++ [v]))
 = {definition of split}
 rep (op (split ws us) v)
-= {definition (17.2) of op'}
+= {definition (eq.4) of op'}
 op' (rep (split ws us)) v
 = {definition of left}
 op' (left (u : us) vs) v
 \end{minted}
 
+Quedando así
+
 \begin{minted}{haskell}
 left (us ++ [v]) vs = if null us then root else op' (left us vs) v
 \end{minted}
 
+Ergo, \hsCode{grep puedee ser definido como}
+
 \begin{minted}{haskell}
-grep l (us, []) = Node(us, []) l Null
+grep l (us, [])   = Node(us, []) l Null
 grep l (us, v:vs) = Node(us, v:vs) l
                     (grep (op' l v) (us ++ [v], vs))
 \end{minted}

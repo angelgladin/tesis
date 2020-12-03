@@ -1,10 +1,10 @@
 split ws (xs ++ [x])
-=  -- {Observación previa en la ec. 1}
+  =  -- {Observación previa en (ec. 3)}
 split ws (us ++ [x])
-=  -- {Por la definición recursiva de `split` en la ec. 2}
+  =  -- {Usando la definición recursiva de `split` de (ec.4)}
 if us ++ [x] ⊑ ws then (us + [x], ws ↓ (us ++ [x]))
 else split ws (tail (us ++ [x]))
-=  -- {Como ws = us ++ vs}
+  =  -- {Como ws = us ++ vs}
 if us ++ [x] ⊑ (us ++ vs)  then (us + [x], (us ++ vs) ↓ (us ++ [x]))
 else split ws (tail (us ++ [x]))
 =  -- {Por definición de `⊑` y `↓`.
