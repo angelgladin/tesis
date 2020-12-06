@@ -226,7 +226,8 @@ Juntando todo lo anterior, el código del primer acercamiento quedaría como:
 
 \section{Refinamiento de los datos}
 
-Una manera de mejorar la eficiencia es buscar un cambio en la representación del primer argumento de \hsCode{op}, es decir el separación (\hsCode{split}) actual sobre el patrón \hsCode{ws}.
+Una manera de mejorar la eficiencia, es buscar un cambio en la representación del primer argumento 
+de \hsCode{op}, es decir la separación \texttt{(us, vs)} actual sobre el patrón \texttt{ws}.
 
 Supongamos funciones \hsCode{abs} y \hsCode{rep} con tipos,
 
@@ -237,17 +238,20 @@ rep :: ([a], [a]) -> Rep ([a], [a])
 
 para algún tipo de dato \hsCode{Rep}.
 
-La función \hsCode{rep} es la función de representación, es decir, ``encapsula'' \hsCode{([a], [a])}, mientras que \hsCode{abs} es la función de abstacción.
+La función \hsCode{rep} es la función de representación, es decir, ``encapsula'' \texttt{([a],[a])},
+mientras que \hsCode{abs} es la función de abstracción. % TODO: Del último paper que encontré en twitter argumentar esto.
 
-Se quiere también que \hsCode{abs . rep = id}, es decir \hsCode{abs} es la inversa derecha de \hsCode{rep}. Esta condición establece que el valor abstracto puede ser recuperado de cualquier representación de esta.
-%La otra dirección \hsCode{rep . abs = id} solo se mantendría si fuera una biyección
+Se quiere también que \texttt{abs . rep = id}, es decir \hsCode{abs} es la inversa derecha de
+\hsCode{rep}. Esta condición establece que el valor abstracto puede ser recuperado de cualquier
+representación de esta.
 
 Si se encontrarán las siguientes funciones que asegurarán que,
 \begin{minted}{haskell}
-foldl op ([], ws) = abs . foldl op' (rep ([], ws))  -- (eq.3)
+foldl op ([], ws) = abs . foldl op' (rep ([], ws))  -- (ec.5)
 \end{minted}
 
-Y también si aseguramos que \hsCode{abs} y \hsCode{op'} toman tiempo constante, se puede redefinir \hsCode{marthces} a leer,
+Y también si aseguramos que \hsCode{abs} y \hsCode{op'} toman tiempo constante, entonces se puede
+redefinir \hsCode{matches} como,
 
 \begin{minted}{haskell}
 matches ws = map fst . filter (null . snd . abs . snd) .
@@ -255,42 +259,47 @@ matches ws = map fst . filter (null . snd . abs . snd) .
 step (n, r) x = (n + 1, op' r x)    
 \end{minted}
 
-% Ver si se traduce así fusion law, hacer como una liga a cada una de las tres condiciones necesarias
-Para encontrar \hsCode{abs}, \hsCode{op'} y \hsCode{rep} que satisfagan (eq.3) recurriremos a la ley de fusión de \hsCode{fold}.
+% TODO: Ver si se traduce así fusion law, hacer como una liga a cada una de las tres condiciones necesarias
+Para encontrar \hsCode{abs}, \hsCode{op'} y \hsCode{rep} que satisfagan (ec.5) recurriremos a la ley de fusión de \hsCode{fold}.
+% TODO: Poner cada una de las leyes de fusión del libro y completarlo con info extra.
 Para la primera condición no se necesita si queremos afirmar que la ley de fusión se mantiene solo para todas las listas finitas.
-La cosa interesante aquí es que que queremos aplicar la ley de fusión de manera ``inversa'', dividiendo el \hsCode{fold} en dos partes.
+La cosa interesante aquí es que que queremos aplicar la ley de fusión para ``separar'', dividiendo el \hsCode{fold} en dos partes.
 
-La segunda condición es inmediata porque \hsCode{abs (rep ([],ws)) = ([],ws)} %Explicar porque es obvio XDDD
-Y hay una definición obvia de \hsCode{op'} que satisface la tercera condición de fusión, específicamente
+La segunda condición es inmediata porque,
 \begin{minted}{haskell}
-op' r = rep . op (abs r)  -- (eq.4)
+abs (rep ([],ws)) = (abs . rep) ([],ws) = id ([],ws) = ([],ws)
+\end{minted}
+
+Se dará una definición de \hsCode{op'} que satisface la tercera condición de fusión,
+específicamente donde \texttt{r} es de tipo \hsCode{Rep},
+\begin{minted}{haskell}
+op' r = rep . op (abs r)  -- (ec.6)
 \end{minted}
 
 Entonces se tiene que,
-% Poner más pasos intermedios
 \begin{minted}{haskell}
-abs (op' r x) = abs (rep (op (abs r) x)) = op (abs r) x
+abs (op' r x) 
+  = abs (rep (op (abs r) x))    -- Sustitución usando (ec.6)
+  = (abs . rep) (op (abs r) x)  -- Composición
+  = op (abs r) x                -- (ec.7)
 \end{minted}
 
-Usando la definición de \hsCode{op} en (eq.4) se obtiene,
-% Explicar ahí donde use esa ecuación (eq.4)
-
-% (eq.666)
+Ajustando la definición de \hsCode{op} en (ec.6) se obtiene,
 \begin{minted}{haskell}
-op' r x | [x] ⊑ vs = rep (us ++ [x], tail vs)
-        | null us = rep ([],ws)
-        | otherwise = op' (rep (split ws (tail us))) x
-        where (us, vs) = abs r
+op' r x                                           -- (ec.8)
+  | [x] ⊑ vs = rep (us ++ [x], tail vs)
+  | null us = rep ([],ws)
+  | otherwise = op' (rep (split ws (tail us))) x
+    where (us, vs) = abs r  
 \end{minted}
 
-Teniendo esas representaciones abtractas, aún queda escoger \hsCode{Rep} y las dos funciones \hsCode{abs} y \hsCode{rep}.
-
-% FIXME: echarle unas revisadas a esta sección
+Con \hsCode{op' :: Rep ([a], [a]) -> a -> Rep ([a], [a])}. Teniendo esas representaciones
+abtractas, aún queda escoger \hsCode{Rep} y las dos funciones \hsCode{abs} y \hsCode{rep}.
 
 \section{Árboles}
-%Poner como referencia lo de los functional arrays,
-En la programación funcional, muchas representaciones un ábrol de cierto tipo, y en este caso no es diferente. Definamos,
-
+% TODO: Poner como referencia lo de los functional arrays Okasaki
+En la programación funcional, muchas representaciones eficiente involucran a un ábrol de cierto
+tipo, y en este caso no es diferente. Se define,
 \begin{minted}{haskell}
 data Rep a = Null | Node a (Rep a) (Rep a)
 \end{minted}
@@ -299,61 +308,92 @@ Teniendo así que \hsCode{Rep} es un árbol binario.
 
 La función \hsCode{abs} está definida por,
 \begin{minted}{haskell}
-abs (Node (us, vs) lr) = (us,vs) -- (eq.5)
+abs (Node (us, vs) lr) = (us,vs)  -- (ec.9)
 \end{minted}
 
-Y claramente toma tiempo constante.
-
-La función \hsCode{rep} está definida por,
+Y claramente toma tiempo constante. La función \hsCode{rep} está definida por,
 
 \begin{minted}{haskell}
-rep (us, vs) = Node (us, vs) (left us vs) (right us vs) -- (eq.6)
+rep (us, vs) = Node (us, vs) (left us vs) (right us vs)  -- (eq.10)
 \end{minted}
 
 donde,
 
 \begin{minted}{haskell}
 left [] vs       = Null
-left (u : us) vs = rep (split ws us) -- (eq.678)
+left (u:us) vs   = rep (split ws us)    -- (eq.678)
 right us []      = Null
-right us (v:vs)  = rep (us ++ [v], vs) -- (eq.123)
+right us (v:vs)  = rep (us ++ [v], vs)  -- (eq.12)
 \end{minted}
 
-La razón de elegir \hsCode{rep}
+% TODO: ver si pongo estot
+La razón de elegir \hsCode{rep} en la (eq.10) es que \hsCode{op'} toma una forma más simple.
 
-\begin{minted}{haskell}
-op' (Node (us, vs) l r) x | [x] ⊑ vs  = r
-                          | null us   = root
-                          | otherwise = op' l x
-\end{minted}
-
-donde \hsCode{root = rep([], ws) -- (eq.2964)}. La primera cláusula es justificada por,
-
-% Razonamiento ecuacional
+Por ánalis de casos en \hsCode{op'},
 \begin{minted}{haskell}
 op' (Node (us, vs) l r) x
-=  -- {definition of op' in the case [x] ⊑ vs} FIXME, poner que me refiero a (eq.666)
+  =  -- {En el primer caso de `op'` (ec.8)}
 rep (us ++ [x], tail vs)
-=  -- {definition of right and x = head vs} FIXME,  (eq.123)
+  =  -- {Tomando el (RHS) de la definición de `right` en (eq.12) y 
+     --  como vs = (v':vs'), `tail vs = vs'`}
 right us vs
-=  -- {definition of rep} FIXME, ver (eq.6)
+  =  -- {Por definición de `rep` (eq.10)}
 r
 \end{minted}
+La primera cláusula quedando como \hsCode{[x] ⊑ vs  = r}. % cambiarla
 
-% TODO, analizar este caso
-Las otras cláusulas son simiilares, Si ponemos \hsCode{op' Null x = root}, entonces \hsCode{op'} toma una forma más sencilla.
 \begin{minted}{haskell}
-op' Null x = root
-op' (Node (us, vs) l r) x | [x] ⊑ vs = r
-                          | otherwise = op' l x
+op' (Node (us, vs) l r) x
+  =  -- {En el segundo caso de `op'` (ec.8)}
+rep ([], ws)
+  = -- {Renombrando por simplicidad}
+root
+\end{minted}
+La segunda cláusula quedando como\hsCode{ null us = rep([], ws) = root -- (eq.2964)}. % cambiarlo
+
+\begin{minted}{haskell}
+op' (Node (us, vs) l r) x
+    =  -- {En el tercer caso de `op'` (ec.8)}
+op' (rep (split ws (tail us))) x
+    =  -- {Tomando el (RHS) de la definición de `left` en (eq.678) y 
+       --  como vs = (v':vs'), `tail vs = vs'`}
+op' (left us vs) x
+    =  -- {Por definición de `rep` (eq.10)}
+op' l x
+\end{minted}
+La tercera cláusula %TODO
+
+% TODO: ponerlos hasta abajo
+\begin{minted}{haskell}
+op' (Node (us, vs) l r) x
+  | [x] ⊑ vs  = r
+  | null us   = root
+  | otherwise = op' l x
 \end{minted}
 
+% TODO: ver si lo dejo
+La razón de elegir \hsCode{rep} en la (eq.10) es que \hsCode{op'} toma una forma más simple.
+
+Las otras cláusulas son similares, Si ponemos \hsCode{op' Null x = root}, entonces \hsCode{op'} toma una forma aún más sencilla.
+\begin{minted}{haskell}
+op' Null x                 = root
+op' (Node (us, vs) l r) x  | [x] ⊑ vs  = r
+                           | otherwise = op' l x
+\end{minted}
+
+% FIXME de aquí para abajo checar como va todo.
 % TODO poner bien la explicación de pag 131.
 
-La idea es especificar una versión generalizanda, digamos \hsCode{grep} de \hsCode{rep}.
+La idea es dar una versión generalizanda, digamos \hsCode{grep} de \hsCode{rep}.
 
 \begin{minted}{haskell}
 rep (us, vs) = grep (left us vs) (us, vs)
+\end{minted}
+
+Y luego obtener una definición de \hsCode{grep}. De (eq.10) se tiene
+
+\begin{minted}{haskell}
+grep l (us, vs) = Node (us, vs) l (right us vs)
 \end{minted}
 
 Ahora, por definición de \hsCode{right}, se tiene que \hsCode{right us [] = Null} y,
@@ -364,52 +404,89 @@ right us (v:vs) = rep (us ++ [v], vs)
 \end{minted}
 
 % Decir por que se hace inducción estructurada.
-Para simplificar \hsCode{left (us ++ [v]) vs} se necesitas hacer análisis de casos en \hsCode{us}. En el caso \hsCode{us = []}
+Para simplificar \hsCode{left (us ++ [v]) vs} se necesitas hacer análisis de casos en \hsCode{us}.
 
-% Ponerlo aca más chido como en incisos
+Caso \texttt{us = []}.
 % Este caso us = []
 \begin{minted}{haskell}
-(left (us ++ [v]) vs)
- = -- Sustituyendo el valor en (eq.998)
 left ([] ++ [v]) vs
+  =  -- {Por (++.1)}
 left [v] vs -- por (++.1) 
-  =  -- {definition of left}
-rep (split ws []) -- (eq.678)
-= {definition of split}
+  =  -- {Definición de `left` (eq.678)}
+rep (split ws []) 
+  =  -- {Definición de `split` en (ec.1)}
 rep ([], ws)
-= {definition of root} -- (eq.2964)
+  =  -- {Definición of `root` en (eq.2964)}
 root
 \end{minted}
 
 Caso inductivo de \hsCode{u:us} se tiene:
-
-% PONER PASOS INTERMEDIOS Y EXPLICAR MÁS CHIDO
 \begin{minted}{haskell}
-left ((u:us) ++ [v]) vs
-= {definition of left}
+left (u:us ++ [v]) vs
+  =  -- {Definición de `left` (eq.678)}
 rep (split ws (us ++ [v]))
-= {definition of split}
+  =  -- {Definición de `split` en (ec.2)}
 rep (op (split ws us) v)
-= {definition (eq.4) of op'}
+  =  -- {Definición de (eq.6) de op'}
 op' (rep (split ws us)) v
-= {definition of left}
-op' (left (u : us) vs) v
+  =  -- {Definición de `left`}
+op' (left (u:us) vs) v
 \end{minted}
 
-Quedando así
-
+Quedando así \hsCode{left} como
 \begin{minted}{haskell}
 left (us ++ [v]) vs = if null us then root else op' (left us vs) v
 \end{minted}
 
-Ergo, \hsCode{grep puedee ser definido como}
-
+Ergo, \hsCode{grep} puede ser definido como
 \begin{minted}{haskell}
 grep l (us, [])   = Node(us, []) l Null
 grep l (us, v:vs) = Node(us, v:vs) l
                     (grep (op' l v) (us ++ [v], vs))
 \end{minted}
 
-%% HASTA AQUÍ CODIGO PAG 133!!!
+% TODO mejorar
+\begin{minted}{haskell}
+matches :: (Eq a) => [a] -> [a] -> [Int]
+matches ws = map fst . filter (ok . snd) . scanl step (0, root)
+    where
+    ok (Node vs l r) = null vs
+    step (n, t) x = (n + 1, op t x)
+    op Null x = root
+    op (Node [] l r) x = op l x
+    op (Node (v:vs) l r) x = if v == x then r else op l x
+    root = grep Null ws
+    grep l [] = Node [] l Null
+    grep l (v:vs) = Node (v : vs) l (grep (op l v) vs))
+\end{minted}
+
+% FIXME: poner otras palabras
+Ahora pongamos todo juntos.
+\begin{minted}{haskell}
+matches ws = map fst . filter (ok . snd) . scanl step (0, root)
+\end{minted}
+
+donde
+
+\begin{minted}{haskell}
+ok (Node (us,vs) l r) = null vs
+step (n,t) x = (n+1,op t x)
+root = grep Null ([],ws)
+\end{minted}
+
+La función \hsCode{op} (que es \hsCode{op'} renombrada) esttá definida como
+\begin{minted}{haskell}
+op Null x = root
+op (Node (us,[]) l r) x = op l x
+op (Node (us,v:vs) l r) x = if v == x then r else op l x
+\end{minted}
+
+Y la función \hsCode{grep} por
+\begin{minted}{haskell}
+grep l (us,[]) = Node (us,[]) l Null
+grep l (us,v:vs) = Node (us,v :vs) l (grep (op l v) (us ++ [v], vs))
+\end{minted}
+
+% Poner lo que hace falta por escribir
 
 %\section{Ejemplos}
