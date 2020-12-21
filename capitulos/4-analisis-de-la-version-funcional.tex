@@ -1,8 +1,11 @@
+\begin{minted}{haskell}
+\end{minted}
+
 Como ya hemos explicado anteriormente, el problema de \textit{string matching} se trata de buscar
 todas las ocurrencias de una cadena no vacía, que se le denominará \textbf{patrón} en un texto
 llamado \textbf{texto}. 
 
-La notación usada en todo este capítulo será:
+La terminología usada en todo este capítulo será:
 \begin{itemize}
     \item \texttt{ws} que denotará al patrón y
     \item \texttt{xs} el texto.
@@ -13,8 +16,10 @@ Haskell para despues irlo ``optimizando''. Empecemos con esta especificación mu
 
 \begin{minted}{haskell}
 matches :: Eq a => [a] -> [a] -> [Int]
-matches ws = map length . filter (endswith ws) . inits
+matches ws = map length . filter (endswith ws) . inits  -- (ec.40)
 \end{minted}
+
+% TODO: explicar porque di esta definición
 
 Donde \hsCode{endswith}, \hsCode{inits} y \hsCode{tails} se definen respectivamente como:
 
@@ -23,11 +28,9 @@ endswith :: Eq a => [a] -> [a] -> Bool
 endswith ws xs = ws `elem` tails xs
 \end{minted}
 
-\inputminted{haskell}{definiciones/inits.hs}
-
-\inputminted{haskell}{definiciones/tails.hs}
-
-Donde \hsCode{tails} está definida como, %% TODO acomodar esto
+% FIXME: Explicar mejor endwith y hacer una ejecución
+La función \hsCode{endswith ws xs} tiene un valor \hsCode{Bool}, regresa verdadero si \texttt{ws} es un algún sufijo de \texttt{xs}.
+% TODO: poner que se omitirá por ahora como va endwith
 
 La función \hsCode{inits} regresa una lista con los prefijos de una lista en orden creciente como se 
 puede ver a continuación,
@@ -37,6 +40,14 @@ puede ver a continuación,
     [[],[2],[2,3],[2,3,5]]
 \end{minted}
 
+Así un emparejamiento (\textit{match}) ocurre en la posición $p$ si el patrón \texttt{ws} aparece en el texto \texttt{xs} terminando en $p$.
+
+\inputminted{haskell}{definiciones/inits.hs}
+
+\inputminted{haskell}{definiciones/tails.hs}
+
+Donde \hsCode{tails} está definida como, %% TODO acomodar esto
+
 % FIXME: explicar bien tails y acomodarlo con las definiciones de arriba
 Ejemplo,
 
@@ -45,17 +56,83 @@ Ejemplo,
     [[2,3,5,7],[3,5,7],[5,7],[7],[]]
 \end{minted}
 
-% FIXME: Explicar mejor endwith y hacer una ejecución
-La función \hsCode{endswith ws xs} checa si el patrón \texttt{ws} es un algún sufijo de \texttt{xs}.
+Siempre hay que tener en cuenta que cualquier problema que involucre la función \hsCode{inits}, la ley más importante es conocida como \texttt{Scan Lemma}:
+% map (foldl op e) · inits = scanl op e
+% TODO: esto xplicarlo mucho mejor en otro capçitulo, poner como de qué cada lado de la ecuación y en el capítulo poner la prueba
+
+Aunque hay un \hsCode{map} en la definición de \hsCode{matches}, también hay un \hsCode{filter}, así que el primer paso en tranformar \hsCode{matches} is reescribir la especificación usando otra ley:
+% TODO: demostrar esta ecuación
+\begin{minted}{haskell}
+map f . filter p = map fst . filter snd . map (fork (f,p))  -- (ec.42)
+\end{minted}
+
+donde \hsCode{fork (f , p) x = (f x, p x)}. La ley usada simplemente es para llevar a \hsCode{map} después de \hsCode{inits} para prepararlo para aplicar el \textit{scan lemma}. Usando (ec.40) nos lleva a
+
+\begin{minted}{haskell}
+matches ws
+  = map fst . filter snd . map (fork (length , endswith ws)) . inits
+\end{minted}
+
+% Esto lo puse yo
+Porque de (ec.40) lo mezclo con (ec.42)
+\begin{minted}{haskell}
+matches ws = (map length . filter (endswith ws)) . inits
+matches ws = (map fst . filter snd . map (fork (f,p))) . inits
+\end{minted}
+
+% TODO: poner esto de abajo en la introducción de que muhcas veces no sabemos a donde vamos, pero no es misterioso.
+% Again, the focus is on the form of the terms in the specification, not on what they do nor on the shape of the final algorithm. It may be a little scary not to know where we are heading, but it is not mysterious.
+
+La siguiente pregunta a responder es: ¿Puede \hsCode{fork (length, endswith ws)} puede ser casteado como una instancia de \hsCode{fold}? Definitivamente \hsCode{length = fold count 0} donde \hsCode{count n x = n+1} % TODO: demoostrar esa pendejada
+Supongamos que se pueden encontrar \hsCode{e} y \hsCode{op}, que cada uno de ellos dependa de \texttt{ws} tal que
+
+
 
 Entonces \hsCode{matches ws xs} regresa una lista de enteros donde cada entero $n$ indica que
 \texttt{ws} aparece en \texttt{xs} terminando en la posición $n$ (siendo 1-indexado). Por ejemplo:
 
 % FIXME: PONER UNA EJECUCIÓN
 \begin{minted}{haskell}
->>> matches "abcab" "ababcabcab"
-    [7, 10]
+endswith ws = foldl op e  -- (ec.43)
 \end{minted}
+
+% TODO: demostrar esto
+Entonces se está en posición de aplicar otra ley: la \textit{tupling law} para \hsCode{foldl}. La ley establece que,
+\begin{minted}{haskell}
+fork (foldl op1 e1, foldl op2 e2) = foldl op (e1, e2)  -- (ec.44)
+\end{minted}
+
+donde \hsCode{op (a,b) x = (op1 a x, op2 b x)}. Usando \textit{tupling law} resulta en
+
+\begin{minted}{haskell}
+fork (length, endswith ws) = foldl step (0, e)
+step (n,x) y = (n+1, op x y)
+\end{minted}
+
+Finalnente se puede aplicar \textit{scan lemma} para llegar a,
+
+\begin{minted}{haskell}
+matches ws = map fst . filter snd . scanl step (0, e)
+\end{minted}
+
+Si \hsCode{op} toma tiempo constante o al menos amortizada, y también \hsCode{step}, y el resulrado es tiempo lineal.
+
+El problema ahora es que no hay \hsCode{e} y \hsCode{op} que satisfagan (ec.43). La función de \hsCode{endswith ws} regresa un \hsCode{Bool} y eso es información insuficiente para expresar
+a \hsCode{endswith ws} como una composición
+
+\begin{minted}{haskell}
+endswith ws = p . foldl op e  -- (ec.44)
+\end{minted}
+
+La forma de (ec.44) está puesta de esta manera solamente para aplicar el \textit{scan lemma}. En ves de (ec.42) usando una ligera generalización:
+
+\begin{minted}{haskell}
+matches ws = map fst . filter (p . snd) . scanl step (0,e)
+\end{minted}
+
+Dadas \hsCode{p} y \hsCode{op} take amortized constant time, matches will still take linear time.
+
+Lo que queda aún no se ha definido formalmente es \hsCode{endswith}, una definición razonables podría ser:
 
 La función \hsCode{matches} es polimórfica, así que cualquier algoritmo que se use tiene que
 depender de esta función de igualdad \hsCode{(==) :: a -> a -> Bool} sobre elementos de dos listas.
@@ -556,8 +633,14 @@ Este árbol encapsula la función de fallo % TODO: cuando explique el algoritmo 
 del algoritmo KMP como una gráfica cíclica. La operación \hsCode{op} toma tiempo constante amortizado, dando por hecho que el costo de la comparación es contante.
 El tiempo para calcular \texttt{root} es de $\Theta(m)$ pasos, donde $m =$ \texttt{length ws}. De ahí que \hsCode{matches} toma $\Theta(m)$ pasos para construir \texttt{root}
 y a partir de ahí $\Theta(m)$ pasos, donde $n$ es la longitud del texto, para calcular las ocurrencias del patrón en el texto.
-
+\inputminted{haskell}{codigo/haskell/mp-1.hs}
+\inputminted{haskell}{codigo/haskell/mp-2.hs}
 
 % TODO: entender en qué constiste eso de poner la función next y si lo puedo hacer. página 134 ver qué onda
 
 %\section{Ejemplos}
+
+ya está la última versión
+\inputminted{haskell}{codigo/haskell/kmp.hs}
+
+% Mostrar que mp y kmp son iguales con quickcheck en Putting the ‘K’ into Bird’s derivation of Knuth-Morris-Pratt string matching

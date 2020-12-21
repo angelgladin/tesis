@@ -1,3 +1,9 @@
+-- Final version
+
+module KMP
+  ( matches
+  ) where
+
 data Rep a
   = Null
   | Node a (Rep a) (Rep a)
@@ -12,18 +18,14 @@ matches ws = map fst . filter (ok . snd) . scanl step (0, root)
     op Null x = root
     op (Node [] l r) x = op l x
     op (Node (v:vs) l r) x =
-      if v == x
-        then r
-        else op l x
-    
+      if v == x then r else op l x
+
     root = grep Null ws
 
     grep l []     = Node [] l Null
     grep l (v:vs) = Node (v : vs) (next l v) (grep (op l v) vs)
-    
+
     next Null x = Null
     next (Node [] l r) x = Node [] l r
     next (Node (v:vs) l r) x =
-      if v == x
-        then next l x
-        else Node (v : vs) l r
+      if v == x then next l x else Node (v : vs) l r
