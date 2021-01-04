@@ -1,21 +1,8 @@
--- TODO: está todo feo el código
-
 import           Data.Array (Array, elems, listArray, (!))
 
-main :: IO ()
-main = interact $ unlines . map proccess . lines
-
-proccess xs =
-    let rev = reverse xs
-        aux = rev ++ '$':xs
-        pi_array = map (\(_, x, _) -> x) (table aux)
-        n = length xs -- igual y no uso este
-        k = last pi_array
-        other_part = drop k rev
-    in xs ++ other_part
-
-
 type Table a = [(a, Int, Int)]
+
+pi_array = map (\(_,x,_) -> x)
 
 table :: Eq a => [a] -> Table a
 table as =

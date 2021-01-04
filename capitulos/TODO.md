@@ -95,11 +95,11 @@ Explicar sobre runghc
 
 1.  https://www.spoj.com/problems/FINDSR/
     - [x] C++
-    - [ ] Haskell
+    - [x] Haskell
 
 2.  https://www.spoj.com/problems/EPALIN/
     - [x] C++
-    - [ ] Haskell
+    - [x] Haskell
 
 3.  https://www.spoj.com/problems/PERIOD/
     - [x] C++
@@ -119,8 +119,8 @@ Explicar sobre runghc
 
 7.  https://acm.timus.ru/problem.aspx?space=1&num=1423&locale=en
     - [x] C++
-    - [ ] Haskell
-    Necesito este código 309298CY$$
+    - [-] Haskell (por algún motivo no funciona y no sé porqué)
+    Necesito este código 309298CY
 
 8. https://www.spoj.com/problems/TESSER/
     - [ ] C++
