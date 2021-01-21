@@ -1,9 +1,8 @@
-\begin{minted}{haskell}
-\end{minted}
+\section{Planteamiento y algunas observaciones}
 
 Como ya hemos explicado anteriormente, el problema de \textit{string matching} se trata de buscar
-todas las ocurrencias de una cadena no vacía, que se le denominará \textbf{patrón} en un texto
-llamado \textbf{texto}. 
+todas las ocurrencias de una cadena no vacía, que se le denominará \textbf{patrón} en una cadena
+llamada \textbf{texto}. 
 
 La terminología usada en todo este capítulo será:
 \begin{itemize}
@@ -12,25 +11,14 @@ La terminología usada en todo este capítulo será:
 \end{itemize}
 
 Como se mencionó en la motivación de este trabajo, lo que se hará es dar una especificación en
-Haskell para despues irlo ``optimizando''. Empecemos con esta especificación muy básica,
+Haskell para después irlo ``mejorando''. Empecemos con esta especificación,
 
 \begin{minted}{haskell}
 matches :: Eq a => [a] -> [a] -> [Int]
-matches ws = map length . filter (endswith ws) . inits  -- (ec.40)
+matches ws = map length . filter (endswith ws) . inits  -- (ec.91)
 \end{minted}
 
-% TODO: explicar porque di esta definición
-
-Donde \hsCode{endswith}, \hsCode{inits} y \hsCode{tails} se definen respectivamente como:
-
-\begin{minted}{haskell}
-endswith :: Eq a => [a] -> [a] -> Bool
-endswith ws xs = ws `elem` tails xs
-\end{minted}
-
-% FIXME: Explicar mejor endwith y hacer una ejecución
-La función \hsCode{endswith ws xs} tiene un valor \hsCode{Bool}, regresa verdadero si \texttt{ws} es un algún sufijo de \texttt{xs}.
-% TODO: poner que se omitirá por ahora como va endwith
+% TODO, explicar filter, length y map. Al final la composición de todo
 
 La función \hsCode{inits} regresa una lista con los prefijos de una lista en orden creciente como se 
 puede ver a continuación,
@@ -40,37 +28,92 @@ puede ver a continuación,
     [[],[2],[2,3],[2,3,5]]
 \end{minted}
 
-Así un emparejamiento (\textit{match}) ocurre en la posición $p$ si el patrón \texttt{ws} aparece en el texto \texttt{xs} terminando en $p$.
+Donde \hsCode{inits} está definida como:
 
 \inputminted{haskell}{definiciones/inits.hs}
 
-\inputminted{haskell}{definiciones/tails.hs}
+La función \hsCode{endswith ws xs} verifica si el patón \texttt{ws} es sufijo de \texttt{xs}. Más adelante esta función será definida formalmente.
 
-Donde \hsCode{tails} está definida como, %% TODO acomodar esto
-
-% FIXME: explicar bien tails y acomodarlo con las definiciones de arriba
-Ejemplo,
+El valor de \hsCode{matches ws xs} es una lista de enteros $p$ tal que \texttt{ws} es un sufijo de \hsCode{take p xs}. Por ejemplo
 
 \begin{minted}{haskell}
->>> tails [2,3,5,7]
-    [[2,3,5,7],[3,5,7],[5,7],[7],[]]
+>>> matches "abcab" "ababcabcab" 
+    [7, 10]
 \end{minted}
 
-Siempre hay que tener en cuenta que cualquier problema que involucre la función \hsCode{inits}, la ley más importante es conocida como \texttt{Scan Lemma}:
-% map (foldl op e) · inits = scanl op e
-% TODO: esto xplicarlo mucho mejor en otro capçitulo, poner como de qué cada lado de la ecuación y en el capítulo poner la prueba
+En otras palabra, \hsCode{matches ws xs} regresa una lista de enteros donde cada entero $p$ indica que
+\texttt{ws} aparece en \texttt{xs} terminando en la posición $p$ (siendo 1-indexado).
 
-Aunque hay un \hsCode{map} en la definición de \hsCode{matches}, también hay un \hsCode{filter}, así que el primer paso en tranformar \hsCode{matches} is reescribir la especificación usando otra ley:
-% TODO: demostrar esta ecuación
+La función \hsCode{matches} es polimórfica, así que cualquier algoritmo del problema tiene que
+depender de la función de comparación \hsCode{(==) :: a -> a -> Bool} sobre elementos de dos listas.
+Asumiendo que toma tiempo constante hacer la función de comparación, la complejidad en tiempo de
+\hsCode{matches ws xs} es de $\Theta(mn)$ pasos en el peor de los casos, donde $m$ el la longitud de \texttt{ws} y $n$ la
+de \texttt{xs}.
+
+Nuestra meta aquí es deerviar el algoritmo KMP para emparejamiento de cadenas, el cual reduce el tiempo a $\Theta(m+n)$ pasos.
+Y aquí el ``truco'' a utilizar es aplicar estrategias como leyes de fusión, tuple %% poner todas las estrategias que usaré
+para poder manipular la expresión %% TODO: aquí es donde tengo que poner las venttajas de la programación funciional y su manipulación algebraica.
+
+Así un emparejamiento (\textit{match}) ocurre en la posición $p$ si el patrón \texttt{ws} aparece en el texto \texttt{xs} terminando en $p$.
+
+
+Siempre hay que tener en cuenta que cualquier problema que involucre la función \hsCode{inits}, la ley más importante es conocida como \textbf{Scan Lemma}: %% TODO: referirme al capittulo donde demuestre esto
 \begin{minted}{haskell}
-map f . filter p = map fst . filter snd . map (fork (f,p))  -- (ec.42)
+map (foldl op e) . inits = scanl op e  -- (ec.92)
 \end{minted}
 
-donde \hsCode{fork (f , p) x = (f x, p x)}. La ley usada simplemente es para llevar a \hsCode{map} después de \hsCode{inits} para prepararlo para aplicar el \textit{scan lemma}. Usando (ec.40) nos lleva a
+¿Por qué usar \textbf{Scan Lemma}? En pocas pabras para mejorar la complejidad en tiempo evaluando menos expresiones.
+Porque en (ec.92), en la expresión LHS es evaluado en una lista de longitud $n$ con $\Theta(n^2)$ evaluaciones de \hsCode{op}, mientras que
+en RHS en la expresión equivalente en la función estándar de Haskell \hsCode{scanl} solo requiere $\Theta(n)$ evaluaciones.
+
+Aunque hay un \hsCode{map} en la definición de \hsCode{matches}, también hay un \hsCode{filter}, así que el primer paso en tranformar \hsCode{matches} is reescribir la especificación usando otra ley: %% TODO: hacer una referencia a esta ley y demostrarla
+
+\begin{minted}{haskell}
+map f . filter p = map fst . filter snd . map (fork (f,p))  -- (ec.93)
+\end{minted}
+
+donde \hsCode{fork (f, p) x = (f x, p x)}. La ley usada simplemente es para poner a \hsCode{map}
+después de \hsCode{inits} para prepararlo para aplicar el \textit{scan lemma}. Usando (ec.93) nos lleva a
 
 \begin{minted}{haskell}
 matches ws
-  = map fst . filter snd . map (fork (length , endswith ws)) . inits
+  = map length . filter (endswith ws)  -- (ec.91)
+  = map fst . filter snd . map (fork (length , endswith ws)) . inits  -- Por (e.93)
+\end{minted}
+
+La siguiente pregunta a responder es: ¿Puede \hsCode{fork (length, endswith ws)} puede ser convertido
+como una instancia de \hsCode{fold}? Ciértamente \hsCode{length = foldl count 0} donde
+\hsCode{count n x = n + 1} % TODO: Detallar aquí porqué, caso base e inducción 
+Ahora veamos como podemos escribir a \hsCode{endswith ws} como una instancia de \hsCode{foldl}.
+Supongamos que se pueden encontrar \hsCode{e} y \hsCode{op}, los cuales dependen de \texttt{ws} tal que,
+
+\begin{minted}{haskell}
+endswith ws = foldl op e  -- (ec.94)
+\end{minted}
+
+Entonces estamos en posición de aplicar otra ley: la \textit{tupling law} para \hsCode{foldl}. La ley establece que,
+
+\begin{minted}{haskell}
+fork (foldl op1 e1, foldl op2 e2) = foldl op (e1, e2)  -- (ec.95)
+\end{minted}
+
+donde \hsCode{op (a, b) x = (op1 a x, op2 b x) -- (op.96)}. Usando la \textit{tupling law} resulta en
+
+\begin{minted}{haskell}
+fork (foldl op1 e1, foldl op2 e2) = foldl op (e1, e2)  -- Usando (ec.95)
+fork (foldl count 0, foldl op e) = foldl step (0, e)  -- Por (ec.100) y (ec.94)
+fork (length, endswith ws) = foldl step (0, e) -- (ec.100)
+step (n, x) y = (n+1, op x y)  -- Por -- (ec.96)
+\end{minted}
+%% TODO: explicar  el dominio y contradominio de step y op
+
+Finalnente se puede aplicar \textit{scan lemma} para llegar a,
+\begin{minted}{haskell}
+matches ws =
+  map fst . filter snd . (map (fork (length , endswith ws)) . inits)
+  -- { De la (ec.100) se sigue 
+  --   fork (length , endswith ws) = foldl step (0, e) }
+  map fst . filter snd . scanl step (0, e) -- Sutituyendo -- (ec.103)
 \end{minted}
 
 % Esto lo puse yo
@@ -80,88 +123,70 @@ matches ws = (map length . filter (endswith ws)) . inits
 matches ws = (map fst . filter snd . map (fork (f,p))) . inits
 \end{minted}
 
-% TODO: poner esto de abajo en la introducción de que muhcas veces no sabemos a donde vamos, pero no es misterioso.
-% Again, the focus is on the form of the terms in the specification, not on what they do nor on the shape of the final algorithm. It may be a little scary not to know where we are heading, but it is not mysterious.
+Si \hsCode{op} toma tiempo constante o al menos amortizada, entonces también \hsCode{step}, y el resultado es tiempo lineal.
 
-La siguiente pregunta a responder es: ¿Puede \hsCode{fork (length, endswith ws)} puede ser casteado como una instancia de \hsCode{fold}? Definitivamente \hsCode{length = fold count 0} donde \hsCode{count n x = n+1} % TODO: demoostrar esa pendejada
-Supongamos que se pueden encontrar \hsCode{e} y \hsCode{op}, que cada uno de ellos dependa de \texttt{ws} tal que
-
-
-
-Entonces \hsCode{matches ws xs} regresa una lista de enteros donde cada entero $n$ indica que
-\texttt{ws} aparece en \texttt{xs} terminando en la posición $n$ (siendo 1-indexado). Por ejemplo:
-
-% FIXME: PONER UNA EJECUCIÓN
-\begin{minted}{haskell}
-endswith ws = foldl op e  -- (ec.43)
-\end{minted}
-
-% TODO: demostrar esto
-Entonces se está en posición de aplicar otra ley: la \textit{tupling law} para \hsCode{foldl}. La ley establece que,
-\begin{minted}{haskell}
-fork (foldl op1 e1, foldl op2 e2) = foldl op (e1, e2)  -- (ec.44)
-\end{minted}
-
-donde \hsCode{op (a,b) x = (op1 a x, op2 b x)}. Usando \textit{tupling law} resulta en
+El problema ahora es que no hay \hsCode{e} y \hsCode{op} que satisfagan (ec.94). La función de \hsCode{endswith ws}
+regresa un valor \hsCode{Bool} y eso es información insuficiente para expresarlo como una instancia de
+\hsCode{foldl}.
+La sieguiente mejor cosa a hacer es expresar a \hsCode{endswith ws} como una composición.
 
 \begin{minted}{haskell}
-fork (length, endswith ws) = foldl step (0, e)
-step (n,x) y = (n+1, op x y)
+endswith ws = p . foldl op e  -- (ec.101)
 \end{minted}
 
-Finalnente se puede aplicar \textit{scan lemma} para llegar a,
-
+La forma de (ec.101) está puesta de esta manera solamente para aplicar el \textit{scan lemma}. 
+En ves de (ec.93) podemos decudir una ligera generalización:
 \begin{minted}{haskell}
-matches ws = map fst . filter snd . scanl step (0, e)
+map f . filter (p . g) = map fst . filter (p. snd) . map (fork (f,g))  -- (ec.102)
 \end{minted}
+%% TODO: demostrar
 
-Si \hsCode{op} toma tiempo constante o al menos amortizada, y también \hsCode{step}, y el resulrado es tiempo lineal.
-
-El problema ahora es que no hay \hsCode{e} y \hsCode{op} que satisfagan (ec.43). La función de \hsCode{endswith ws} regresa un \hsCode{Bool} y eso es información insuficiente para expresar
-a \hsCode{endswith ws} como una composición
-
+Entonces se obtiene
 \begin{minted}{haskell}
-endswith ws = p . foldl op e  -- (ec.44)
-\end{minted}
+matches ws = map fst . filter (p . snd) . scanl step (0,e) -- (ec.103)
+\end{minted} 
+%% TODO: ver si puedo poner pasos iintermedios
 
-La forma de (ec.44) está puesta de esta manera solamente para aplicar el \textit{scan lemma}. En ves de (ec.42) usando una ligera generalización:
+Dadas \hsCode{p} y \hsCode{op} que tomen tiempo constante amortizado, \hsCode{matches} seguirá tomando tiempo lineal.
 
+Lo que queda por encontrar es \hsCode{p}, \hsCode{p} y \hsCode{e} que satisfagan (ec.101).
+
+Pero antes de que sigamos avanzando, definamos a \hsCode{endswith} formalmente como
 \begin{minted}{haskell}
-matches ws = map fst . filter (p . snd) . scanl step (0,e)
+endswith ws xs = ws ∈ tails xs
 \end{minted}
-
-Dadas \hsCode{p} y \hsCode{op} take amortized constant time, matches will still take linear time.
-
-Lo que queda aún no se ha definido formalmente es \hsCode{endswith}, una definición razonables podría ser:
-
-La función \hsCode{matches} es polimórfica, así que cualquier algoritmo que se use tiene que
-depender de esta función de igualdad \hsCode{(==) :: a -> a -> Bool} sobre elementos de dos listas.
-Asumiendo que toma tiempo constante hacer la función de igualdad, la complejidad en tiempo de
-\hsCode{matches ws xs} es de $\Theta(mn)$ pasos, donde $m$ el la longitud de \texttt{ws} y $n$ la
-de \texttt{xs}.
 
 % FIXME: Hacer el análisis formal de la complejidad.
+%% Explicar como funciona tails, tomar la definición de la documentación
+%Donde \hsCode{tails} está definida como, %% TODO acomodar esto
+%\inputminted{haskell}{definiciones/tails.hs}
+
+%\begin{minted}{haskell}
+%>>> tails [2,3,5,7]
+%    [[2,3,5,7],[3,5,7],[5,7],[7],[]]
+%\end{minted}
+
 \section{Introducción}
 
-% TODO: Ver el articulo y ver porque usan ese patrón
 Por ahora se debe de tener en mente que se deben buscar funciones \hsCode{p} y \hsCode{op} y un
-valor \hsCode{e}, tal que \hsCode{endswith ws = p . foldl op e}.
+valor \hsCode{e}, tal que \hsCode{endswith ws = p . foldl op e  -- (ec.101)}.
 
-Entonces se tiene que,
+Recordando la ecuación (ec.103) %% TODO: poner más bonito la definición y poner step y la firma
 
-\inputminted{haskell}{definiciones/kmp/1-matches.hs}
-
-% TODO: esto es muy repetitivo a cuando lo puse en la primera definición de matches
 Donde \hsCode{matches ws xs} es una lista de enteros, en la cual cada entero $n$ dice si el patrón
 \texttt{ws} aparece en el texto \texttt{xs} acabando en la posición $n$.
 
+%% TODO: ver como lo quito porque está muy repetitvo con lo de arriba
 Dadas \hsCode{p} y \hsCode{op} que tomen tiempo constante, o al menos tiempo constante amortizado,
 \hsCode{matches} tomará $\Theta(n + m)$ pasos calcular las apariciones del patrón en el texto, donde
 el patrón tiene una longitud de $m$ y el texto una longitud de $n$.
 
+%% TODO: incluso ver si quitto el capítulo de introducción para juntarlo con lo primero
+
 \section{Primer acercamiento}
 
 Se puede escribir a \hsCode{endswith ws} como una composición funciones,
+%% TODO: explicar porque lo escribí así
 \begin{minted}{haskell}
 endswith ws = not . null . filter (= ws) . tails
 \end{minted}
@@ -193,7 +218,7 @@ Teniendo la función prefijo $(\sqsubseteq)$, se ve más prometedora la función
 Aplicando \texttt{xs} a la función \hsCode{filter (⊑ ws) . tails}, regresará en orden decreciente
 sobre la longitud de todas la colas de \texttt{xs}, todas las que sean prefijos de \texttt{ws}.
 
-% Poner ejemplo
+% TODO: Poner ejemplo
 
 Entonces, el primer elemento de la lista es \texttt{ws} si y solo si \hsCode{endswith ws xs} es
 verdadero, porque como \hsCode{tails} regresa las colas en orden decreciente y si \texttt{ws} no 
@@ -250,6 +275,7 @@ de \texttt{xs}. Teniendo así que \hsCode{endswith ws = null . snd . split ws}.
 Queda a encontrar \hsCode{op} y \hsCode{e} tal que \hsCode{split ws = foldl op e}. De forma
 equivalente, se quiere encontrar \hsCode{e} y \hsCode{op} tal que satisfagan, 
 
+%% TODO: como estte es un patrón comun de foldl, explicarlo
 \inputminted{haskell}{definiciones/kmp/1-split-eq.hs}
 
 Se tiene que \hsCode{split ws [] = ([], ws)} porque, 

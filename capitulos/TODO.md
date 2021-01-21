@@ -10,6 +10,7 @@
     [ ] transparencia referencial (ventajas de la programación funcional)
     [ ] orden superior (ventajas de la programación funcional)
     [ ] ver mas casos de porque es chida la programación funcional
+    [ ] Continuar con lo de la failure function
 
 # Herrameintas que use
 
