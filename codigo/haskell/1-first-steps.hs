@@ -31,3 +31,12 @@ matches ws = map fst . filter (null . snd . snd) . scanl step (0, ([], ws))
           | [x] ⊑ vs = (us ++ [x], tail vs)
           | null us = ([], ws)
           | otherwise = op (split ws (tail us)) x
+
+matches' ws =  scanl step (0, ([], ws))
+  where
+    step (n, (us, vs)) x = (n + 1, op (us, vs) x)
+      where
+        op (us, vs) x
+          | [x] ⊑ vs = (us ++ [x], tail vs)
+          | null us = ([], ws)
+          | otherwise = op (split ws (tail us)) x
