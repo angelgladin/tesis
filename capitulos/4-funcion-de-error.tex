@@ -1,0 +1,37 @@
+Función de error en KMP
+
+En este capítulo se derivará por medio de una especificación formal la función de error del algoritmo de KMP.
+Aunque por medio de este acercamiento se podría también obtener todo el algoritmo KMP, %Poner cita del articulo de On building cyclic and shared structures in Haskel
+pero se verá otra manera ``puramente funcional'' de hacerlo en el siguiente capítulo.
+
+Consideremos la cadena \texttt{abacabab}
+%TODO: poner aquí la tabla
+La entrada preev en la posicióon $k$ es la longitud del sufijo propio más largo de \hsCode{take k "abacabab"}.
+que también es un prefijo de "abacabab". Un sufijo propiio de una lista es un sufijo de longitud estrictamente menor.
+Para una lista no vacía \texttt{as}, los sufijos propios de \hsCode{take k as} son sufijos de
+\hsCode{take (k-1) (tail hs)}. Además
+
+%% [take (k - 1) (tail as) | k <- [1 .. length as]] = inits (tail as)
+
+Y así la tabla es definida por un arreglo como:
+\begin{minted}{haskell}
+import Data.List (tails, inits, isPrefixOf)
+
+ptable as = listArray (1,length as) (zip as (map (llsap as) (inits (tail as))))
+
+-- where llsap as bs, the length of the longest suffix of bs that is also a prefix of as, is defined by
+llsap as bs = head [length cs | cs <- tails bs, isPrefixOf cs as]
+
+ptable "abacabab"
+array (1,8) [(1,('a',0)),(2,('b',0)),(3,('a',1)),(4,('c',0)),(5,('a',1)),(6,('b',2)),(7,('a',3)),(8,('b',2))]
+\end{minted}
+
+\begin{minted}{haskell}
+llsap as [] = e
+llsap as (bs ++ [b]) = op as (llsap as bs) b
+\end{minted}
+
+% llsap as (bs ++ [b]) = llsap as (take (k - 1) (tail as) ++ [b])
+
+\inputminted{haskell}{codigo/haskell/failure-function.hs}
+

@@ -1,7 +1,5 @@
-import           Data.Array (Array, elems, listArray, (!))
+import           Data.Array (Array, listArray, (!))
 
-
--- TODO: ver como solo obtener el arreglo de prefijos
 ptable :: Eq a => [a] -> Array Int (a, Int)
 ptable as = xa
   where
