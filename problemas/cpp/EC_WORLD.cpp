@@ -1,8 +1,8 @@
-
 #include <iostream>
 #include <vector>
 
 using namespace std;
+
 vector<int> compute_prefix_function(const string &pattern) {
   int m = pattern.length();
   vector<int> pi(m);
@@ -45,23 +45,23 @@ vector<int> kmp(const string &text, const string &pattern) {
 }
 
 int main() {
-  int t;
-  cin >> t;
-  while (t--) {
-    int n;
-    cin >> n;
-    // TODO add capacity
-    vector<int> hills;
-    for (int i = 0; i < n; i++) {
-      int a;
-      cin >> a;
-      hills.push_back(a);
+  int n;
+  string s, t;
+
+  cin >> n;
+
+  while (n--) {
+    cin >> s;
+    cin >> t;
+
+    string auxc = t + t;
+
+    vector<int> aux = kmp(auxc, s);
+    if (aux.empty()) {
+      cout << "No" << endl;
+    } else {
+      cout << "Si" << endl;
     }
-
-    string message;
-    cin >> message;
-
-    string ans = "YES";
-    cout << ans << endl;
   }
+  return 0;
 }

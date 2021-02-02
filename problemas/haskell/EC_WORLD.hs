@@ -1,16 +1,16 @@
-main = do
-  n <- readLn :: IO Int
-  s <- getLine
-  t <- getLine
-  putStrLn . show $ proccess n s t
+main :: IO ()
+main = getLine >>
+  (interact $ unlines . fmap proccess . join . lines)
+  where
+    join :: [a] -> [(a, a)]
+    join (s1:s2:ss) = (s1, s2) : join ss
+    join _          = []
 
--- TODO: ver que es mejor ++ o replicate
-proccess :: Eq a => Int -> [a] -> [a] -> Int
-proccess n s t =
-  let occurrences = matches s (t ++ t)
-   in if null occurrences
-        then -1
-        else head occurrences - n
+proccess :: (String, String) -> String
+proccess (p, q) =
+  let t = q ++ q
+      occurences = matches p t
+      in if null occurences then "No" else "Si"
 
 data Rep a
   = Null

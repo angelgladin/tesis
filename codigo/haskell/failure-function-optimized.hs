@@ -1,3 +1,7 @@
+module FailureFunction
+  ( ptable
+  ) where
+
 import           Data.Array (Array, listArray, (!))
 
 ptable :: Eq a => [a] -> Array Int (a, Int)
