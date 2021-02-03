@@ -1,13 +1,40 @@
-\lipsum[1-1]
+En diversas situaciones se necesita encontrar todas las ocurrencias de un patrón en un texto;
+éstas pueden ir desde editores de texto hasta buscar patrones particulares en secuencias de ADN.
+Es aquí cuando se hace uso de algoritmos eficientes para este problema.
 
-\section{Motivación}
-\lipsum[2-4]
+Es aquí cuando se formaliza el problema de ``búsqueda de subcadenas'' (string-matching).
+Supongamos que el texto es un arreglo $T[1 \ldots n]$ de longitud $n$ y el patrón es un arreglo
+$P[1 \ldots m]$ de longitud $m \leq n$. También supongamos que los elementos de $P$ y $T$ son
+caracteres tomados de un alfabeto finito $\Sigma$. El arreglo de caracteres $P$ y $T$ también son
+llamados \textbf{cadenas} de caracteres.
 
 \section{Notación y terminología}
-\lipsum[2-4]
+
+Decimos que el patrón $P$ \textbf{ocurre con un desplazamiento} $s$ en el texto $T$ si
+$0 \leq s \leq n - m$ y $T[s+1 \ldots s+m] = P[1 \ldots m]$. Si $P$ ocurre con un desplazamiento
+$s$ en $T$, entonces se dice que $s$ es \textbf{un desplazamiento válido}, si no, se dice que $s$
+es \textbf{un desplazamiento inválido}.
+El \textbf{problema de búsqueda de subcadenas} es el problema de encontrar todos los
+desplazamientos válidos en los que dado el patrón $P$ ocurre en el ttexto $T$.
+
+% aquí poner la imagen del la figura 32.1 y explicarlo
+
+Denotemos a $\Sigma^*$ como el conjunto de todas las cadenas de longitud finita formadas usando
+caracteres del alfabeto $\Sigma$. La cadena de longitud cero es \textbf{la cadena vacía}, denotada
+como $\varepsilon$, que también pertenece a $\Sigma^*$. La longitud de una cadena $x$ se denota
+como $\vert x \vert$. La \textbf{concatenación} de dos cadenas $x$ y $y$, se denota como $xy$ y
+tiene como longitud $\vert x \vert + \vert y \vert$ y consiste de los caracteres de $x$ seguidos
+por los caracteres de $y$.
+
+Decimos que una cadena $w$ es \textbf{prefijo} de una cadena $x$, denotada como $w \sqsubset x$, si
+$x = wy$ para alguna cadena $y \in \Sigma^*$. Notemos que si $w \sqsubset x$, entonces
+$\vert w \vert \leq \vert x \vert$. De manera análoga, decimos que una cadena $w$ es \textbf{sufijo}
+de una cadena $x$, denotado como $w \sqsupset x$, si $x = yw$ para alguna $y \in \Sigma^*$. Y así
+como con el prefijo, si $w \sqsubset x$, entonces $\vert w \vert \leq \vert x \vert$.
+Por ejemplo, tomemos \texttt{ab $\sqsubset$ abcca} y \texttt{cca $\sqsupset$ abcca}. La cadena
+vacía $\varepsilon$ es tanto un sufijo coomo un prefijo para cualquier cadena.
 
 \section{Algoritmo de búsqueda de subcadenas ingenuo (\textit{naïve})}
-
 
 \begin{algorithm}[H]
     \SetKwProg{Fn}{NAIVE-STRING-MATCHER($T,P$)}{}{}
@@ -22,6 +49,15 @@
     }
 \end{algorithm}
 
+\section{Algoritmo Knuth-Morris-Prattt}
+% TODO: ver qué agarro de aquí: https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm
+
+\subsection{Diferencias entre KMP Y MP}
+% TODO: https://www.cs.helsinki.fi/u/tpkarkka/teach/14-15/SPA/lecture04.pdf
+% https://studylib.net/doc/7580926/chapter-6-the-mp-and-kmp-algorithms--algorithms-based-upon
+
+% http://www-igm.univ-mlv.fr/~lecroq/string/node7.html#SECTION0070
+%http://www-igm.univ-mlv.fr/~lecroq/string/node8.html
 
 \begin{algorithm}[H]
     \SetKwProg{Fn}{KMP-MATCHER($T,P$)}{}{}
@@ -66,5 +102,34 @@
     }
 \end{algorithm}
 
+En un capítulo posterior se atacará este problema resulto en Haskell y C++ %% TODO: poner liga al capítulo
+%% KMP
+% TODO: poner liga al cormen
+% TODO: cormen respuestas https://walkccc.me/CLRS/Chap32/32.4/
+
+\begin{tcolorbox}
+%% SUFFIX FUNCTION
+32.4-1
+Compute the prefix function $\pi$ for the pattern \texttt{ababbabbabbababbabb}.
+\end{tcolorbox}
+
+\begin{tcolorbox}
+%% KMP
+32.4-7
+Give a linear-time algorithm to determine whether a text $T$ is a cyclic rotation of another string
+$T'$ . For example, \texttt{arc} and \texttt{car} are cyclic rotations of each other.
+\end{tcolorbox}
+
+\begin{tcolorbox}
+32.1 a.
+\textbf{String matching based on repetition factors}
+Let $y^i$ denote the concatenation of string y with itself $i$ times. For example,
+\texttt{ab}$^3 =$ \texttt{ababab}. We say that a string $x \in \Sigma^*$
+\textbf{has repetition factor} $r$ if $x = y^r$ for some string $y \in \Sigma^*$ and some $r > 0$.
+Let $\rho(x)$ denote the largest $r$ such that $x$ has repetition factor $r$.
+a. Give an efficient algorithm that takes as input a pattern $P[1 \ldots m]$ and computes the value
+$\rho(x)$ for $i = 1,2,\ldots,m$. What is the running time of your algorithm?
+\end{tcolorbox}
+
+
 \section{Diferentes tipos de algoritmos en cadenas}
-\lipsum[2-4]

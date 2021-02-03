@@ -1,5 +1,5 @@
 main :: IO ()
-main = getLine >>
+main = getLine >>  -- TODO: usar replicateM
   (interact $ unlines . fmap proccess . join . lines)
   where
     join :: [a] -> [(a, a)]

@@ -1,3 +1,7 @@
+module MP1
+  ( matches
+  ) where
+
 data Rep a
   = Null
   | Node a (Rep a) (Rep a)

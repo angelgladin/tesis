@@ -1,6 +1,5 @@
-# TODO IMPROVE IT
+all:
+	g++ -Wall -std=c++11 main.cpp -o main
 
-all: compile_all 
-
-compile_all:
-	clang++ -Wall -std=c++11 kmp.cpp -o kmp
+clean:
+	rm main

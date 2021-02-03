@@ -49,7 +49,6 @@ int main() {
   string s, t;
 
   cin >> n;
-
   while (n--) {
     cin >> s;
     cin >> t;

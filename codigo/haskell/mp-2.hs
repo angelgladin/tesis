@@ -1,3 +1,7 @@
+module MP1
+  ( matches
+  ) where
+
 data Rep a
   = Null
   | Node a (Rep a) (Rep a)
@@ -15,7 +19,7 @@ matches ws = map fst . filter (ok . snd) . scanl step (0, root)
       if v == x
         then r
         else op l x
-    
+
     root = grep Null ws
     grep l []     = Node [] l Null
     grep l (v:vs) = Node (v : vs) l (grep (op l v) vs)

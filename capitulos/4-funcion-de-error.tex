@@ -13,25 +13,48 @@ Para una lista no vacía \texttt{as}, los sufijos propios de \hsCode{take k as} 
 
 %% [take (k - 1) (tail as) | k <- [1 .. length as]] = inits (tail as)
 
+\inputminted{haskell}{codigo/haskell/failure-function-naive.hs}
 Y así la tabla es definida por un arreglo como:
-\begin{minted}{haskell}
-import Data.List (tails, inits, isPrefixOf)
-
-ptable as = listArray (1,length as) (zip as (map (llsap as) (inits (tail as))))
-
--- where llsap as bs, the length of the longest suffix of bs that is also a prefix of as, is defined by
-llsap as bs = head [length cs | cs <- tails bs, isPrefixOf cs as]
-
-ptable "abacabab"
-array (1,8) [(1,('a',0)),(2,('b',0)),(3,('a',1)),(4,('c',0)),(5,('a',1)),(6,('b',2)),(7,('a',3)),(8,('b',2))]
-\end{minted}
 
 \begin{minted}{haskell}
 llsap as [] = e
 llsap as (bs ++ [b]) = op as (llsap as bs) b
 \end{minted}
 
-% llsap as (bs ++ [b]) = llsap as (take (k - 1) (tail as) ++ [b])
+Para una definición adecuada de \hsCode{e} y \hsCode{op}. Argumentamos informalmente, dejando el cálculo al
+lector interesado. % TODO: demostrar yo
+Primeramente, es inmediato de la definición de \hsCode{llsap} que \hsCode{e = 0}. % TODO: explicar porque.
+Para encontrar \hsCode{op}, sea \hsCode{k = llsap as bs} y supongamos \hsCode{a = head (drop k as)}, así \hsCode{a}
+es el siguiente elemento de \hsCode{as} después del prefijo más largo de \hsCode{as} que se empareja con el sufijo de \hsCode{bs}.
+Si \texttt{a = b}, entonces \hsCode{llsap as (bs ++ [b]) = k+1}. Si no, \texttt{k = 0} entonces \hsCode{llsap as (bs ++ [b]) = 0}.
+En el caso que queda se tiene
 
-\inputminted{haskell}{codigo/haskell/failure-function.hs}
+\begin{minted}{haskell}
+llsap as (bs ++ [b]) = llsap as (take (k - 1) (tail as) ++ [b])
+\end{minted}
 
+Así \texttt{llasp as bs = foldl (op as) bs}, donde
+\begin{minted}{haskell}
+op as k b  | a == b    = k + 1
+           | k == 0    = 0
+           | otherwise = llsap as (take (k - 1) (tail as) ++ [b])
+               where a = head (drop k as)
+\end{minted}
+
+% Recordar que le llaman back pointer a pi[k]
+Ahora viene la parte donde la representación de la tabla de apuntadores \textit{back} como un arreglo en vez de una lista
+resulta útil. Poniendo \texttt{xa = ptable as}, se puede ver que,
+
+\begin{minted}{haskell}
+head (drop k as)                        = fst (xa!(k + 1))
+llsap as (take (k - 1) (tail as) ++ [b] = op as (llsap as (take (k - 1) (tail as))) b
+                                        = op as (snd (xa!k)) b
+\end{minted}
+
+Recordando que \hsCode{xa} es 1-indexada. Esto significa que \hsCode{ptable} queda redefinida como
+
+\section{Implementación en Haskell}
+
+\inputminted{haskell}{codigo/haskell/failure-function-optimized.hs}
+
+% TODO: poner aquí lo de data array: https://hackage.haskell.org/package/haskell2010-1.1.2.0/docs/Data-Array.html

@@ -1,12 +1,8 @@
 import           Data.List (intercalate)
 
 main :: IO ()
--- Explain in a further document what is all this stuff about
 main = interact $ unlines . fmap proccess . join . lines
   where
-    -- Read the three first lines.
-    -- The first it's the length of the needle, the second the needle and
-    -- the third the haystack.
     join (s1:s2:s3:ss) = (s1, s2, s3) : join ss
     join _             = []
 
