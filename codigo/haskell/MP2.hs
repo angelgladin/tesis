@@ -1,4 +1,4 @@
-module MP1
+module MP2
   ( matches
   ) where
 

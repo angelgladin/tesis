@@ -337,7 +337,7 @@ step (n, (us, vs)) x = (n + 1, op (us, vs) x)
 
 Juntando todo lo anterior, el código del primer acercamiento quedaría como:
 
-\inputminted{haskell}{codigo/haskell/1-first-steps.hs}
+\inputminted{haskell}{codigo/haskell/NaiveMatching.hs}
 
 %% TODO: poner esto
 % *Main> matches' "abcab" "ababcabcab"
@@ -693,14 +693,14 @@ Este árbol encapsula la función de fallo % TODO: cuando explique el algoritmo 
 del algoritmo KMP como una gráfica cíclica. La operación \hsCode{op} toma tiempo constante amortizado, dando por hecho que el costo de la comparación es contante.
 El tiempo para calcular \texttt{root} es de $\Theta(m)$ pasos, donde $m =$ \texttt{length ws}. De ahí que \hsCode{matches} toma $\Theta(m)$ pasos para construir \texttt{root}
 y a partir de ahí $\Theta(m)$ pasos, donde $n$ es la longitud del texto, para calcular las ocurrencias del patrón en el texto.
-\inputminted{haskell}{codigo/haskell/mp-1.hs}
-\inputminted{haskell}{codigo/haskell/mp-2.hs}
+\inputminted{haskell}{codigo/haskell/MP1.hs}
+\inputminted{haskell}{codigo/haskell/MP2.hs}
 
 % TODO: entender en qué constiste eso de poner la función next y si lo puedo hacer. página 134 ver qué onda
 
 %\section{Ejemplos}
 
 ya está la última versión
-\inputminted{haskell}{codigo/haskell/kmp.hs}
+\inputminted{haskell}{codigo/haskell/KMP.hs}
 
 % Mostrar que mp y kmp son iguales con quickcheck en Putting the ‘K’ into Bird’s derivation of Knuth-Morris-Pratt string matching

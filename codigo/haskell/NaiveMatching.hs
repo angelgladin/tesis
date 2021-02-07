@@ -1,3 +1,7 @@
+module NaiveMatching  (
+  matches
+) where
+
 import           Data.List (tails)
 
 (⊑) :: Eq a => [a] -> [a] -> Bool

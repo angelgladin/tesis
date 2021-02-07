@@ -1,5 +1,3 @@
--- Final version
-
 module KMP
   ( matches
   ) where
