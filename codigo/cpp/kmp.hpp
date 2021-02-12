@@ -11,14 +11,11 @@ vector<int> compute_prefix_function(const string &pattern) {
   vector<int> pi(m);
   pi[0] = 0;
   int k = 0;
-
   for (int q = 1; q < m; q++) {
     while (k > 0 && pattern[k] != pattern[q])
       k = pi[k - 1];
-
     if (pattern[k] == pattern[q])
       k++;
-
     pi[q] = k;
   }
   return pi;

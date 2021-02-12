@@ -8,11 +8,11 @@ main = interact $ unlines . map parse . takeWhile (/= "*") . lines
     proccess :: String -> Int
     proccess xs =
       let pi_array = ptable xs
-          n = snd $ bounds pi_array
-          last = snd $ pi_array ! n
-          patternLength = n - last
-       in if n `mod` patternLength == 0
-            then n `div` patternLength
+          m = snd $ bounds pi_array
+          last = snd $ pi_array ! m
+          root_length = m - last
+       in if n `mod` root_length == 0
+            then n `div` root_length
             else 1
 
 
