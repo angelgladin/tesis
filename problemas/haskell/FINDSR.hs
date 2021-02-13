@@ -11,8 +11,8 @@ main = interact $ unlines . map parse . takeWhile (/= "*") . lines
           m = snd $ bounds pi_array
           last = snd $ pi_array ! m
           root_length = m - last
-       in if n `mod` root_length == 0
-            then n `div` root_length
+       in if m `mod` root_length == 0
+            then m `div` root_length
             else 1
 
 

@@ -1,3 +1,5 @@
+\label{chap:jueces}
+
 En esta sección se resolverán 2 problemas relacionados con \textit{string matching} usando el
 algoritmo KMP y la función de error de la que se habló en el capítulo 4. Se resolverán los
 problemas usando C++ y Haskell y se compararán ambas versiones.
@@ -15,18 +17,6 @@ bonito de la programación competitiva y resolver ejercicios se juntan. Ése pro
 a resolver lo siguiente y aún mejor, en un juez en línea que puede ``probar'' la implementación.
 La especificación del problema dice lo siguiente: 
 
-% TODO: está dlv mi redacción, mejorarla.
-Lo primero que se debe de hacer es calcular la función de error $\pi$ teniendo una complejidad en
-tiempo de $\Theta(n)$ y lineal en espacio. Teniendo calculada $\pi$, consideremos $m$ la longitud
-del patrón. Supongamos que $r = m - \pi[m]$ es la longitud de la $n$-esima raíz del patrón y que
-$\pi[i] = i - r$ donde $r \mid m$ es la $\frac{i}{k}$-ésima concatenación de la raíz del patrón
-hasta la $i$-ésima posición. Conlcuyendo así que $\rho(P) = \frac{m}{r}$.
-
-En otro caso, supongamos que no se cumple lo anterior, i.e., que $r \nmid m$ entonces su factor de
-repetición forzosamente debe ser 1. Por contradicción, supongamos que tiene un factor de repetición
-mayor estrico que 1 lo que significaría que tendría que habría una cadena $x^r$ y que
-$\pi[i] \geq \vert x^{r-1} \vert$, pero significaría que podríamos escribir a $x$ concatenada $r$
-veces. $\Rightarrow\!\Leftarrow$
 
 \includepdf[pages=-]{problemas/pdf/FINDSR.pdf}
 
@@ -47,6 +37,40 @@ En la línea 24 se crea un vector cargado con la función de error con el patró
 
 La parte interesante aquí es en la línea 28 porque se obtiene la posible longitud de la $k$-ésima
 raíz del patrón. Y de la línea 30 a 33 es cuando se hace la validación previamente analizada.
+
+% TODO: acomodarlos  chido
+\begin{table}[]
+\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\cline{2-13}
+$i$        & 1         & 2         & 3         & 4          & 5         & 6         & 7         & 8         & 9         & 10        & 11        & 12        \\ \hline
+$P[i]$   & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{a} & \texttt{b} & \texttt{c} \\ \hline
+$\pi[i]$ & 0         & 0         & 0         & 1          & 2         & 3         & 4         & 5         & 6         & 7         & 8         & 9         \\ \cline{2-13} 
+\end{tabular}
+\end{table}
+
+\begin{table}[]
+\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l|}
+\cline{2-12}
+$i$        & 1         & 2         & 3         & 4         & 5         & 6         & 7         & 8         & 9         & 10        & 11        \\ \hline
+$P[i]$   & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{d} & \texttt{e} & \texttt{f} & \texttt{g} & \texttt{h} & \texttt{0} & \texttt{1} & \texttt{2} \\ \hline
+$\pi[i]$ & 0         & 0         & 0         & 0         & 0         & 0         & 0         & 0         & 0         & 0         & 0         \\ \cline{2-12} 
+\end{tabular}
+\end{table}
+
+\begin{table}[]
+\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|}
+\cline{2-11}
+$i$        & 1         & 2         & 3         & 4         & 5         & 6         & 7         & 8         & 9         & 10        \\ \hline
+$P[i]$   & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} \\ \hline
+$\pi[i]$ & 0         & 1         & 2         & 3         & 4         & 5         & 6         & 7         & 8         & 9         \\ \cline{2-11} 
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{spoj/FINDSR-accepted-cpp-haskell}
+\caption{El código fue aceptado por el juez en Haskell y C++}
+\end{figure}
 
 \inputminted[linenos, frame=lines]{haskell}{problemas/haskell/FINDSR.hs}
 \pagebreak
@@ -76,11 +100,17 @@ raíz del patrón. Y de la línea 14 a 15 es cuando se hace la validación previ
 \hyperlink{cyclic_rotation}{el problema 32.4-7}
 \includepdf[pages=-]{problemas/pdf/EC_WORLD.pdf}
 
-\inputminted[linenos, frame=lines]{cpp}{problemas/cpp/EC_WORLD.cpp}
+\inputminted[linenos, frame=lines, fontsize=\footnotesize]{cpp}{problemas/cpp/EC_WORLD.cpp}
 \pagebreak
 
 \inputminted[linenos, frame=lines]{haskell}{problemas/haskell/EC_WORLD.hs}
 \pagebreak
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{spoj/EC_WORLD-accepted-cpp}
+\caption{El código fue aceptado por el juez en Haskell y C++}
+\end{figure}
 
 \subsection{Extender el palíndromo}
 \includepdf[pages=-]{problemas/pdf/EPALIN.pdf}
@@ -102,3 +132,6 @@ raíz del patrón. Y de la línea 14 a 15 es cuando se hace la validación previ
 
 % TODO: Chane y justifico esto el <$> https://ro-che.info/articles/2019-07-22-associativity-of-fmap
 
+
+
+% TODO: poner que puedo optimizar la entrada con Data.ByteString.Char8

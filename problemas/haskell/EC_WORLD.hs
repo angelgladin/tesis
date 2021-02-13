@@ -1,16 +1,20 @@
-main :: IO ()
-main = getLine >>  -- TODO: usar replicateM
-  (interact $ unlines . fmap proccess . join . lines)
-  where
-    join :: [a] -> [(a, a)]
-    join (s1:s2:ss) = (s1, s2) : join ss
-    join _          = []
+import           Control.Monad (replicateM)
 
-proccess :: (String, String) -> String
-proccess (p, q) =
-  let t = q ++ q
-      occurences = matches p t
-      in if null occurences then "No" else "Si"
+main :: IO ()
+main = do
+  t <- read <$> getLine
+  inputs <- replicateM t $ replicateM 2 getLine
+  let answers = proccess <$> inputs
+  sequence_ $ putStrLn <$> answers
+  where
+    proccess :: [String] -> String
+    proccess [p, q] =
+      let s = q ++ q
+          occurences = matches p s
+       in if null occurences
+            then "No"
+            else "Si"
+
 
 data Rep a
   = Null

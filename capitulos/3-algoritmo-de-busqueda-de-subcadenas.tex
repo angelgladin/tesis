@@ -49,7 +49,7 @@ vacía $\varepsilon$ es tanto un sufijo coomo un prefijo para cualquier cadena.
     }
 \end{algorithm}
 
-\section{Algoritmo Knuth-Morris-Prattt}
+\section{Algoritmo Knuth-Morris-Pratt}
 % TODO: ver qué agarro de aquí: https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm
 
 \subsection{Diferencias entre KMP Y MP}
@@ -102,22 +102,7 @@ vacía $\varepsilon$ es tanto un sufijo coomo un prefijo para cualquier cadena.
     }
 \end{algorithm}
 
-En un capítulo posterior se atacará este problema resulto en Haskell y C++ %% TODO: poner liga al capítulo
-%% KMP
-% TODO: poner liga al cormen
-% TODO: cormen respuestas https://walkccc.me/CLRS/Chap32/32.4/
-
-\begin{tcolorbox}
-%% SUFFIX FUNCTION
-32.4-1
-Compute the prefix function $\pi$ for the pattern \texttt{ababbabbabbababbabb}.
-\end{tcolorbox}
-
-\begin{tcolorbox}
-\hypertarget{cyclic_rotation}{32.4-7}
-Give a linear-time algorithm to determine whether a text $T$ is a cyclic rotation of another string
-$T'$ . For example, \texttt{arc} and \texttt{car} are cyclic rotations of each other.
-\end{tcolorbox}
+\subsection{Problemas}
 
 \begin{tcolorbox}
 \hypertarget{repetition_factor}{32.1 a.}
@@ -126,8 +111,43 @@ Let $y^i$ denote the concatenation of string y with itself $i$ times. For exampl
 \texttt{ab}$^3 =$ \texttt{ababab}. We say that a string $x \in \Sigma^*$
 \textbf{has repetition factor} $r$ if $x = y^r$ for some string $y \in \Sigma^*$ and some $r > 0$.
 Let $\rho(x)$ denote the largest $r$ such that $x$ has repetition factor $r$.
-a. Give an efficient algorithm that takes as input a pattern $P[1 \ldots m]$ and computes the value
+Give an efficient algorithm that takes as input a pattern $P[1 \ldots m]$ and computes the value
 $\rho(x)$ for $i = 1,2,\ldots,m$. What is the running time of your algorithm?
 \end{tcolorbox}
+
+Lo primero que se debe de hacer es calcular la función de error $\pi$ teniendo una complejidad en
+tiempo de $\Theta(m)$ y lineal en espacio. Teniendo calculada $\pi$, consideremos $m$ la longitud
+del patrón y supongamos que $r = m - \pi[m]$ es la longitud de la $i$-esima raíz del patrón y que
+$\pi[i] = i - r$ donde $r \mid m$ es la $\frac{i}{k}$-ésima concatenación de la raíz del patrón
+hasta la $i$-ésima posición. Conlcuyendo así que $\rho(P) = \frac{m}{r}$.
+
+En otro caso, supongamos que no se cumple lo anterior, i.e., que $r \nmid m$ entonces su factor de
+repetición forzosamente debe ser 1. Por contradicción, supongamos que tiene un factor de repetición
+mayor estrico que 1 lo que significaría que tendría que habría una cadena $y^r$ y que
+$\pi[i] \geq \vert x^{r-1} \vert$, pero significaría que podríamos escribir a $x$ concatenada $r$
+veces. $\Rightarrow\!\Leftarrow$.
+
+
+\begin{tcolorbox}
+\hypertarget{cyclic_rotation}{32.4-7}   
+Give a linear-time algorithm to determine whether a text $T$ is a cyclic rotation of another string
+$T'$ . For example, \texttt{arc} and \texttt{car} are cyclic rotations of each other.
+\end{tcolorbox}
+
+Descartemos el caso en que la longitud de $T$ y $T'$ sean diferentes porque no podría ser una
+rotación cíclica. Entonces $\vert T \vert = \vert T' \vert$, sea $S = TT$ el texto donde $T$ está
+concatenado dos veces, y $P = T'$ el patrón. Usando el algoritmo de Knuth-Morris-Pratt se buscará
+el patrón $P$ en $S$ en tiempo lineal.
+
+Supongamos que $P$ aparece en $T$ desplazado $s$ posiciones a la izquierda donde
+$0 \leq s < \vert P \vert$. Si $s = 0$ entonces $T = T'$, el caso interesante es cuando $s > 0$,
+teniendo así que $T[0 \ldots s]$ es sufijo de $T'$ y $T[s+1 \ldots m]$ es prefijo de $T$. 
+
+\noindent\rule{\textwidth}{1pt}
+
+Los problemas anteriores se obtuvieron del libro \textit{Introduction to Algorithms, Third
+Edition}\cite{cormen_2009}, pero en el \autoref{chap:jueces} se verá que éstos mismos problemas
+pueden llegar a aparecer en problemas de programación competitiva, por lo que no basta con
+``memorizar los algoritmos'' como muchos podrían llegar a pensar.
 
 \section{Diferentes tipos de algoritmos en cadenas}
