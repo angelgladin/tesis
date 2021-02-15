@@ -4,6 +4,8 @@ En esta sección se resolverán 2 problemas relacionados con \textit{string matc
 algoritmo KMP y la función de error de la que se habló en el capítulo 4. Se resolverán los
 problemas usando C++ y Haskell y se compararán ambas versiones.
 
+Es un estándar que las especifiaciones del problema estén en inglés.
+
 %% TODO: Explicar los constraints
 
 \section{SPOJ}
@@ -11,90 +13,146 @@ SPOJ (Sphere Online Judge)
 % https://wiki.haskell.org/SPOJ
 % Tomar algo del competitive aquí
 
-\subsection{Encontrar el factor de repetición de una cadena}
-Recordemos en el capítulo 3 \hyperlink{repetition_factor}{el problema 32.1}, es aquí cuando lo
-bonito de la programación competitiva y resolver ejercicios se juntan. Ése problema es lo mismo
-a resolver lo siguiente y aún mejor, en un juez en línea que puede ``probar'' la implementación.
-La especificación del problema dice lo siguiente: 
+\section{Problemas}
 
+\subsection{Encontrar el factor de repetición de una cadena}
+Recordemos en el \hyperlink{repetition_factor}{capítulo 3 el problema 32.1}, es aquí cuando lo
+bonito de la programación competitiva y resolver ejercicios teóricamente se juntan. Ése problema
+es lo mismo a resolver el siguiente, y aún mejor, en un juez en línea que puede ``probar'' la
+implementación considerando ciertas restricciones.
+
+La especificación del problema dice lo siguiente: 
 
 \includepdf[pages=-]{problemas/pdf/FINDSR.pdf}
 
-\inputminted[linenos, frame=lines]{cpp}{problemas/cpp/FINDSR.cpp}
-\pagebreak
+Analisemos detenidamente la especificación del problema. 
+\subsubsection{Análisis}
+Como se había dicho previamente, ya se había atacado este problema así que se omitirá el análisis
+y la complejidad.
 
-En la línea 2 agregamos \texttt{vector} % TODO: explicar aquí qué pedo
-De línea 6 a la 19 es la implementación de la función de error.
-En la línea 23 es la parte importante sobre leer la entrada; una \textit{heurística} a seguir es que
-siempre que diga: ``La entrada contiene varios casos de prueba, cada uno de ellos está descrito en una sola línea'', lo 
-que se significa es que se seguirán leyendo valores de \texttt{cin} en la variable previamente declarada \texttt{x} simpre y cuando
-el valor siga siendo leído se seguirá en el ciclo \texttt{while}.
-% TODO: ecplicar que no nos fijamos en la cota de 10^5 caracteres
-También menciona que la última entrada contendrá un solo asterisco \texttt{*} y es ahí cuando se parará de leer de la entrada estandar,
-es por eso que primero se lee el valor y despué se compara que no sea diferente.
+\subsubsection{Entrada}
+Una \textit{heurística} a seguir es que siempre que diga: \textit{``the input contains several test
+cases, each line described in a single line''} es leer hasta el final de archivo (End Of File) cada
+línea. Seguido de esto, dice que cada línea una cadena no vacía de a lo más $10^5$
+caracteres\footnote{Hay lenguajes programación que no tienen implementadas cadenas, y que se debe
+saber de antemano el tamaño, para así tener un arreglo de $n$ caracteres. Es aquí cuando es
+importante saber el tamaño máximo de la entrada.} formada solamente de dígitos y letras en
+minúsculas\footnote{También es sumamente importante saber si las cadenas del lenguaje que se usará
+como son represntadas ya que podrían estar en ASCII o Unicode.}.
+Finalmente dice que la última entrada contiene un solo asterisco \texttt{*} y que no debe ser
+procesado como un caso más.
 
-En la línea 24 se crea un vector cargado con la función de error con el patrón \texttt{s}.
+\subsubsection{Salida}
+Para cada caso prueba \textit{(input)} se debe imprimir en la salida estándar una sola línea con un
+número $n$ siendo ésta la raíz de la cadena, es decir, el número de veces que está concatenada la
+cadena consigo misma.
 
-La parte interesante aquí es en la línea 28 porque se obtiene la posible longitud de la $k$-ésima
-raíz del patrón. Y de la línea 30 a 33 es cuando se hace la validación previamente analizada.
-
-% TODO: acomodarlos  chido
-\begin{table}[]
-\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\subsubsection{Ejemplos}
+\begin{itemize}
+\item Consideremos la entrada $x =$ \texttt{abcabcabcabc} y sobre ésta se construye la función
+de error, 
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \cline{2-13}
-$i$        & 1         & 2         & 3         & 4          & 5         & 6         & 7         & 8         & 9         & 10        & 11        & 12        \\ \hline
+$i$      & 1          & 2          & 3          & 4          & 5          & 6          & 7          & 8          & 9          & 10         & 11         & 12         \\ \hline
 $P[i]$   & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{a} & \texttt{b} & \texttt{c} \\ \hline
-$\pi[i]$ & 0         & 0         & 0         & 1          & 2         & 3         & 4         & 5         & 6         & 7         & 8         & 9         \\ \cline{2-13} 
+$\pi[i]$ & 0          & 0          & 0          & 1          & 2          & 3          & 4          & 5          & 6          & 7          & 8          & 9          \\ \cline{2-13} 
 \end{tabular}
 \end{table}
 
-\begin{table}[]
-\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l|}
+Siendo $\vert x \vert = 12$ y el último elemento de la función de error es $\pi[m] = 9$ y sea
+$r = 12 - 9 = 3$. Se conluye que la raíz de la cadena es de longitud \textbf{3} y su factor de
+repetición es $\rho(x) = \frac{12}{3} =$ \textbf{4}. Concluyendo así que
+\texttt{(abc)}$^4 = $ \texttt{abcabcabcabc}.
+
+\item Consideremos la entrada $x =$ \texttt{acbdefgh012} y sobre ésta se construye la función
+de error, 
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|}
 \cline{2-12}
-$i$        & 1         & 2         & 3         & 4         & 5         & 6         & 7         & 8         & 9         & 10        & 11        \\ \hline
+$i$      & 1          & 2          & 3          & 4          & 5          & 6          & 7          & 8          & 9          & 10         & 11         \\ \hline
 $P[i]$   & \texttt{a} & \texttt{b} & \texttt{c} & \texttt{d} & \texttt{e} & \texttt{f} & \texttt{g} & \texttt{h} & \texttt{0} & \texttt{1} & \texttt{2} \\ \hline
-$\pi[i]$ & 0         & 0         & 0         & 0         & 0         & 0         & 0         & 0         & 0         & 0         & 0         \\ \cline{2-12} 
+$\pi[i]$ & 0          & 0          & 0          & 0          & 0          & 0          & 0          & 0          & 0          & 0          & 0          \\ \cline{2-12} 
 \end{tabular}
 \end{table}
 
-\begin{table}[]
-\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|}
+Siendo $\vert x \vert = 11$ y el último elemento de la función de error es $\pi[m] = 0$ y sea
+$r = 11 - 0 = 11$. Teniendo que su factor de repetición es $\rho(x) = $ \textbf{1}. Concluyendo
+así que\texttt{(acbdefgh012)}$^1 = $ \texttt{acbdefgh012}.
+
+\item Consideremos la entrada $x =$ \texttt{aaaaaaaaaa} y sobre ésta se construye la función
+de error, 
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|}
 \cline{2-11}
-$i$        & 1         & 2         & 3         & 4         & 5         & 6         & 7         & 8         & 9         & 10        \\ \hline
+$i$      & 1          & 2          & 3          & 4          & 5          & 6          & 7          & 8          & 9          & 10         \\ \hline
 $P[i]$   & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} \\ \hline
-$\pi[i]$ & 0         & 1         & 2         & 3         & 4         & 5         & 6         & 7         & 8         & 9         \\ \cline{2-11} 
+$\pi[i]$ & 0          & 1          & 2          & 3          & 4          & 5          & 6          & 7          & 8          & 9          \\ \cline{2-11} 
 \end{tabular}
 \end{table}
 
+Siendo $\vert x \vert = 10$ y el último elemento de la función de error es $\pi[m] = 9$ y sea
+$r = 10 - 9 = 1$. Se conluye que la raíz de la cadena es de longitud \textbf{1} y su factor de
+repetición es $\rho(x) = \frac{10}{1} =$ \textbf{1}. Concluyendo así que
+\texttt{(a)}$^{10} = $ \texttt{aaaaaaaaaa}.
+\end{itemize}
+\newpage
+
+\subsubsection{Implementación en C++}
+\inputminted[linenos, frame=lines, fontsize=\small]{cpp}{problemas/cpp/FINDSR.cpp}
+
+\begin{itemize}
+\item En la línea \texttt{1} se agrega la cabecera \texttt{iostream} que define la entrada y salida
+estándar. En la línea \texttt{2} se agrega la cabecera \texttt{vector} que son contenedores de
+arreglos dinámicos.
+
+\item De línea \texttt{6} a \texttt{19} es la implementación de la función de error.
+
+\item En la línea \texttt{23} es la parte importante sobre leer la entrada; se leerá hasta EOF y si
+la cadean leída es diferente de \texttt{*}.
+
+\item En la línea \texttt{24} se crea un vector con la función de error con el patrón \texttt{s}, y
+en la línea \texttt{28} se obtiene la posible longitud de la $k$-ésima raíz del patrón.
+
+\item Y de la línea \texttt{30} a \texttt{33} es cuando se hace la validación previamente analizada.
+\end{itemize}
+
+\subsubsection{Implementación en Haskell}
+\inputminted[linenos, frame=lines]{haskell}{problemas/haskell/FINDSR.hs}
+
+\begin{itemize}
+\item En la línea \texttt{1} del módulo \hsCode{Data.Array} importamos solamente el tipo
+\hsCode{Array} sin ninguno de sus constructores, la función \hsCode{bounds :: Array i e -> (i, i)}
+que devuelve los límites del arreglo en cual fue construido,\\
+\hsCode{listArray :: Ix i => (i, i) -> [e] -> Array i e} que construye un arreglo donde el primer
+argumentos son los límites inferiores y superiores, y una lista de valores devolviendo valores
+con un orden indexado,\\
+\hsCode{(!) :: Ix i => Array i e -> i -> e}  regresa el valor de un índice dado en el arreglo.
+
+\item Analisemos parte por partes las líneas \texttt{3, 4}. recordemos la función \\
+\hsCode{interact :: (String -> String) -> IO ()} %% TODO: Ayudarme con lo de spoj y explicar toda la composición
+
+\item De igual manera de las líneas \texttt{8} a \texttt{16} en la expresión \hsCode{let ... in ...}
+en la línea \texttt{10} se calcula la función de error de la cadena de entrada, en la \texttt{11}
+se obtienen los límites del arreglo siendo la segunda entrada tamaño del arreglo, y en la línea
+\texttt{12} se obtiene el último elemento del arreglo y después su índice. En la línea \texttt{13}
+se obtiene la posible longitud de la $k$-ésima raíz del patrón. Finalmente de la línea \texttt{14}
+a \texttt{16} es cuando se hace la validación previamente analizada.
+
+\item De la línea 19 a 29 es la implementación de función de error.
+\end{itemize}
+
+\subsubsection{Resultado del juez}
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{spoj/FINDSR-accepted-cpp-haskell}
 \caption{El código fue aceptado por el juez en Haskell y C++}
 \end{figure}
 
-\inputminted[linenos, frame=lines]{haskell}{problemas/haskell/FINDSR.hs}
-\pagebreak
-
-
-En la línea 1 % TODO: explicar ahí qué pedoo
-
-De la línea 19 a 29 es la implementación de función de error vista en el capítulo % TODO: poner vínculo al pendejo capótulo.
-
-Analisemos parte por partes la línea 4, recordemos la función \\
-\hsCode{interact :: (String -> String) -> IO ()} %% Ayudarme con lo de spoj
-
-% TODO: está dlv mi redacción, mejorarla.
-De la línea 9 a la 16 es la parte donde se hace el procesamiento del algoritmo principal,
-en la expresión \hsCode{let ... in} % TODO: ver si así se podría poner
-en la línea 10 se calcula la función de error de la cadena de entrada
-en la línea 11 la función \hsCode{bounds :: Array i e -> (i, i)} devuelve los límites del arreglo en cual fue construido y nos quedamos
-con la segunda entrada usando \hsCode{snd} para obtener el tamaño del arreglo.
-En la línea 12 primero con la función \hsCode{(!) :: Ix i => Array i e -> i -> e} accedemos a la posición \texttt{m} del arreglo y recordando
-la función \hsCode{ptable} la segunda entrada es el valor númerico del arreglo.
-Acto seguido en la línea 13 oobtenemos  la posible longitud de la $k$-ésima
-raíz del patrón. Y de la línea 14 a 15 es cuando se hace la validación previamente analizada.
-
-% TODO: explicar los ejemplos del problema
+\newpage
 
 \subsection{Ver si una cadena es una rotación cíclica de otra}
 \hyperlink{cyclic_rotation}{el problema 32.4-7}
