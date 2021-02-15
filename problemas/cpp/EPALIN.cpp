@@ -22,10 +22,7 @@ int main() {
   string s;
   while (cin >> s) {
     string ans = s;
-
-    string rev = s;
-    reverse(rev.begin(), rev.end());
-
+    string rev = string(s.rbegin(), s.rend());
     string aux = rev + '$' + s;
 
     vector<int> pi = compute_prefix_function(aux);

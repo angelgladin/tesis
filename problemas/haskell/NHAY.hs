@@ -1,16 +1,19 @@
 import           Data.List (intercalate)
 
 main :: IO ()
-main = interact $ unlines . fmap proccess . join . lines
+main = interact $ unlines . map proccess . parse . lines
   where
-    join (s1:s2:s3:ss) = (s1, s2, s3) : join ss
-    join _             = []
+    parse:: [String] -> [(String, String, String)]
+    parse (s1:s2:s3:ss) = (s1, s2, s3) : parse ss
+    parse _             = []
 
-proccess :: (String, String, String) -> String
-proccess (patternLenght, pattern, text) =
-  let xs = matches pattern text
-      m = read patternLenght :: Int
-   in intercalate "\n" (show <$> ((+ (-m)) <$> xs))
+    proccess :: (String, String, String) -> String
+    proccess (patternLenght, pattern, text) =
+      let occurrences = matches pattern text
+          m = read patternLenght :: Int
+      in if null occurrences
+            then "\n"
+            else intercalate "\n" $ show <$> (map (subtract m) occurrences)
 
 data Rep a
   = Null
