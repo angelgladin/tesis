@@ -15,6 +15,8 @@ SPOJ (Sphere Online Judge)
 
 \section{Problemas}
 
+% TODO: poner aquí la motivación.
+
 \subsection{Encontrar el factor de repetición de una cadena}
 Recordemos en el \hyperlink{repetition_factor}{capítulo 3 el problema 32.1}, es aquí cuando lo
 bonito de la programación competitiva y resolver ejercicios teóricamente se juntan. Ése problema
@@ -25,7 +27,6 @@ La especificación del problema dice lo siguiente:
 
 \includepdf[pages=-]{problemas/pdf/FINDSR.pdf}
 
-Analisemos detenidamente la especificación del problema. 
 \subsubsection{Análisis}
 Como se había dicho previamente, ya se había atacado este problema así que se omitirá el análisis
 y la complejidad.
@@ -102,7 +103,7 @@ repetición es $\rho(x) = \frac{10}{1} =$ \textbf{1}. Concluyendo así que
 \newpage
 
 \subsubsection{Implementación en C++}
-\inputminted[linenos, frame=lines, fontsize=\small]{cpp}{problemas/cpp/FINDSR.cpp}
+\inputminted[linenos, frame=lines, fontsize=\footnotesize]{cpp}{problemas/cpp/FINDSR.cpp}
 
 \begin{itemize}
 \item En la línea \texttt{1} se agrega la cabecera \texttt{iostream} que define la entrada y salida
@@ -132,8 +133,42 @@ argumentos son los límites inferiores y superiores, y una lista de valores devo
 con un orden indexado,\\
 \hsCode{(!) :: Ix i => Array i e -> i -> e}  regresa el valor de un índice dado en el arreglo.
 
-\item Analisemos parte por partes las líneas \texttt{3, 4}. recordemos la función \\
-\hsCode{interact :: (String -> String) -> IO ()} %% TODO: Ayudarme con lo de spoj y explicar toda la composición
+\item Analicemos parte por partes las líneas \texttt{3, 4}. recordemos la función \\
+\hsCode{interact :: (String -> String) -> IO ()}, la función \hsCode{interact} toma una función de
+tipo \hsCode{(String -> String)} como argumento. La \textit{entrada} entera de la entrada estándar
+es pasada a ésa función como argumento, y la cadena resultante es la \textit{salida} de la
+salida estándar.
+
+Acto seguido, se tiene la función \texttt{\$} que es un operador infijo con asociatividad izquierda,
+esto para tener mejor legibilidad cuando se tienen argumentos largos.
+
+Dado que se procesará linea por línea de la entrada, es bastante común tratar el flujo de la
+entrada como una lista de líneas, así que para hacer eso se divirá todo la cadena de entrada en
+líneas. Consideremos las funciones\\ \hsCode{lines :: String -> [String]} y
+\hsCode{unlines :: [String] -> String}, donde\\ \hsCode{lines} divide la cadena en una lista de
+cadenas cuando se encuentra un caracter de salto de línea, \hsCode{unlines} es la operación inversa
+de \hsCode{lines}, une líneas y después añade un caracter de salto de línea a cada cadena.
+
+Pongamos total atención a la siguiente composición de funciones\\
+\hsCode{unlines . map parse . takeWhile (/= "*") . lines}.\\
+La función \hsCode{map parse} será la responsable de que la cadena en turno la tranformará a la
+respuesta del problema.
+
+La función \hsCode{takeWhile :: (a -> Bool) -> [a] -> [a]}, aplicado a un predicado \hsCode{p} y
+una lista \texttt{xs}, regresa el prefijo más largo (que posiblemente puede ser vacío) de
+\texttt{xs} de los elemetos que satisfacen \hsCode{p}.
+Entonces \hsCode{takeWhile (/= "*")} significa que se seguirá procesanso hasta que la cadena leída
+sea diferente de \texttt{*}.
+
+El patrón \hsCode{unlines . f . lines} es un patrón bastamte común donde \hsCode{f} puede ser una
+función o composición de funciones donde \hsCode{f :: [String] -> [String]}.
+
+\item De la línea \texttt{6, 7} la función \hsCode{parse} será la responsable de tomar la cadena en
+turno, tomar el resultado de \hsCode{process} y convertirlo al tipo \hsCode{String}.
+
+En el punto siguiente se hablará sobre la función \hsCode{process :: String -> Int}, pero básicamente es
+la que ``hará el algoritmo'', lo importame aquí es el tipo \hsCode{Int}, y es por eso que se hizo
+la función \hsCode{parse :: String -> String}.
 
 \item De igual manera de las líneas \texttt{8} a \texttt{16} en la expresión \hsCode{let ... in ...}
 en la línea \texttt{10} se calcula la función de error de la cadena de entrada, en la \texttt{11}
@@ -142,11 +177,11 @@ se obtienen los límites del arreglo siendo la segunda entrada tamaño del arreg
 se obtiene la posible longitud de la $k$-ésima raíz del patrón. Finalmente de la línea \texttt{14}
 a \texttt{16} es cuando se hace la validación previamente analizada.
 
-\item De la línea 19 a 29 es la implementación de función de error.
+\item De la línea \texttt{19} a \texttt{29} es la implementación de función de error.
 \end{itemize}
 
 \subsubsection{Resultado del juez}
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{spoj/FINDSR-accepted-cpp-haskell}
 \caption{El código fue aceptado por el juez en Haskell y C++}
