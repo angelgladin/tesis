@@ -189,46 +189,151 @@ a \texttt{16} es cuando se hace la validación previamente analizada.
 
 \newpage
 
+
 \subsection{Ver si una cadena es una rotación cíclica de otra}
-\hyperlink{cyclic_rotation}{el problema 32.4-7}
+
+\subsubsection{Análisis}
+De igual manera, el en \hyperlink{cyclic_rotation}{capítulo 3 el problema 32.4-7} se había hecho el
+análisis del problema, y como este problema es resovler exactamente lo mismo se omitirá el análisis
+y su complejidad.
+
+\subsubsection{Entrada}
+Este tipo de entrada es la más común que se verá en la programación competitiva; ya que la primera
+línea será un entero con el número de casos a resolver, después caso consistirá de dos líneas.
+
+Igual que el problema anterior (e igual que en la mayoría de los problemas de este índole) la
+entrada será sobre un alfabeto de \texttt{[a-z]} entonces serán representados en ASCII.
+
+\subsubsection{Salida}
+Solo se deberá mostrar en la salida estándar \texttt{Si} o \texttt{No} dependiendo si es una
+rotación cíclica.
+
+\subsubsection{Ejemplos}
+Dado que ambas cadenas son de la misma longitud se hará lo siguiente, $s = qq$ donde $s$ será el
+texto y $p$ el patrón. Entonces con el algoritmo dee Knuth-Morris-Pratt se buscará $p$ en $s$.
+
+\begin{itemize}
+\item \texttt{abc} es una rotación cíclica de \texttt{cab} porque \texttt{cab} $\mapsto$
+\texttt{abc}. Se muestra en la siguiente tabla de manera gráfica la idea.
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+\texttt{c}                   &  \cellcolor{green}\texttt{a} &  \cellcolor{green}\texttt{b} &
+\cellcolor{green} \texttt{c} &  \texttt{a}                  & \texttt{b}                   \\\hline
+\end{tabular}
+\end{table}
+
+\item Claramente \texttt{abab} no es rotación cíclica de \texttt{aabb}.
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+\texttt{a} & \texttt{b} & \texttt{a} &\texttt{b} & \texttt{a} & \texttt{b} & \texttt{a} & \texttt{b} \\\hline
+\end{tabular}
+\end{table}
+\end{itemize}
+
 \includepdf[pages=-]{problemas/pdf/EC_WORLD.pdf}
 
+\subsubsection{Implementación en C++}
 \inputminted[linenos, frame=lines, fontsize=\footnotesize]{cpp}{problemas/cpp/EC_WORLD.cpp}
-\pagebreak
+\begin{itemize}
+\item a
+\end{itemize}
 
-\inputminted[linenos, frame=lines]{haskell}{problemas/haskell/EC_WORLD.hs}
-\pagebreak
+\subsubsection{Implementación en Haskell}
+% TODO: poner que este problema no lo acepta el juez
+\inputminted[linenos, frame=lines, fontsize=\small]{haskell}{problemas/haskell/EC_WORLD.hs}
+\begin{itemize}
+\item a
+\end{itemize}
 
+\subsubsection{Resultado del juez}
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{spoj/EC_WORLD-accepted-cpp}
-\caption{El código fue aceptado por el juez en Haskell y C++}
+\caption{El código fue aceptado por el juez en C++}
 \end{figure}
 
+\newpage
+
+
 \subsection{Extender una cadena a un palíndromo}
+
+\subsubsection{Análisis}
+
+\subsubsection{Entrada}
+
+\subsubsection{Salida}
+
+\subsubsection{Ejemplos}
+\begin{itemize}
+\item a
+\item a
+\item a
+\item a
+\end{itemize}
+
 \includepdf[pages=-]{problemas/pdf/EPALIN.pdf}
 
+\subsubsection{Implementación en C++}
+\inputminted[linenos, frame=lines]{cpp}{problemas/cpp/EPALIN.cpp}
+
+\begin{itemize}
+\item a
+\end{itemize}
+
+\subsubsection{Implementación en Haskell}
+\inputminted[linenos, frame=lines]{haskell}{problemas/haskell/EPALIN.hs}
+
+\begin{itemize}
+\item a
+\end{itemize}
+
+\subsubsection{Resultado del juez}
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{spoj/EPALIN-accepted-cpp-haskell}
 \caption{El código fue aceptado por el juez en Haskell y C++}
 \end{figure}
 
-\inputminted[linenos, frame=lines]{cpp}{problemas/cpp/EPALIN.cpp}
-\pagebreak
+\newpage
 
-\inputminted[linenos, frame=lines]{haskell}{problemas/haskell/EPALIN.hs}
-\pagebreak
 
 \subsection{Encontrar todas las ocurrencias de un patrón en un texto}
+
+\subsubsection{Análisis}
+
+\subsubsection{Entrada}
+
+\subsubsection{Salida}
+
+\subsubsection{Ejemplos}
+\begin{itemize}
+\item a
+\item a
+\item a
+\item a
+\end{itemize}
+
 \includepdf[pages=-]{problemas/pdf/NHAY.pdf}
 
+\subsubsection{Implementación en C++}
 \inputminted[linenos, frame=lines]{cpp}{problemas/cpp/NHAY.cpp}
-\pagebreak
 
+\begin{itemize}
+\item a
+\end{itemize}
+
+\subsubsection{Implementación en Haskell}
 \inputminted[linenos, frame=lines]{haskell}{problemas/haskell/NHAY.hs}
-\pagebreak
 
+\begin{itemize}
+\item a
+\end{itemize}
+
+\subsubsection{Resultado del juez}
 \begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{spoj/NHAY-accepted-cpp-haskell}
