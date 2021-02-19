@@ -46,11 +46,10 @@ int main() {
     cin >> q;
     string s = q + q;
     vector<int> occurrences = kmp(s, p);
-    if (occurrences.empty()) {
+    if (occurrences.empty())
       cout << "No" << endl;
-    } else {
+    else
       cout << "Si" << endl;
-    }
   }
   return 0;
 }

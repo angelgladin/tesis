@@ -239,18 +239,67 @@ texto y $p$ el patrón. Entonces con el algoritmo dee Knuth-Morris-Pratt se busc
 \subsubsection{Implementación en C++}
 \inputminted[linenos, frame=lines, fontsize=\footnotesize]{cpp}{problemas/cpp/EC_WORLD.cpp}
 \begin{itemize}
-\item a
+\item De línea \texttt{6} a \texttt{19} es la implementación de la función de error.
+
+\item De línea \texttt{21} a \texttt{38} es la implementación del algoritmo Knuth-Morris-Pratt.
+
+\item En línea \texttt{43} se lee el número de casos, y en la \texttt{44} se itera \texttt{t} hasta
+que sea 0 y como cualquier valor no cero en \texttt{while} lo toma como falso para la iteración.
+
+\item De la línea \texttt{47} a \texttt{52} es cuando hace la validación dicha en el análisis.
+
 \end{itemize}
 
+\newpage
+
 \subsubsection{Implementación en Haskell}
-% TODO: poner que este problema no lo acepta el juez
-\inputminted[linenos, frame=lines, fontsize=\small]{haskell}{problemas/haskell/EC_WORLD.hs}
+\inputminted[linenos, frame=lines]{haskell}{problemas/haskell/EC_WORLD.hs}
+
+Muchas veces algunos jueces no aceptan cierto lenguaje, y en este caso el que diseñó el problema y
+lo subió en SPOJ, no puso a Haskell para este problema. Pero aún así se hará.
+
+Dado que el tipo de entrada, que es por casos es diferente al problema anterior, la naturaleza de
+la entrada y salida será diferente.
+
 \begin{itemize}
-\item a
+\item En la línea \texttt{1} del módulo \hsCode{Control.Monad} se importa la función\\
+\hsCode{replicateM :: Applicative m => Int -> m a -> m [a]}, donde\\ \hsCode{replicateM n act}
+lleva a cabo una acción $n$ veces, juntando los resultados.
+
+\item De la línea \texttt{4} a \texttt{8} empieza el bloque \hsCode{do} utilizado para las
+operaciones de entrada y salida como secuencia.
+
+En la línea \texttt{5} lee una línea, que es el número de casos de la entrada estándar y eso es
+transformado con \hsCode{fmap :: (a -> b) -> f a -> f b} a un entero con la función
+\hsCode{read :: Read a => String -> a}. Se ocupa el sinónimo infijo \texttt{<\$>} de \hsCode{fmap}.
+
+En la línea \texttt{6} es cuando se lee la entrada de cada caso, primero \hsCode{replicateM t}
+ejecuta la acción \hsCode{replicateM 2 getLine} $t$ veces, donde cada una lee de la entrada
+estándar 2 veces.
+
+En la línea \texttt{7} como la expresión \hsCode{let} está en el bloque \hsCode{do} se omite el
+\hsCode{in} después. Dado que \hsCode{inputs} tiene ligado los valores de la entrada, cada caso que
+consiste de una lista de dos elementos es transformado con \texttt{<\$>} por la función
+\hsCode{process} que hace el ``algoritmo'' descrito en el análisis.
+
+En la línea \texttt{8} en la función\\
+\hsCode{sequence_ :: (Foldable t, Monad m) => t (m a) -> m ()}, que evalúa cada acción monádica de
+la estructura plegable de iquierda a derecha e ignora sus resultados, los hacemos porque serán
+puras acciones \hsCode{IO ()}, \hsCode{sequence_} recibe como argumento acciones monádicas donde
+cada \texttt{answer} se imprime en la salida estándar con \hsCode{putStrLn :: String -> IO ()}. 
+
+\item De la línea \texttt{10} a \texttt{16} es see crea la función
+\hsCode{process :: [String] -> String}, donde por medio de caza de patrones se trabaja con una
+lista de dos elementos, acto seguido en la expresión \hsCode{let ... in ..} se busca la ocurrencia
+del patrón \texttt{p} en \texttt{s} y al final con la función
+\hsCode{null :: Foldable t => t a -> Bool} se verifica si la lista es vacía.  
+
+\item De la línea \texttt{19} a \texttt{24} es la implementación del algoritmo Knuth-Morris-Pratt
+funcionalmente.
 \end{itemize}
 
 \subsubsection{Resultado del juez}
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{spoj/EC_WORLD-accepted-cpp}
 \caption{El código fue aceptado por el juez en C++}
