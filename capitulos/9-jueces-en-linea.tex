@@ -311,17 +311,93 @@ funcionalmente.
 \subsection{Extender una cadena a un palíndromo}
 
 \subsubsection{Análisis}
+En este problema lo \textit{realmente importante} empieza en el tercer párrafo, que resumiendo es:
+
+\begin{tcolorbox}
+Dada una cadena, producir el palíndromo\footnote{Un palíndromo es una palabra o frase que se lee
+igual en un sentido que en otro. Por ejemplo: arenera, oso, radar, sometemos, etc.} más corto que
+puede ser formado agregando cero o más caracteres al final de la cadena.
+\end{tcolorbox}
+
+Una forma ingenua de resolver este problema es simplemente concatenando la cadena original $s$
+con su reversa $s^R$, i.e., $t = ss^R$ donde $t$ ya es un palíndromo, y a pesar de que resuelve el
+problema no se asegura que sea el palíndromo más corto.
+
+Para mostrarlo tomemos una cadena arbitraria $s = $ \texttt{recono} y $s^R =$ \texttt{onocer}
+quedando $t = $ \texttt{reconoonocer} y $t$ es un palíndromo pero hay un palíndromo más corto
+$t' = $ \texttt{reconocer}. Esto fue concatenando \texttt{cer} a \texttt{recono}. 
+Por lo tanto debe de haber una forma mejor de atacar el problema.
+
+Consideremos la función de error utilizada en KMP, como por hipótesis del problema la cadena solo
+consiste de letras mayúsculas y minúsculas, se puede usar un tipo de ``separador'' al procesar lo
+siguiente; sea $r = s^R$\texttt{\$}$s$ donde $r$ es la concatenación de la reveresa de la cadena de
+entrada concatenada con el símbolo \texttt{\$} como separador, y la cadena original.
+
+Entonces se procesará $r$ con la función de error, y ésta indicará el prefijo más largo de $s^R$
+que es sufijo de $s$, denominemos a tal la subcadena como $s'$ tal que $s' \sqsubset s^R$ y
+$s' \sqsupset s$, esto para saber de antemano la subcadena que se traslapa en $s$ y $s^R$. Para
+obtener $s'$ tomemos $m = \vert s \vert$ y $\pi$ la función de error donde $\pi[m] = n$ es la % TODO: corregir pendeja longitud
+longitud de $s'$. Para finalmente tener el palíndromo más pequeño se toma la cadena original $s$
+concatenada con $u = s^R[n \ldots m]$ donde $u$ es la subcadena de $s^R$ desde $n$.
+
+La complejidad del algoritmo es $\Theta(m)$ donde $m$ es el tamaño de la cadena de entrada tanto
+en espacio y tiempo, esto es por construir la función de error y obtener la reversa de una cadena.
 
 \subsubsection{Entrada}
+Al igual que el primero problema, la entrada será leída línea por línea hasta EOF yla
+entrada será sobre un alfabeto de \texttt{[a-z]|[A-Z]} entonces serán representados en ASCII.
 
 \subsubsection{Salida}
+Una sola línea que se imprime en la salida estándar con el palíndromo de más corto.
 
 \subsubsection{Ejemplos}
 \begin{itemize}
+\item Sea $s = $ \texttt{aaaa}, $s^R =$ \texttt{aaaa} y finalmente $r = s$\texttt{\$}$s^R =$ \texttt{aaaa\$aaaa}
+y se construye la función de error con $r$ quedando,
+
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|}
+\cline{2-10}
+$i$      & 1          & 2          & 3          & 4          & 5           & 6          & 7          & 8          & 9          \\ \hline
+$P[i]$   & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{\$} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} \\ \hline
+$\pi[i]$ & 0          & 1          & 2          & 3          & 0           & 1          & 2          & 3          & 4          \\ \cline{2-10} 
+\end{tabular}
+\end{table}
+
+
 \item a
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|}
+\cline{2-10}
+$i$      & 1          & 2          & 3          & 4          & 5           & 6          & 7          & 8          & 9          \\ \hline
+$P[i]$   & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{\$} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} \\ \hline
+$\pi[i]$ & 0          & 1          & 2          & 3          & 0           & 1          & 2          & 3          & 4          \\ \cline{2-10} 
+\end{tabular}
+\end{table}
+
 \item a
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\cline{2-17}
+&  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\ \hline
+&  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\ \hline
+&  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\ \cline{2-17} 
+\end{tabular}
+\end{table}
+
 \item a
-\item a
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|}
+\cline{2-10}
+$i$      & 1          & 2          & 3          & 4          & 5           & 6          & 7          & 8          & 9          \\ \hline
+$P[i]$   & \texttt{a} & \texttt{b} & \texttt{b} & \texttt{a} & \texttt{\$} & \texttt{a} & \texttt{b} & \texttt{b} & \texttt{a} \\ \hline
+$\pi[i]$ & 0          & 0          & 0          & 1          & 0           & 1          & 2          & 3          & 4          \\ \cline{2-10} 
+\end{tabular}
+\end{table}
 \end{itemize}
 
 \includepdf[pages=-]{problemas/pdf/EPALIN.pdf}
