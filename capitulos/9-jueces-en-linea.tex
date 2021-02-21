@@ -336,9 +336,9 @@ entrada concatenada con el símbolo \texttt{\$} como separador, y la cadena orig
 Entonces se procesará $r$ con la función de error, y ésta indicará el prefijo más largo de $s^R$
 que es sufijo de $s$, denominemos a tal la subcadena como $s'$ tal que $s' \sqsubset s^R$ y
 $s' \sqsupset s$, esto para saber de antemano la subcadena que se traslapa en $s$ y $s^R$. Para
-obtener $s'$ tomemos $m = \vert s \vert$ y $\pi$ la función de error donde $\pi[m] = n$ es la % TODO: corregir pendeja longitud
+obtener $s'$ tomemos $n = \vert t \vert$ y $\pi$ la función de error donde $\pi[n] = k$ es la 
 longitud de $s'$. Para finalmente tener el palíndromo más pequeño se toma la cadena original $s$
-concatenada con $u = s^R[n \ldots m]$ donde $u$ es la subcadena de $s^R$ desde $n$.
+concatenada con $u = s^R[k \ldots]$ donde $u$ es la subcadena de $s^R$ desde $k$.
 
 La complejidad del algoritmo es $\Theta(m)$ donde $m$ es el tamaño de la cadena de entrada tanto
 en espacio y tiempo, esto es por construir la función de error y obtener la reversa de una cadena.
@@ -352,8 +352,8 @@ Una sola línea que se imprime en la salida estándar con el palíndromo de más
 
 \subsubsection{Ejemplos}
 \begin{itemize}
-\item Sea $s = $ \texttt{aaaa}, $s^R =$ \texttt{aaaa} y finalmente $r = s$\texttt{\$}$s^R =$ \texttt{aaaa\$aaaa}
-y se construye la función de error con $r$ quedando,
+\item Sea $s = $ \texttt{aaaa}, $s^R =$ \texttt{aaaa} y finalmente
+$r = s^R$\texttt{\$}$s =$ \texttt{aaaa\$aaaa} y se construye la función de error con $r$ quedando,
 
 \begin{table}[h]
 \centering
@@ -364,31 +364,13 @@ $P[i]$   & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{\$} & \te
 $\pi[i]$ & 0          & 1          & 2          & 3          & 0           & 1          & 2          & 3          & 4          \\ \cline{2-10} 
 \end{tabular}
 \end{table}
+Para obtener $s'$ tomemos $n = \vert r \vert = 9$ y en $\pi[9] = 4$ donde $\vert s' \vert = 4$.\\
+Siendo el palíndromo más corto como
+$u = s \cdot s^R[4 \ldots] =$ \texttt{aaaa}$\cdot \varepsilon$ = \texttt{aaaa}.
 
+\item Sea $s = $ \texttt{abba}, $s^R =$ \texttt{abba} y finalmente
+$r = s^R$\texttt{\$}$s =$ \texttt{abba\$abba} y se construye la función de error con $r$ quedando,
 
-\item a
-\begin{table}[h]
-\centering
-\begin{tabular}{c|c|c|c|c|c|c|c|c|c|}
-\cline{2-10}
-$i$      & 1          & 2          & 3          & 4          & 5           & 6          & 7          & 8          & 9          \\ \hline
-$P[i]$   & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{\$} & \texttt{a} & \texttt{a} & \texttt{a} & \texttt{a} \\ \hline
-$\pi[i]$ & 0          & 1          & 2          & 3          & 0           & 1          & 2          & 3          & 4          \\ \cline{2-10} 
-\end{tabular}
-\end{table}
-
-\item a
-\begin{table}[h]
-\centering
-\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\cline{2-17}
-&  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\ \hline
-&  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\ \hline
-&  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\ \cline{2-17} 
-\end{tabular}
-\end{table}
-
-\item a
 \begin{table}[h]
 \centering
 \begin{tabular}{c|c|c|c|c|c|c|c|c|c|}
@@ -398,6 +380,53 @@ $P[i]$   & \texttt{a} & \texttt{b} & \texttt{b} & \texttt{a} & \texttt{\$} & \te
 $\pi[i]$ & 0          & 0          & 0          & 1          & 0           & 1          & 2          & 3          & 4          \\ \cline{2-10} 
 \end{tabular}
 \end{table}
+Para obtener $s'$ tomemos $n = \vert r \vert = 9$ y en $\pi[9] = 4$ donde $\vert s' \vert = 4$.\\
+Siendo el palíndromo más corto como
+$u = s \cdot s^R[4 \ldots] =$ \texttt{abba}$\cdot \varepsilon$ = \texttt{abba}.
+
+\item Sea $s = $ \texttt{amanaplanacanal}, $s^R =$ \texttt{lanacanalpanama} y finalmente\\
+$r = s^R$\texttt{\$}$s =$ \texttt{lanacanalpanama\$amanaplanacanal} y se construye la función de
+error con $r$ quedando,
+
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\cline{2-17}
+$i$      & 1          & 2          & 3          & 4          & 5          & 6          & 7          & 8          & 9          & 10         & 11         & 12         & 13         & 14         & 15         & 16          \\ \hline
+$P[i]$   & \texttt{l} & \texttt{a} & \texttt{n} & \texttt{a} & \texttt{c} & \texttt{a} & \texttt{n} & \texttt{a} & \texttt{l} & \texttt{p} & \texttt{a} & \texttt{n} & \texttt{a} & \texttt{m} & \texttt{a} & \texttt{\$} \\ \hline
+$\pi[i]$ & 0          & 0          & 0          & 0          & 0          & 0          & 0          & 0          & 1          & 0          & 0          & 0          & 0          & 0          & 0          & 0           \\ \cline{2-17} 
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\cline{2-16}
+$i$      & 17         & 18         & 19         & 20         & 21         & 22         & 23         & 24         & 25         & 26        & 27          & 28         & 29         & 30         & 31          \\ \hline
+$P[i]$   & \texttt{a} & \texttt{m} & \texttt{a} & \texttt{n} & \texttt{a} & \texttt{p} & \texttt{l} & \texttt{a} & \texttt{n} & \texttt{a} & \texttt{c} & \texttt{a} & \texttt{n} & \texttt{a} & \texttt{l}  \\ \hline
+$\pi[i]$ & 0          & 0          & 0          & 0          & 0          & 0          & 1          & 2          & 3          & 4          & 5          & 6          & 7          & 8          & 9           \\ \cline{2-16} 
+\end{tabular}
+\end{table}
+Para obtener $s'$ tomemos $n = \vert r \vert = 31$ y en $\pi[31] = 9$ donde $\vert s' \vert = 9$.\\
+Siendo el palíndromo más corto como $u = s \cdot s^R[9 \ldots] =$\\
+\texttt{amanaplanacanal}$\cdot$\texttt{panama} = \texttt{amanaplanacanalpanama}.
+
+\item Sea $s = $ \texttt{xyz}, $s^R =$ \texttt{zyx} y finalmente
+$r = s^R$\texttt{\$}$s =$ \texttt{xyz\$zyx} y se construye la función de error con $r$ quedando,
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c|c|c|c|c|c|c|}
+\cline{2-8}
+$i$      & 1          & 2          & 3          & 4           & 5          & 6          & 7          \\ \hline
+$P[i]$   & \texttt{z} & \texttt{y} & \texttt{x} & \texttt{\$} & \texttt{x} & \texttt{y} & \texttt{z} \\ \hline
+$\pi[i]$ & 0          & 0          & 0          & 0           & 0          & 0          & 1          \\ \cline{2-8} 
+\end{tabular}
+\end{table}
+Para obtener $s'$ tomemos $n = \vert r \vert = 7$ y en $\pi[7] = 1$ donde $\vert s' \vert = 1$.\\
+Siendo el palíndromo más corto como
+$u = s \cdot s^R[1 \ldots] =$ \texttt{xyz}$\cdot$\texttt{yx} = \texttt{xyzx}.
+
 \end{itemize}
 
 \includepdf[pages=-]{problemas/pdf/EPALIN.pdf}
