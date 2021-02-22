@@ -425,7 +425,7 @@ $\pi[i]$ & 0          & 0          & 0          & 0           & 0          & 0  
 \end{table}
 Para obtener $s'$ tomemos $n = \vert r \vert = 7$ y en $\pi[7] = 1$ donde $\vert s' \vert = 1$.\\
 Siendo el palíndromo más corto como
-$u = s \cdot s^R[1 \ldots] =$ \texttt{xyz}$\cdot$\texttt{yx} = \texttt{xyzx}.
+$u = s \cdot s^R[1 \ldots] =$ \texttt{xyz}$\cdot$\texttt{yx} = \texttt{xyzyx}.
 
 \end{itemize}
 
@@ -435,18 +435,26 @@ $u = s \cdot s^R[1 \ldots] =$ \texttt{xyz}$\cdot$\texttt{yx} = \texttt{xyzx}.
 \inputminted[linenos, frame=lines]{cpp}{problemas/cpp/EPALIN.cpp}
 
 \begin{itemize}
-\item a
+\item En la línea \texttt{24} se hace una copia de la línea que se leyó
+\item En la línea \texttt{26} se crea la cadena $r$.
+\item En la línea \texttt{31, 32} se acompleta la cadena original para que sea un palíndromo.
 \end{itemize}
 
 \subsubsection{Implementación en Haskell}
 \inputminted[linenos, frame=lines]{haskell}{problemas/haskell/EPALIN.hs}
 
 \begin{itemize}
-\item a
+\item Al igual que el primer problema, se tratará la entrada y salida orientada a líneas con
+la función \hsCode{interact} donde la función \hsCode{process} es la que hará \textit{el algorítmo}.
+\item En la línea \texttt{8} se saca la reversa de la cadena de entrada, en la línea \texttt{9}
+se crea la cadena $r$, en la línea \texttt{10} se crea la función de error. Finalmente en la línea
+\texttt{13} con la \hsCode{drop :: Int -> [a] -> [a]} que regresa el sufijo de una lista
+\texttt{xs} después de los primeros $n$ elementos, se obtiene la cadena faltante para completar el
+palíndromo y en la línea \texttt{14} se concatena \texttt{xs} la cadena anterior.
 \end{itemize}
 
 \subsubsection{Resultado del juez}
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{spoj/EPALIN-accepted-cpp-haskell}
 \caption{El código fue aceptado por el juez en Haskell y C++}
@@ -458,33 +466,163 @@ $u = s \cdot s^R[1 \ldots] =$ \texttt{xyz}$\cdot$\texttt{yx} = \texttt{xyzx}.
 \subsection{Encontrar todas las ocurrencias de un patrón en un texto}
 
 \subsubsection{Análisis}
+De los problemas anteriores este es quizás es el uso más \textit{canónico} del algoritmo
+Knuth-Morris-Pratt per se, ya que solo se pide encontrar todas las posiciones 0-indexadas de
+un patrón en un texto. Lo inlcuí porque ``la trampa'' de este problema es que mucha gente lo
+resuelve con el algoritmo \textit{naïve} y simplemente el juez no lo aceptará. La complejidad como
+ya se había comentado enteriormente, es $\Theta(m)$ en tiempo el preprocesamiento del patrón y
+$\Theta(n)$ en encontrar las ocurrencias, en espacio toma complejidad $O(m)$.
+%TODO: poner que está chido porque se pueden encontrar patrones que se overlapean
 
 \subsubsection{Entrada}
+Al igual que el primer problemas se leerá hasta EOF, y cada caso prueba consistirá de 3 líneas;
+la primera será la longitud del patrón, seguida del patrón y después el texo.
 
 \subsubsection{Salida}
+Si hubo una(s) aparición(es) cada una será impresa en pantalla línea por línea. Si no, solamente
+se imprirá un salto de línea.
 
 \subsubsection{Ejemplos}
 \begin{itemize}
-\item a
-\item a
-\item a
-\item a
+\item El patón es \texttt{na} y el texto es \texttt{banananobano}, y hubo 2 apariciones del patrón
+en las posiciones 2 y 4.
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|
+>{\columncolor[HTML]{F5B7B1}}c|
+>{\columncolor[HTML]{F5B7B1}}c|
+>{\columncolor[HTML]{D7BDE2}}c|
+>{\columncolor[HTML]{D7BDE2}}c|c|c|c|c|c|c|}
+\hline
+\texttt{b} & \texttt{a} & \texttt{n} & \texttt{a} & \texttt{n} & \texttt{a} & \texttt{n} &
+\texttt{o} & \texttt{b} & \texttt{a} & \texttt{n} & \texttt{o} \\ \hline
+\end{tabular}
+\end{table}
+
+\item El patón es \texttt{foobar} y el texto es \texttt{foo}, y no hubo ninguna aparición del
+patrón.
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\texttt{f} & \texttt{o} & \texttt{o} \\ \hline
+\end{tabular}
+\end{table}
+
+\item El patón es \texttt{foobarfoo} y el texto es \texttt{barfoobarfoobarfoobarfoobarfoo}, y
+hubo 4 apariciones del patrónen la posiciones 3, 9, 15 y 21.
+\begin{table}[H]
+\centering
+\hspace*{-3cm}
+\footnotesize
+\begin{tabular}{|c|c|c|
+>{\columncolor[HTML]{AED6F1}}c|
+>{\columncolor[HTML]{AED6F1}}c|
+>{\columncolor[HTML]{AED6F1}}c|
+>{\columncolor[HTML]{AED6F1}}c|
+>{\columncolor[HTML]{AED6F1}}c|
+>{\columncolor[HTML]{AED6F1}}c|
+>{\columncolor[HTML]{AED6F1}}c|
+>{\columncolor[HTML]{AED6F1}}c|
+>{\columncolor[HTML]{AED6F1}}c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\texttt{b} & \texttt{a} & \texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} &
+\texttt{a} & \texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} &
+\texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} & \texttt{r} &
+\texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} & \texttt{r} & \texttt{f} &
+\texttt{o} & \texttt{o} \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\hspace*{-3cm}
+\footnotesize
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|
+>{\columncolor[HTML]{ABEBC6}}c|
+>{\columncolor[HTML]{ABEBC6}}c|
+>{\columncolor[HTML]{ABEBC6}}c|
+>{\columncolor[HTML]{ABEBC6}}c|
+>{\columncolor[HTML]{ABEBC6}}c|
+>{\columncolor[HTML]{ABEBC6}}c|
+>{\columncolor[HTML]{ABEBC6}}c|
+>{\columncolor[HTML]{ABEBC6}}c|
+>{\columncolor[HTML]{ABEBC6}}c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\texttt{b} & \texttt{a} & \texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} &
+\texttt{a} & \texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} &
+\texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} & \texttt{r} &
+\texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} & \texttt{r} & \texttt{f} &
+\texttt{o} & \texttt{o} \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\hspace*{-3cm}
+\footnotesize
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|
+>{\columncolor[HTML]{F9E79F}}c|
+>{\columncolor[HTML]{F9E79F}}c|
+>{\columncolor[HTML]{F9E79F}}c|
+>{\columncolor[HTML]{F9E79F}}c|
+>{\columncolor[HTML]{F9E79F}}c|
+>{\columncolor[HTML]{F9E79F}}c|
+>{\columncolor[HTML]{F9E79F}}c|
+>{\columncolor[HTML]{F9E79F}}c|
+>{\columncolor[HTML]{F9E79F}}c|c|c|c|c|c|c|c|}
+\hline
+\texttt{b} & \texttt{a} & \texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} &
+\texttt{a} & \texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} &
+\texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} & \texttt{r} &
+\texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} & \texttt{r} & \texttt{f} &
+\texttt{o} & \texttt{o} \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\hspace*{-3cm}
+\footnotesize
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|
+>{\columncolor[HTML]{EDBB99}}c|
+>{\columncolor[HTML]{EDBB99}}c|
+>{\columncolor[HTML]{EDBB99}}c|
+>{\columncolor[HTML]{EDBB99}}c|
+>{\columncolor[HTML]{EDBB99}}c|
+>{\columncolor[HTML]{EDBB99}}c|
+>{\columncolor[HTML]{EDBB99}}c|
+>{\columncolor[HTML]{EDBB99}}c|
+>{\columncolor[HTML]{EDBB99}}c|c|}
+\hline
+\texttt{b} & \texttt{a} & \texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} &
+\texttt{a} & \texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} &
+\texttt{r} & \texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} & \texttt{r} &
+\texttt{f} & \texttt{o} & \texttt{o} & \texttt{b} & \texttt{a} & \texttt{r} & \texttt{f} &
+\texttt{o} & \texttt{o} \\ \hline
+\end{tabular}
+\end{table}
+
 \end{itemize}
 
 \includepdf[pages=-]{problemas/pdf/NHAY.pdf}
 
 \subsubsection{Implementación en C++}
-\inputminted[linenos, frame=lines]{cpp}{problemas/cpp/NHAY.cpp}
-
-\begin{itemize}
-\item a
-\end{itemize}
+\inputminted[linenos, frame=lines, fontsize=\footnotesize]{cpp}{problemas/cpp/NHAY.cpp}
 
 \subsubsection{Implementación en Haskell}
 \inputminted[linenos, frame=lines]{haskell}{problemas/haskell/NHAY.hs}
 
 \begin{itemize}
-\item a
+\item Al ser un programa orientado a líneas, solo se prestará atención a la función
+\hsCode{process} y \hsCode{parse}.
+
+En la función \hsCode{parse} se usa para \textit{procesar} de tres en tres líneas y cada caso
+prueba verlo como una sola tupla. En la función \hsCode{process} en la línea \texttt{12} busca
+las apariciones del patrón en el texto, seguido en la línea \texttt{14} verifica si es una lista
+vacía, si lo es solamente regresa un salto de línea, si no con la función
+\hsCode{intercalate :: [a] -> [[a]] -> [a]} que inserta el primer argumento entre cada elemento
+de la lista y concatena el resultado, pone un salto de línea entre cada índice de cada ocurrencia.
 \end{itemize}
 
 \subsubsection{Resultado del juez}
@@ -493,8 +631,5 @@ $u = s \cdot s^R[1 \ldots] =$ \texttt{xyz}$\cdot$\texttt{yx} = \texttt{xyzx}.
 \includegraphics[width=\textwidth]{spoj/NHAY-accepted-cpp-haskell}
 \caption{El código fue aceptado por el juez en Haskell y C++}
 \end{figure}
-% TODO: Chane y justifico esto el <$> https://ro-che.info/articles/2019-07-22-associativity-of-fmap
-
-
 
 % TODO: poner que puedo optimizar la entrada con Data.ByteString.Char8

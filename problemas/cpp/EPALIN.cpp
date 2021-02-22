@@ -28,8 +28,8 @@ int main() {
     vector<int> pi = compute_prefix_function(aux);
     int k = pi[aux.size() - 1];
 
-    for (size_t i = k; i < s.length(); i++)
-      ans += aux[i];
+    for (size_t i = k; i < rev.length(); i++)
+      ans += rev[i];
 
     cout << ans << endl;
   }

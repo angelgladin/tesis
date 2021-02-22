@@ -43,7 +43,6 @@ int main() {
   while (cin >> needle_length) {
     cin >> needle;
     cin >> haystack;
-
     vector<int> occurrences = kmp(haystack, needle);
     if (occurrences.empty()) {
       cout << endl;
