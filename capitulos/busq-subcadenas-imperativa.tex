@@ -1,0 +1,72 @@
+\section{Algoritmo de búsqueda de subcadenas ingenuo (\textit{naïve})}
+
+\begin{algorithm}[H]
+    \SetKwProg{Fn}{NAIVE-STRING-MATCHER($T,P$)}{}{}
+    \Fn{}{
+        $n = T.length$\\
+        $m = T.length$\\
+        \For{$s = 0 $ \KwTo $n-m$}{
+            \If{$P[1\ldots m] == T[s+1 \ldots s+m]$}{
+                $print$ ``Pattern occurs with shift'' $s$
+            }
+        }
+    }
+\end{algorithm}
+
+\section{Función de error}
+\section{De Morris-Pratt a Knuth-Morris-Pratt}
+% TODO: https://www.cs.helsinki.fi/u/tpkarkka/teach/14-15/SPA/lecture04.pdf
+% https://studylib.net/doc/7580926/chapter-6-the-mp-and-kmp-algorithms--algorithms-based-upon
+
+% http://www-igm.univ-mlv.fr/~lecroq/string/node7.html#SECTION0070
+%http://www-igm.univ-mlv.fr/~lecroq/string/node8.html
+% DEL LIBRO DE STRINGOLOGY SACAR ALGO
+
+\section{Knuth-Morris-Pratt}
+% TODO: ver qué agarro de aquí: https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm
+
+
+\begin{algorithm}[H]
+    \SetKwProg{Fn}{KMP-MATCHER($T,P$)}{}{}
+    \Fn{}{
+        $n = T.length$\\
+        $m = T.length$\\
+        $\pi =$ COMPUTE-PREFIX-FUNCTION($P$)\\
+        $q = 0$\\    
+        \For{$i = 1 $ \KwTo $n$}{
+            \While{$q >0$ and $P[q+1] \neq T[i]$}{
+                $q = \pi[q]$
+            }
+            \If{$P[q+1] == T[i]$}{
+                $q = q + 1$
+            }
+            \If{$q == m$}{
+                $print$ ``Pattern occurs with shift'' $i-m$\\
+                $q = \pi[q]$
+            }
+        }
+    }
+\end{algorithm}
+
+\begin{algorithm}[H]
+    \SetKwProg{Fn}{COMPUTE-PREFIX-FUNCTION($P$)}{}{}
+    \Fn{}{
+        $m = P.length$\\
+        let $\pi[1 \ldots m]$ be a new array\\
+        $\pi[1] =0$\\
+        $k = 0$\\    
+        \For{$q = 2 $ \KwTo $m$}{
+            \While{$k >0$ and $P[k+1] \neq P[q]$}{
+                $k = \pi[k]$
+            }
+            \If{$P[k+1] == P[q]$}{
+                $k = k + 1$
+            }
+            $\pi[k] = k$
+        }
+        \Return $\pi$
+    }
+\end{algorithm}
+
+\section{Implementación en C++}
+\inputminted{cpp}{codigo/cpp/kmp.hpp}

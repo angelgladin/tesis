@@ -2,7 +2,6 @@
 
 \usepackage{defs-config-macros}
 
-
 \begin{document}
 
 \thispagestyle{empty}
@@ -21,37 +20,30 @@
     
     \tableofcontents
 
-
 \mainmatter
     \chapter*{Motivación y estructura del trabajo}
-        \input{capitulos/0-motivacion}
+        \input{capitulos/motivacion}
     \addcontentsline{toc}{chapter}{Motivación y estructura del trabajo}
     
     \chapter{Fundamentos}
-        \input{capitulos/1-fundamentos}
+        \input{capitulos/fundamentos}
     
-    % TODO: Poner en dos capítulos separados lo de "Algoritmos de búsqueda de subcadenas" y función de error
-    % unos imperativo y otro funcional
-    \chapter{Algoritmos de búsqueda de subcadenas}
-        \input{capitulos/3-algoritmo-de-busqueda-de-subcadenas}
+    \chapter{Búsqueda de subcadenas con perspectiva en \\la programación imperativa}
+    \chaptermark{} % https://tex.stackexchange.com/questions/26234/chapter-title-in-header-too-long
+        \input{capitulos/busq-subcadenas-imperativa}
+    
+    \chapter{Búsqueda de subcadenas con perspectiva en \\la programación funcional}
+    \chaptermark{} % https://tex.stackexchange.com/questions/26234/chapter-title-in-header-too-long
+        \input{capitulos/busq-subcadenas-funcional}
 
-    \chapter{Función de error}
-        \input{capitulos/4-funcion-de-error}
-
-    \chapter{Algoritmo Knuth-Morris-Pratt}
-        \input{capitulos/5-algoritmo-kmp}
-
-    \chapter{Entrada y Salida perezosa (Lazy I/O)}
-        \input{capitulos/6-entrada-y-salida}
-
-    \chapter{QuickCheck}
-        \input{capitulos/8-quickcheck}
+    \chapter{\textit{QuickCheck}}
+        \input{capitulos/quickcheck}
 
     \chapter{Jueces en línea}
-        \input{capitulos/9-jueces-en-linea}
+        \input{capitulos/jueces-en-linea}
     
     \chapter{Conclusiones}
-        \input{capitulos/11-conclusiones}
+        \input{capitulos/conclusiones}
     
     \begin{appendices}
         \input{capitulos/compilar-y-ejecutar-codigo}

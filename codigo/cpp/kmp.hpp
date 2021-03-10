@@ -23,19 +23,15 @@ vector<int> compute_prefix_function(const string &pattern) {
 
 vector<int> kmp(const string &text, const string &pattern) {
   vector<int> matches;
-
   int n = text.size();
   int m = pattern.size();
   vector<int> pi = compute_prefix_function(pattern);
   int q = 0;
-
   for (int i = 0; i < n; i++) {
     while (q > 0 && pattern[q] != text[i])
       q = pi[q - 1];
-
     if (pattern[q] == text[i])
       q++;
-
     if (q == m) {
       matches.push_back(i - m + 1);
       q = pi[q - 1];

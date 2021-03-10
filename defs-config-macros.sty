@@ -19,7 +19,12 @@
     linkcolor=blue,
 }
 \usepackage{epigraph} % Poner epígrafe en los capítulos
-\usepackage[toc,page,header]{appendix}
+\usepackage[toc,page,header]{appendix} % Poder agregar el apéndice como un capítulo
+\addto\captionsspanish{ % El paquete de appendix está en inglés y se debe sobreescribe el nombre en español
+  \renewcommand\appendixname{Apéndices}
+  \renewcommand{\appendixtocname}{Apéndices}
+  \renewcommand\appendixpagename{Apéndices}
+}
 
 \geometry{bindingoffset=3cm}
 
