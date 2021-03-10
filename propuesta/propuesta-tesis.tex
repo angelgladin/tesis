@@ -20,8 +20,8 @@
 \section{Resumen}
 Los algoritmos de búsqueda de subcadenas son una clase de algoritmos de cadenas que tratan de
 buscar un(os) \emph{patron(es)} en una cadena o texto. Normalmente cuando es una cadena grande se
-busca mejorar el desempeño del mismo. El algoritmo de Knuth-Morris-Pratt (KMP) es útil para buscar un
-solo patrón (con longitud $m$) en un texto (de longitud $n$) con una complejidad en tiempo de
+busca mejorar el desempeño del mismo. El algoritmo de Knuth-Morris-Pratt (KMP) es útil para buscar
+un solo patrón (con longitud $m$) en un texto (de longitud $n$) con una complejidad en tiempo de
 $\Theta(n + m)$.
 
 En este trabajo se hará énfasis en éste algoritmo centrado en la programación funcional; primero se
@@ -42,23 +42,21 @@ la programación funcional para poder profundizar en el razonamiento ecuacional.
 propiedades y definiciones útiles respecto a \textit{cadenas}, ánalisis de tiempo en algoritmos y
 un primer acercamiento a búsqueda de subcadenas.
 
-\item \textbf{Algoritmos de subcadenas con perspectiva en \textit{la programación imperativa}:} Se
-presentarán dos algoritmos; la versión ingenua y el algoritmo KMP y se analizarán algunos ejemplos
-y el algoritmo \textit{per se}.
+\item \textbf{Algoritmos de búsqueda de subcadenas con perspectiva en \textit{la programación
+imperativa}:} Se presentarán dos algoritmos; la versión ingenua y el algoritmo KMP y se analizarán
+algunos ejemplos y el algoritmo \textit{per se}.
 
-\item \textbf{Algoritmos de subcadenas con perspectiva en \textit{la programación funcional}:}
-Aquí es donde se hará uso de todos los fundamentos presentados en el primer capítulo para hacer la
-\textit{derivación} del algoritmo ingenuo al algoritmo Morris-Pratt y después a Knuth-Morris-Pratt.
-También se discutirá sobre la \textit{función de error} que es usada en KMP. Se hará hincapié en
-los teoremas y \textit{leyes} usadas en la programación funcional.
+\item \textbf{Algoritmos de búsqueda de subcadenas con perspectiva en \textit{la programación
+funcional}:} Aquí es donde se hará uso de todos los fundamentos presentados en el primer capítulo
+para hacer la \textit{derivación} del algoritmo ingenuo al algoritmo Morris-Pratt y después a
+Knuth-Morris-Pratt. También se discutirá sobre la \textit{función de error} que es usada en KMP.
+Se hará hincapié en los teoremas y \textit{leyes} usadas en la programación funcional.
 
-\item \textbf{\textit{Quickcheck}:} Se hablará acerca de esta biblioteca en Haskell para poder
+\item \textbf{\textit{QuickCheck}:} Se hablará acerca de esta biblioteca en Haskell para poder
 probar las propiedades que deberían de cumplir las funciones, es decir, cada función tiene
 propiedades deseables y usando QuickCheck se demuestra si se cumplen total o parcialmente
 estas propiedades. Una ventaja notoria es que una propiedad es probada con una gran cantidad de
 casos generados aleatoriamente.
-
-%Será usado para probar las implentaciones derivadas con la implentación ingenua.
 
 \item \textbf{Jueces en línea:} Se hablará brevemente en qué consiste la programación competitiva
 y algunas ``heurísticas'' a seguir en la resolución de problemas. Al final se atacarán tres
