@@ -1,10 +1,10 @@
-\section{Naïve}
+% TODO: introducción-
 
 \section{Función de error}
-En este capítulo se derivará por medio de una especificación formal la función de error del
+En esta seccióno se derivará por medio de una especificación formal la función de error del
 algoritmo de KMP. Aunque por medio de este acercamiento\cite{bird:cyclic} se podría obtener todo
-el algoritmo KMP usando estructuras cíclicas, específicameente listas doblemente ligadas, no se
-hará así, porque se verá otra manera ``puramente funcional'' de hacerlo en el siguiente capítulo.
+el algoritmo KMP usando estructuras cíclicas (específicamente listas doblemente ligadas) no se
+hará así, porque se verá otra manera más ``elegante'' de hacerlo en la siguiente sección.
 
 Consideremos la cadena \texttt{abacabab} y su procesamiento con la función de error,
 
@@ -18,13 +18,15 @@ $\pi[k]$ & 0          & 0          & 1          & 0          & 1          & 2   
 \end{tabular}
 \end{table}
 
-La entrada $\pi[k]$ en la posición $b$ es la longitud del \textbf{sufijo propio más largo} de
-\hsCode{take k "abacabab"} que también es un prefijo de \hsCode{"abacabab"}.
+\begin{center}
+La entrada $\pi[k]$ es la longitud del \textbf{sufijo propio más largo} de
+\hsCode{take k xs} que también es un prefijo de\hsCode{ xs}.
+\end{center}
 
-Veamos del procesamiento de la cadena de arriba:
+Veamos el procesamiento de la cadena de arriba:
 \begin{itemize}
-\item[$\pi{[1]}$] Dado que el sufijo propio más largo de \hsCode{take 1 "abacabab" = "a"} es
-$\varepsilon$, siempre la primera posición será 0. Por lo que $\pi[1] = 0$.
+\item[$\pi{[1]}$] Dado que el sufijo propio más largo de \hsCode{take 1 xs} para
+cualquier\hsCode{ xs} no vacía siempre es $\varepsilon$, siempre se tendrá que $\pi[1] = 0$.
 \item[$\pi{[2]}$] El sufijo propio más largo de \hsCode{take 2 "abacabab" = "ab"} que también es
 prefijo de \texttt{abacabab} es $\varepsilon$. Por lo que $\pi[2] = 0$.
 \item[$\pi{[3]}$] El sufijo propio más largo de \hsCode{take 3 "abacabab" = "aba"} que también es
@@ -41,39 +43,46 @@ es prefijo de \texttt{abacabab} es \texttt{aba}. Por lo que $\pi[7] = 3$.
 es prefijo de \texttt{abacabab} es \texttt{ab}. Por lo que $\pi[8] = 2$.
 \end{itemize}
 
-Para una lista no vacía \texttt{as}, los sufijos \textbf{propios} de \hsCode{take k as} son sufijos
-de \hsCode{take (k-1) (tail as)}, el $k-1$ es porque como se afirma que la lista \texttt{as} es no
-vacía, se contemplan en los sufijos propios a la lista vacía, y a \hsCode{tail as} de manera
-similar.
+Para una lista \textbf{no vacía} \texttt{as} los sufijos \textbf{propios} de \hsCode{take k as},
+son sufijos de \hsCode{take (k - 1) (tail as)}. El $k-1$ es porque como se afirma que la lista
+\texttt{as} es no vacía, se contempla a la lista vacía en la lista de sufijos propios, y a
+\hsCode{tail as} porque por definición de sufijo \textbf{propio} no puede estar la cabeza de
+la lista \texttt{as}.
 
 Teniendo así una forma de calcular todos los sufijos \textbf{propios} de una lista \texttt{as} como:
 \begin{minted}{haskell}
 [take (k - 1) (tail as) | k <- [1 .. length as]] = inits (tail as)
 \end{minted}
+donde \hsCode{inits}\footnote{
+    La función \hsCode{inits} viene definida en el módulo \hsCode{Data.List}.
+} regresa una lista con los prefijos de una lista en orden creciente y \hsCode{tail} extrae la
+cabeza de la lista.
 
-De igual manera se mostrará por medio de un ejemplo concreto tales sufijos propios,
+Ejemplo con \texttt{abacabab}:
 \begin{minted}{haskell}
 >>> inits (tail "abacabab")
     inits "bacabab"
     ["","b","ba","bac","baca","bacab","bacaba","bacabab"]
 \end{minted}
 
-donde \hsCode{inits}\footnote{
-    La función \hsCode{inits} viene definida en el módulo \hsCode{Data.List}.
-    }
-regresa una lista con los prefijos de una lista en orden creciente y \hsCode{tail} extrae la cabeza
-de la lista.
-
 La función de error se define como:
-\inputminted[fontsize=\small]{haskell}{codigo/haskell/FailureFunctionNaive.hs}
+\inputminted[fontsize=\small, frame=single, framesep=10pt]{haskell}
+    {codigo/haskell/FailureFunctionNaive.hs}
 
-Donde \hsCode{llasp as bs} es la longitud del sufijo más largo de \texttt{bs} que es también un
-prefijo de \texttt{as}. Esto es porque la función \hsCode{tails}\footnote{
+Donde \hsCode{llsap as bs} (\textit{\textbf{L}ength of \textbf{L}ongest \textbf{S}uffix of
+\texttt{bs} that is \textbf{A}lso a \textbf{P}refix of \texttt{as}}) es la longitud del sufijo más
+largo de \texttt{bs} que es también un prefijo de \texttt{as}. La función \hsCode{llasp} primero
+\hsCode{tails}\footnote{
     La función \hsCode{tails} viene definida en el módulo \hsCode{Data.List}.
-    }
-regresa todos los sufijos en orden decreciente y con la función \hsCode{head} solo se obtiene el
-primero (que evidentemente es el mayor). Y así \hsCode{ptable} calcula la función de error como
-una lista.
+} regresa todos los sufijos en orden decreciente y con \hsCode{isPrefixOf} solo toma el los sufijos
+que son prefijos de \texttt{as}. Finalmente con la función \hsCode{head} se obtiene el primero
+elemento que evidentemente es el mayor.
+
+Se hace un sínonimo para el tipo \hsCode{[(Int, (a, Int))]} con la palabra reservada \hsCode{type}
+llamado \hsCode{PiTable} para mayor legibilidad. La primera entrada es la $i$-ésima posición del
+elemento y en la segunda entrada es una tupla, corresponde a la función dee error.
+
+Y así \hsCode{ptable} calcula la función de error como una lista de \hsCode{PiTable}.
 
 Si se calcula \hsCode{ptable "abacabab"} el resultado es:
 \begin{minted}{haskell}
@@ -82,14 +91,15 @@ Si se calcula \hsCode{ptable "abacabab"} el resultado es:
      (6,('b',2)),(7,('a',3)),(8,('b',2))]
 \end{minted}
 
-Recordando el \textit{Scan Lemma}\ref{fundamentos:scan_lemma} y viendo que hay un \hsCode{inits} en
-\hsCode{ptable} veamos si se puede optimizar. El \textit{Scan Lemma} afirma que
+Recordando el \textit{Scan Lemma}\ref{fundamentos:scan_lemma}, que afirma que
 \begin{minted}{haskell}
 map (foldl op e) . inits = scanl op e
 \end{minted}
 
-Para expresar a \hsCode{llasp as bs} en la forma de un pliegue \hsCode{foldl (op as) e} se debe
-demostrar que: % TODO: The universal property of fold
+y viendo que hay un \hsCode{inits} en la definición de \hsCode{ptable} en\\
+\hsCode{map (llsap as) (inits (tail as))} veamos como lo podemos utilizar. Pero problema aquí es
+que \hsCode{llasp as} debe ser expresado como una instancía de \hsCode{foldl (op as) e}. Ahora se
+debe mostrar que:
 
 \begin{minted}{haskell}
 llsap as []          = e
@@ -97,41 +107,51 @@ llsap as (bs ++ [b]) = op as (llsap as bs) b
 \end{minted}
 Para una definición adecuada de \hsCode{e} y \hsCode{op}. 
 
-Es inmediato que \hsCode{llsap as [] = 0} porque el sufijo \texttt{[]} que es prefijo de
-\texttt{as} es de longitud 0 y así \texttt{e = 0}.
+Es inmediato que \hsCode{llsap as [] = 0} porque el sufijo \texttt{[]} (que es el más largo) que
+es prefijo de \texttt{as} es de longitud 0 y así \texttt{e = 0}. De hecho este caso es el primer
+elemento de \hsCode{inits (tails as)}.
 
-Lo interesante es encontrar \hsCode{op}. Sea\hsCode{ k = llsap as bs} donde \texttt{k} y\\
-\hsCode{ a = head (drop k as)}, así \texttt{a} es el siguiente elemento de \texttt{as} después del
-prefijo más largo de \texttt{as} que se empareja con el sufijo de \texttt{bs}.
+Lo interesante aquí es encontrar \hsCode{op}. Supongamos\hsCode{ k = llsap as bs} donde \texttt{k}
+es la longitud del sufijo más largo de \texttt{bs} que es un prefijo de \texttt{as} y,
+\hsCode{ a = head (drop k as)} donde \texttt{a} es el siguiente elemento de \texttt{as} después
+del prefijo más largo de \texttt{as} que se empareja con el sufijo de \texttt{bs}.
 
-Para ejemplificarlo consideremos los siguientes ejemplos sobre la cadena original \texttt{abacabab}.
+Para ejemplificarlo consideremos los siguientes ejemplos sobre la cadena \texttt{abacabab}.
 \begin{itemize}
-\item Consideremos $i = 3$ donde\hsCode{ bs = take 3 "abacabab" = "aba"},\\
-\hsCode{llsap "abacabab" "a" = 1}\\
-\hsCode{head (drop 1 "abacabab") = head "bacabab" = 'b' = a}.
-Y así \texttt{a\colorbox{yellow}b}\texttt{acabab}.
-\item Consideremos $i = 6$ donde\hsCode{ bs = take 6 "abacabab" = "abacab"},\\
-\hsCode{llsap "abacabab" "ab" = 2}\\
-\hsCode{head (drop 2 "abacabab") = head "acabab" = 'a' = a}.
-Y así \texttt{ab\colorbox{yellow}a}\texttt{cabab}.
+\item Consideremos\hsCode{ bs = "ba"} donde\hsCode{ k = llsap "abacabab" "ba" = 1} y así\\
+\hsCode{ a = head (drop 1 "abacabab") = head "bacabab" = 'b'}.\\
+Quedando \texttt{a\colorbox{yellow}b}\texttt{acabab}.
+\item Consideremos\hsCode{ bs = "bacab"} donde\hsCode{ k = llsap "abacabab" "bacab" = 2} y\\
+así\hsCode{ a = head (drop 2 "abacabab") = head "acabab" = 'a'}.\\
+Quedando \texttt{ab\colorbox{yellow}a}\texttt{cabab}.
 \end{itemize}
 
 Si \texttt{a = b}, entonces \hsCode{llsap as (bs ++ [b]) = k + 1} porque cuando se esté
 ``consumiendo'' \texttt{b}, significa que el prefijo de \texttt{as} ya en el paso anterior ya era
-un sufijo de un segmento de \texttt{b}, y así solamente lo que se tenía de longitud más larga del
+un sufijo de un segmento de \texttt{bs}, y así solamente lo que se tenía de longitud más larga del
 prefijo en el paso pasado solo se suma uno.
+% TODO: poner aquí un ejemplo
 
 En otro caso significa que hasta el $i$-ésimo caracter consumido no ha habido ningún sufijo que sea
 prefijo de y así \texttt{k = 0} entonces \hsCode{llsap as (bs ++ [b]) = 0}.
 
-Este útlimo caso parece que no dice mucha información, pero es justamente cuando no se cumple el primer
-caso pero es aquí cuando se usa la información preprocesada, ya que si no se puede hacer que hasta ese sufijo
-eea prefijo de \texttt{as}, se sabe de antemano la longitud máxima del prefijo que es sufijo en esa posición.
+Quedando este último caso,
 \begin{minted}{haskell}
 llsap as (bs ++ [b]) = llsap as (take (k - 1) (tail as) ++ [b])
 \end{minted}
+este caso parece que no decir mucha información, pero es justamente cuando % TODO: poner referencia a la versión impetattiva cuando se regresa a buscar otra entrada en pi[i]
+% TODO: poner referencia al capitulo donde pongo el código impertaivo y como "se va saltando"
 
-Así \texttt{llasp as bs = foldl (op as) bs}, donde
+
+Para mostrar este caso consideremos el siguiente ejemplo: % TODO: mejorar este esbozo de ejemplo
+\begin{itemize}
+\item \hsCode{as = "abacabab"} \hsCode{bs = "bacabab"}\\
+\hsCode{llsap as (bs ++ [b]) = llsap as (take (k - 1) (tail as) ++ [b])}\\ % 
+\hsCode{llsap "abacabab" ("acabab" ++ "b") = 3 = llsap as ((take 2 "abacabab") ++ "b")}
+\hsCode{llsap "abacabab" ((take 2 "abacabab") ++ [b]) = llsap "abacabab" ("ab" ++ "b")}
+\end{itemize}
+
+Así \hsCode{llasp as bs = foldl (op as) bs}, donde
 \begin{minted}{haskell}
 op as k b  | a == b    = k + 1
            | k == 0    = 0
@@ -139,26 +159,41 @@ op as k b  | a == b    = k + 1
                where a = head (drop k as)
 \end{minted}
 
-Aún no se ha acado de razonar el programa. Haciendo la siguiente observación que
+Aún no se ha acado de razonar el programa. Haciendo la siguiente observación,
 \begin{minted}{haskell}
 llsap as (take (k - 1) (tail as) ++ [b]) = op as (llsap as (take (k - 1) (tail as))) b
 \end{minted}
+% TODO: explicar que es porque se consume la b, o sea el primer elementos de la lista bs, pero se ocupa la función op
 
-% TODO: poner referencia al capitulo donde pongo el código impertaivo y como "se va saltando"
 
 En Haskell existe un módulo de arreglos %TODO: poner aquí todo eso
-y se usará para acceder a la $k$-ésima posición en la lista
+% TODO: mejorar explicación culera
+y se usará para acceder a la $k$-ésima posición en la lista 
 y así para acceder como
 
 % TODO: decir que aquí usaré ya arrays
 \begin{minted}{haskell}
-head (drop k as)                            = fst (xa!(k + 1))
-op as (llsap as (take (k - 1) (tail as))) b = op as (snd (xa!k)) b
+head (drop k as)                            = fst (xs ! (k + 1))      -- (ec.1)
+op as (llsap as (take (k - 1) (tail as))) b = op as (snd (xs ! k)) b  -- (ec.2)
 \end{minted}
 
-% TODO: poner paso intermeedio de lista a arreglo.
+% TODO: revisar si lo que escribí hace sentido.
+\begin{itemize}
+\item En \texttt{(ec.1)} como se quiere acceder al siguiente elemento en la lista \texttt{xs} para
+obtener \texttt{a}, primero se obtiene la posición $k+1$ de la lista y despues con \hsCode{fst}
+se obtiene el tipo \hsCode{a}. % TODO: ver como se llama 'a' formalmente.
+\item En \texttt{(ec.2)} La \hsCode{(snd (xs ! k))} es el más largo y se obtiene de lo que se había
+procesado anteriormente.
+% TODO: Explicar mejor
+\end{itemize}
 
-\inputminted{haskell}{codigo/haskell/FailureFunctionOptimized.hs}
+\newpage
 
+Finalmente usando Arreglos %TODO: explicar mejor
+la versión final queda como.
+\inputminted[fontsize=\small, frame=single, framesep=10pt]{haskell}
+    {codigo/haskell/FailureFunctionOptimized.hs}
+% TODO: poner una conclusión
+\newpage
 
 \section{Knuth-Morris-Pratt}
