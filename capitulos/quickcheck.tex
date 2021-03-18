@@ -1,12 +1,19 @@
-%import qualified Test.QuickCheck as QC
-
-\inputminted{haskell}{codigo/haskell/test-string-matching.hs}
-
-
-% TODO: http://www.scs.stanford.edu/11au-cs240h/notes/testing-slides.html#(1)
-% http://wiki.haskell.org/Introduction_to_QuickCheck1
-% http://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html
-% https://begriffs.com/posts/2017-01-14-design-use-quickcheck.html
+QuickCheck es una biblioteca de Haskell para hacer pruebas aleatorias que deben cumplir ciertas
+propiedades nuestros programas. El programador provee una especificación de su programa en la
+forma de propiedades las cuales las funciones deben satisfacer y, QuickCheck prueba que esas
+propiedades se mantengan en un gran número de casos de casos generados aleatoriamente. Las
+especificaciones son expresadas en Haskell usando combinadores proporcionados por QuickCheck.
+QuickCheck provee combinadores para definir propiedades, observar la disctribución de los casos
+de prueba y, definir los generadores de información generadores.\footnote{
+    Descripción de QuickCheck tomada de la documentación oficial
+    \url{https://hackage.haskell.org/package/QuickCheck}.
+}
 
 \section{Motivación} % TODO: ver si lo dejo
+
+
+\inputminted{haskell}{codigo/haskell/test-failure-function.hs}
+\inputminted{haskell}{codigo/haskell/test-matching.hs}
+
+
 \section{Experimentos} % TODO: cambiarlo

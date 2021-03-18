@@ -1,4 +1,4 @@
-module FailureFunction
+module FailureFunctionOptimized
   ( ptable
   ) where
 
