@@ -10,7 +10,7 @@ newtype Pattern =
 
 instance Arbitrary Pattern where
   arbitrary = do
-    size <- choose (1, 1000)
+    size <- chooseInt (1, 1000)
     text <- vectorOf size $ elements ['a' .. 'z']
     return (S text)
 

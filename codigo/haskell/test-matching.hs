@@ -10,8 +10,8 @@ data TextPattern =
 
 instance Arbitrary TextPattern where
   arbitrary = do
-    textSize <- choose (1, 1000)
-    patternSize <- choose (1, 20)
+    textSize <- chooseInt (1, 1000)
+    patternSize <- chooseInt (1, 20)
     text <- vectorOf textSize $ elements "GACT"
     pattern_ <- vectorOf patternSize $ elements "GACT"
     return (S pattern_ text)

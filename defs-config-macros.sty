@@ -8,6 +8,7 @@
 \usepackage{graphicx} % Para poder agregar las imágenes con y usar \graphicspath
 \usepackage{lipsum} % Usar texto dummy para llenar hojas
 \usepackage{minted} % Para agregar código
+\usemintedstyle{perldoc} % Tema de minted
 \usepackage[ruled, vlined, linesnumbered]{algorithm2e} % Incluir pseudocódigo
 \usepackage{newunicodechar} % Poder usar (pero debemos declarar también) caracteres unicode en código
 \usepackage{pdfpages} % Poder insertar pdfs.
@@ -50,3 +51,6 @@
 
 % Macro para código inline de Haskell
 \newcommand{\hsCode}[1]{\mintinline{haskell}|#1|}
+
+% Macros para usar otra tipografía en algunas palabras
+\newcommand{\QuickCheck}{{\fontfamily{lmss}\selectfont QuickCheck }}
