@@ -1,10 +1,12 @@
-\documentclass[letterpaper,10pt]{article}
+\documentclass[letterpaper,11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
 \usepackage[]{enumitem}
 \usepackage[]{hyperref}
 \pagestyle{empty}
 \usepackage[left=2cm,right=2cm,top=1.2cm,bottom=1.2cm]{geometry}
+\renewcommand{\labelenumii}{\theenumii}
+\renewcommand{\theenumii}{\theenumi.\arabic{enumii}.}
 
 
 \begin{document}
@@ -13,25 +15,42 @@
 \textbf{Análisis del algoritmo Knuth-Morris-Pratt con énfasis en la programación funcional} \\\\
 \textbf{Ángel Iván Gladín García} \\
 \normalsize Resumen de Proyecto de Tesis       \hfill No. cuenta: 313112470\\
-\hfill 8 de marzo de 2021.\\
+\hfill 24 de marzo de 2021.\\
 
 \vspace*{-15pt}
 
 \section{Resumen}
 Los algoritmos de búsqueda de subcadenas son una clase de algoritmos de cadenas que tratan de
-buscar un(os) \emph{patron(es)} en una cadena o texto. Normalmente cuando es una cadena grande se
-busca mejorar el desempeño del mismo. El algoritmo de Knuth-Morris-Pratt (KMP) es útil para buscar
-un solo patrón (con longitud $m$) en un texto (de longitud $n$) con una complejidad en tiempo de
-$\Theta(n + m)$.
+buscar un(os) \emph{patrón(es)} en una cadena o texto.
+Una manera ingenua de hacerlo es mediante fuerza bruta; la idea es ir deslizando el patrón sobre
+el texto de izquierda a derecha, comparándolo con las subcadenas del mismo tamaño que empiezan en
+cada carácter del texto. Lo cual en el peor de los casos toma una complejidad de tiempo de $O(nm)$.
 
-En este trabajo se hará énfasis en éste algoritmo centrado en la programación funcional; primero se
-dará una especificación formal y por medio de razonamiento ecuacional se refinará una versión
-más eficiente en complejidad en tiempo. En este análisis se desglosará la teoría necesaría para
-poder llevar a cabo este proceso.
+Normalmente cuando es una cadena grande se busca mejorar el desempeño del mismo. El algoritmo de
+Knuth-Morris-Pratt (KMP) es útil para buscar un solo patrón (con longitud $m$) en un texto (de
+longitud $n$) con una complejidad en tiempo de $\Theta(n + m)$.
 
-Finalmente se usará este algoritmo para resolver algunos problemas famosos que llegan a aparecer
-en competencias o acertijos de programación competiviva y se discutirá su uso con sus respectivas
-implicaciones.
+En este trabajo se hará énfasis en el algoritmo KMP centrado en la programación funcional.
+
+Primero se dará una especificación formal (en el lenguaje de programación Haskell) del algoritmo
+de fuerza bruta con complejidad $O(nm)$ y por medio de razonamiento ecuacional lo que se busca
+es llegar a derivar el algoritmo KMP el cual tiene complejidad $\Theta(n + m)$.
+
+A diferencia de la implementación del algoritmo en la versión imperativa, en la versión funcional
+se puede observar como se llega de una manera más \textit{elegante} a la implementación del
+algoritmo. Pero en tanto en la versión imperativa y funcional algoritmo KMP se tiene la misma
+complejidad $\Theta(n + m)$.
+
+En este análisis se desglosará la teoría necesaría para poder llevar a cabo este proceso en la
+programación funcional. También se hablará sobre una biblioteca en Haskell llamada QuickCheck
+para probar ambas versiones con cosas generados aleatoriamente.
+
+Finalmente se hablará en qué consiste la programación competitiva y jueces en línea; en esta parte
+usando el algoritmo KMP y la función de error (función auxiliar usada en KMP) y se resolverán e
+implementarán algunos problemas famosos como encontrar el factor de repetición de una cadena,
+ver si una cadena es rotación cíclica de otra y como extender una cadena a un palíndromo de
+longitud mínima. Se implementarán tanto en Haskell como en C++ y se harán sus respectivas
+comparaciones.
 
 \section{Índice tentativo}
 
@@ -41,27 +60,56 @@ implicaciones.
 la programación funcional para poder profundizar en el razonamiento ecuacional. También se darán
 propiedades y definiciones útiles respecto a \textit{cadenas}, ánalisis de tiempo en algoritmos y
 un primer acercamiento a búsqueda de subcadenas.
+\begin{enumerate}
+    \item Programación funcional
+    \item Listas, plieges, principio universal de fusión, \textit{Scan Lemma}, \textit{Tuppling},
+    \textit{Accumulating Parameters}
+    \item Razonamiento ecuacional
+    \item Notación asintótica
+    \item Cadenas
+\end{enumerate}
 
 \item \textbf{Algoritmos de búsqueda de subcadenas con perspectiva en \textit{la programación
 imperativa}:} Se presentarán dos algoritmos; la versión ingenua y el algoritmo KMP y se analizarán
 algunos ejemplos y el algoritmo \textit{per se}.
+\begin{enumerate}
+    \item Algoritmo de búqueda de subcadenas ingenuo (naïve)
+    \item Función de error
+    \item De Morris-Pratt a Knuth-Morris-Pratt
+    \item Implementación en C++
+\end{enumerate}
 
 \item \textbf{Algoritmos de búsqueda de subcadenas con perspectiva en \textit{la programación
 funcional}:} Aquí es donde se hará uso de todos los fundamentos presentados en el primer capítulo
 para hacer la \textit{derivación} del algoritmo ingenuo al algoritmo Morris-Pratt y después a
 Knuth-Morris-Pratt. También se discutirá sobre la \textit{función de error} que es usada en KMP.
 Se hará hincapié en los teoremas y \textit{leyes} usadas en la programación funcional.
+\begin{enumerate}
+    \item Derivando Función de error
+    \item Derivando Knuth-Morris-Pratt
+\end{enumerate}
 
 \item \textbf{\textit{QuickCheck}:} Se hablará acerca de esta biblioteca en Haskell para poder
 probar las propiedades que deberían de cumplir las funciones, es decir, cada función tiene
 propiedades deseables y usando QuickCheck se demuestra si se cumplen total o parcialmente
 estas propiedades. Una ventaja notoria es que una propiedad es probada con una gran cantidad de
 casos generados aleatoriamente.
+\begin{enumerate}
+    \item Motivación
+    \item Uso básico
+    \item Generadores
+    \item Probando las implementaciones
+\end{enumerate}
 
 \item \textbf{Jueces en línea:} Se hablará brevemente en qué consiste la programación competitiva
 y algunas ``heurísticas'' a seguir en la resolución de problemas. Al final se atacarán tres
 problemas en los lenguajes de programación Haskell y C++ usando el algoritmo KMP y la función
 de error.
+\begin{enumerate}
+    \item Diferentes jueces en línea
+    \item Problemas: Encontrar el factor de repetición de una cadena, ver si una cadena es una
+    rotación cíclica de otra, extender una cadena a un palíndromo de longitud mínima.
+\end{enumerate}
 
 \item \textbf{Conclusiones:} Se centrará en las ventajas y desventajas del razonamiento
 ecuacional en la programación funcional, se hablará sobre algunas herramientas para poder
@@ -74,16 +122,22 @@ verificar nuestros programas y se darán ideas a trabajos futuros.
 \section{Bibliografía básica}
 
 \begin{enumerate}[label={[\arabic*]}]
-\item Bird, R. (2010). Pearls of Functional Algorithm Design.
-Cambridge: Cambridge University Press.
-\item Bird, R. (2014). Thinking Functionally with Haskell. Cambridge: Cambridge University Press.
+\item Richard Bird y Jeremy Gibbons. Algorithm Design with Haskell. Cambridge University Press,
+2020. doi: 10.1017/9781108869041.
+\item Thomas H. Cormen y col. Introduction to Algorithms, Third Edition. 3rd. The MIT Press,
+2009. isbn: 0262033844.
+\item Graham Hutton. Programming in Haskell. 2nd. USA: Cambridge University Press, 2016.
+isbn: 1316626229.
+\item Wojciech Rytter Maxime Crochemore. Jewels of stringology. 1st. World Scienti- fic, 2002.
+isbn: 9789810247829,9789812778222,9810247826.
+\item QuickCheck: An Automatic Testing Tool for Haskell.
+\url{http://www.cse.chalmers. se/~rjmh/QuickCheck/manual.html.}
+\item Richard Bird. ``On building cyclic and shared structures in Haskell''. En: Formal Aspects of
+Computing 24 (jul. de 2012).
 \item Graham Hutton. ``A Tutorial on the Universality and Expressiveness of Fold''.
 En: J. Funct. Program. 9.4 (jul. de 1999), págs. 355-372.
 \url{https://doi.org/10.1017/S0956796899003500}.
-\item Richard Bird. ``On building cyclic and shared structures in Haskell''. En: Formal Aspects of
-Computing 24 (jul. de 2012).
-\item Introduction to Algorithms T. Cormen, C. Leiserson, R. Rivest, and C. Stein. The MIT Press,
-3rd Edition.
+
 \end{enumerate}
 
 \end{document}
