@@ -22,35 +22,37 @@
 \section{Resumen}
 Los algoritmos de búsqueda de subcadenas son una clase de algoritmos de cadenas que tratan de
 buscar un(os) \emph{patrón(es)} en una cadena o texto.
-Una manera ingenua de hacerlo es mediante fuerza bruta; la idea es ir 'deslizando' el patrón sobre
-el texto de izquierda a derecha, comparándolo con las subcadenas del mismo tamaño que empiezan en
-cada carácter del texto. Este proceso, en el peor de los casos, toma una complejidad de tiempo de $O(nm)$.
-% Normalmente cuando es una cadena grande se busca mejorar el desempeño del mismo. 
-El algoritmo de Knuth-Morris-Pratt (KMP) es útil para buscar un solo patrón (con longitud $m$) en un texto (de
-longitud $n$) con una complejidad en tiempo de $\Theta(n + m)$. 
+Una manera ingenua de hacerlo es mediante fuerza bruta; la idea es ir ``deslizando'' el patrón
+sobre el texto de izquierda a derecha, comparándolo con las subcadenas del mismo tamaño que
+empiezan en cada carácter del texto. Este proceso, en el peor de los casos, toma una complejidad
+de tiempo de $O(nm)$.
+
+El algoritmo de Knuth-Morris-Pratt (KMP) es útil para buscar un solo patrón (con longitud $m$) en
+un texto (de longitud $n$) con una complejidad en tiempo de $\Theta(n + m)$. 
 
 En este trabajo se abordará el algoritmo KMP centrado en la programación funcional.
-Primero se dará una especificación formal (en el lenguaje de programación \textsc{Haskell}) del algoritmo
-de fuerza bruta con complejidad $O(nm)$ y por medio de razonamiento ecuacional se busca 
-derivar el algoritmo KMP que mejora el desempeño del algoritmo anterior. % con complejidad $\Theta(n + m)$.
+Primero se dará una especificación formal (en el lenguaje de programación \textsc{Haskell}) del
+algoritmo de fuerza bruta con complejidad $O(nm)$ y por medio de razonamiento ecuacional se busca 
+derivar el algoritmo KMP que mejora el desempeño del algoritmo anterior.
 
-A diferencia de la implementación del algoritmo en una versión imperativa, usando un estilo funcional 
-se podrá enfatizar la idea principal del algoritmo al razonar en alto nivel y obtener 
+A diferencia de la implementación del algoritmo en una versión imperativa, usando un estilo
+funcional se podrá enfatizar la idea principal del algoritmo al razonar en alto nivel y obtener 
 de una manera más \textit{elegante} una implementación funcional de este. 
 En ambas versiones, la imperativa y la funcional, el algoritmo KMP tiene la misma 
 complejidad: $\Theta(n + m)$.
 
-Para el análisis anterior se desglosará la teoría necesaría para poder llevar a cabo el proceso en la
-programación funcional. También se hablará sobre una biblioteca en \textsc{Haskell} llamada 
-\textsc{QuickCheck} para probar ambas versiones con casos generados aleatoriamente.
+Para el análisis anterior se desglosará la teoría necesaría para poder llevar a cabo el proceso
+en la programación funcional. También se hablará sobre una biblioteca llamada \textsc{QuickCheck}
+para probar con casos generados aleatoriamente la implementación de fuerza bruta y KMP en
+\textsc{Haskell}.
 
-Finalmente se explicará brevemente en qué consiste la programación competitiva y los jueces en línea.
-Este tema es parte de la motivación del trabajo al retomar algunos problemas propuestos para estos concursos.
-En esta parte, usando el algoritmo KMP y la función de error (función auxiliar usada en KMP) se resolverán e
-implementarán algunos problemas populares como encontrar el factor de repetición de una cadena,
-decidir si una cadena es rotación cíclica de otra y cómo extender una cadena a un palíndromo de
-longitud mínima. Se implementarán tanto en Haskell como en C++ y se harán sus respectivas
-comparaciones.
+Finalmente se explicará brevemente en qué consiste la programación competitiva y los jueces en
+línea. Este tema es parte de la motivación del trabajo al retomar algunos problemas propuestos
+para estos concursos. En esta parte, usando el algoritmo KMP y la función de error (función
+auxiliar usada en KMP) se resolverán e implementarán algunos problemas populares como encontrar
+el factor de repetición de una cadena, decidir si una cadena es rotación cíclica de otra y cómo
+extender una cadena a un palíndromo de longitud mínima. Se implementarán tanto en \textsc{Haskell}
+como en \textsc{C++} y se harán sus respectivas comparaciones.
 
 \section{Índice tentativo}
 
@@ -76,7 +78,7 @@ algunos ejemplos y el algoritmo \textit{per se}.
     \item Algoritmo de búqueda de subcadenas ingenuo (naïve)
     \item Función de error
     \item De Morris-Pratt a Knuth-Morris-Pratt
-    \item Implementación en C++
+    \item Implementación en \textsc{C++}
 \end{enumerate}
 
 \item \textbf{Algoritmos de búsqueda de subcadenas con perspectiva en \textit{la programación
@@ -86,12 +88,12 @@ después extenderlo al algoritmo Knuth-Morris-Pratt.
 También se discutirá sobre la \textit{función de error}, función auxiliar que es usada en KMP. 
 Se hará hincapié en los teoremas y \textit{leyes} usadas en la programación funcional.
 \begin{enumerate}
-    \item Derivando Función de error
+    \item Derivando la función de error
     \item Derivando Knuth-Morris-Pratt
 \end{enumerate}
 
-\item \textbf{\textit{QuickCheck}:} Se hablará acerca de esta biblioteca en Haskell para poder
-probar las propiedades que deben cumplir las funciones, es decir, cada función tiene
+\item \textbf{\textit{QuickCheck}:} Se hablará acerca de esta biblioteca en \textsc{Haskell} para
+poder probar las propiedades que deben cumplir las funciones, es decir, cada función tiene
 propiedades deseables y usando QuickCheck se demuestra si se cumplen total o parcialmente
 estas propiedades. Una ventaja notoria de esta herramienta es que asegura que si una propiedad 
 es probada con una gran cantidad de casos generados aleatoriamente se cumplen dichas propiedades.
@@ -104,8 +106,8 @@ es probada con una gran cantidad de casos generados aleatoriamente se cumplen di
 
 \item \textbf{Jueces en línea:} Se hablará brevemente en qué consiste la programación competitiva
 y algunas ``heurísticas'' a seguir en la resolución de problemas. Al final se atacarán tres
-problemas en los lenguajes de programación Haskell y C++ usando el algoritmo KMP y la función
-de error.
+problemas en los lenguajes de programación \textsc{Haskell} y \textsc{C++} usando el algoritmo
+KMP y la función de error.
 \begin{enumerate}
     \item Diferentes jueces en línea
     \item Problemas: Encontrar el factor de repetición de una cadena, ver si una cadena es una
@@ -115,8 +117,6 @@ de error.
 \item \textbf{Conclusiones:} Se centrará en las ventajas y desventajas del razonamiento
 ecuacional en la programación funcional, se hablará sobre algunas herramientas para poder
 verificar nuestros programas y se darán ideas a trabajos futuros.
-
-%\item \textbf{Apéndices*:} Se abordarán cuestiones técnicas.
 
 \end{enumerate}
 
@@ -131,7 +131,7 @@ verificar nuestros programas y se darán ideas a trabajos futuros.
 isbn: 1316626229.
 \item Wojciech Rytter Maxime Crochemore. Jewels of stringology. 1st. World Scienti- fic, 2002.
 isbn: 9789810247829,9789812778222,9810247826.
-\item QuickCheck: An Automatic Testing Tool for Haskell.
+\item QuickCheck: An Automatic Testing Tool for Haskell.\\
 \url{http://www.cse.chalmers. se/~rjmh/QuickCheck/manual.html.}
 \item Richard Bird. ``On building cyclic and shared structures in Haskell''. En: Formal Aspects of
 Computing 24 (jul. de 2012).
