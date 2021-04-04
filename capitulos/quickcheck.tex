@@ -1,3 +1,6 @@
+\epigraph{\itshape Randomized testing exemplifies the 80/20 rule: it yields 80\% of the benefit
+of formal verification for 20\% of the effort.}{Matt Might}
+
 \QuickCheck es una biblioteca de Haskell para hacer pruebas generadas aleatoriamente que deben
 cumplir ciertas propiedades nuestros programas. El programador provee una especificación de su
 programa en la forma de propiedades las cuales las funciones deben satisfacer y, \QuickCheck prueba
@@ -13,11 +16,11 @@ de prueba y, definir los generadores de información generadores.\footnote{
 
 En esta sección se verá la importancia sobre usar \QuickCheck; tanto como una manera rápida de
 verificar ciertas propiedades que deben cumplirse en alguna implementación que se haya hecho en
-Haskell, como ventajas y desventajas sobre su uso. El porqué es útil utilizarlo y qué problemática
+Haskell, ventajas y desventajas sobre su uso. El porqué es útil utilizarlo y qué problemática
 aborda.
 
 Se verá como será utilizado en un ejemplo práctico; en este caso tanto en
-\hyperlink{funcional:funcion_error}{la versión de error} y en
+\hyperlink{funcional:funcion_error}{la funsión de error} y en
 \hyperlink{funcional:kmp}{\textit{Knuth-Morris-Pratt}} en Haskell. En ambos ejemplos se expondrá la
 versión \textit{naïve} y la versión ``optimizada'' que fue derivada mediante razonamiento
 ecuacional. Y por medio de casos generados aleatoriamente se analizará el resultado que
@@ -25,7 +28,7 @@ ecuacional. Y por medio de casos generados aleatoriamente se analizará el resul
 
 \section{Motivación}
 Hoy en día el estilo de hacer pruebas a nuestro código es mediante \textit{pruebas unitarias (unit
-testing)} en las cuales: se inveta un ``estado del mundo'', se ejecuta la prueba unitaria, se
+testing)} en las cuales; se inveta un ``estado del mundo'', se ejecuta la prueba unitaria, se
 checa si el estado modificado del ``mundo'' hace lo que debería hacer y al final se ve si todo
 sigue funcionando como se debe.
 
@@ -57,8 +60,8 @@ class AdderImpl implements Adder {
 }
 \end{minted}
 
-En este tipo de pruebas se pueden agregar gran cantidad de objetos (\textit{mock objects}) que
-simulan comporamientos o, un sinnúmero de casos prueba pero ¿cuál es el problema aquí? El código
+En este tipo de pruebas se pueden agregar gran cantidad de objetos que simulan comporamientos 
+(\textit{mock objects}) o, un sinnúmero de casos prueba pero ¿cuál es el problema aquí? El código
 anterior solo tiene 7 pruebas y no es dificil de imaginar que se pueden crear muchos más casos, o
 simplemente si se implementa otra funcionalidad el espacio de búsqueda de posibles \textit{bugs}
 crece de forma exponencial.
@@ -69,54 +72,57 @@ Claramente hacer pruebas es impráctico, pero ¿por qué usar \QuickCheck?
 de esto) con casos de prueba generados \textit{aleatoriamente}.
 \item El programador escribe propiedades a cumplir en vez de pruebas en específico.
 \item Obviamente no nos puede dar la misma seguridad de hacer pruebas exhaustivamente, pero
-es muy práctico.
+\textbf{es muy práctico}.
 \item Se puede escoger la cantidad de información que será sometida a nuestras propiedades.
 \end{itemize}
 
-%%% HASTA AQUÍ TODO LUCE BIEN!
 
-\newpage
 \section{Uso básico}
-% TODO: agregar más texto
-Consideremos el siguiente ejemplo:
+
+Consideremos la siguiente propiedad de la función \hsCode{reverse} para \textit{listas finitas}.
 \begin{minted}{haskell}
 import Test.QuickCheck
 
 prop_rev_rev :: [Int] -> Bool
-prop_rev_rev xs = reverse (reverse xs) == xsq
+prop_rev_rev xs = reverse (reverse xs) == xs
 \end{minted}
 
-% TODO: agregar más texto
-\begin{minted}{haskell}
+Después de haber importado \hsCode{Test.QuickCheck}, se carga la definición en \texttt{ghci}
+para después invocarlas
+\begin{minted}{text}
 >>> quickCheck prop_rev_rev
 +++ OK, passed 100 tests.
 \end{minted}
 
-% TODO: agregar más texto
-Para todo entero $n$, si $n$ es par entonces $n+1$ es impar. Con \QuickCheck se puede validar (mas
-no verficar formalmente) con varios números generados aleatoriamente para probar esta propiedad.
+Y aunque esta propiedad es verdadera y más adelante se muestra su demostración, se puede
+ver lo útil y práctico que es.
+% TODO: Poner prueba de StructuralInduction.pdf página 9
+
+Ahora consideremos un caso donde la propiedad falle \QuickCheck mostrará un contraejemplo.
 \begin{minted}{haskell}
->>> quickcheck (\n -> even(n) ==> odd(n + 1))
-+++ OK, passed 100 tests
-\end{minted}
-
-donde \hsCode{==>} descarta los casos que no satisfacen esa precondición
-
-Ahora consideremos un caso donde la propiedad falle. \QuickCheck mostrará un contra ejemplo. Por
-ejemplo:
-\begin{minted}{haskell}
-import Test.QuickCheck
-
 prop_wrong :: [Int] -> Bool
 prop_wrong xs = reverse xs == xs 
 \end{minted}
 
-% TODO: agregar más texto
-\begin{minted}{haskell}
+Mostrando así un caso donde no cumple la propiedad.
+\begin{minted}{text}
 >>> quickCheck prop_rev_id
 *** Failed! Falsified (after 5 tests and 3 shrinks):
 [1,0]
 \end{minted}
+
+\noindent\rule{\textwidth}{1pt}
+
+Veamos otro ejemplo, para todo entero $n$, si $n$ es par entonces $n+1$ es impar. Aunque la
+demostracióon es trivial, con \QuickCheck se puede validar (mas no verficar formalmente) con
+varios números generados aleatoriamente para probar esta propiedad.
+\begin{minted}{haskell}
+>>> quickCheck (\n -> even n ==> odd(n + 1))
++++ OK, passed 100 tests
+\end{minted}
+
+donde \hsCode{==>} es una propiedad condicional que descarta los casos que no satisfacen esa
+precondición.
 
 Cuando se escriben propiedades;
 \begin{itemize}
@@ -127,39 +133,86 @@ la última y más importante es que las funciones polimórficas deben de estar r
 en específico.
 \end{itemize}
 
+
 \section{Generadores}
+
+Aunque \QuickCheck puede generar algunos valores aleatorios para algún tipo ímplicitamente, hay
+ocaciones que se necesita nuestros propios valores aleatorios. Es aquí cuando se debe escribir
+una instancia de \hsCode{Arbitrary} para esto. Los valores que se ocupan en la pruebas son
+producidos por los \textit{generadores de valores}.
+
+Los Generadores tienen tipos de la forma \hsCode{Gen a} que es un generador de valores para
+un tipo \hsCode{a}. El tipo \hsCode{Gen} es una mónada, así que se puede utilizar la notación 
+\hsCode{do} y las funciones monádicas pueden ser utilizadas para definir generadores.
+
+Veamos el siguiente ejemplo; consideremos el tipo de dato algebraico \hsCode{Point} donde
+representa un punto en un espacio bidimensional. Lo que se quiera hacer es generar puntos
+con coordenadas $x$ y $y$ aleatoriamente.
+
+\begin{minted}{haskell}
+data Point = Point Int Int
+
+instance Arbitrary Point where
+  arbitrary = do
+    x <- arbitrary
+    y <- arbitrary
+    return (Point x y)
+\end{minted}
+
+donde \hsCode{arbitrary :: Gen a} es un generator para valores de un cierto tipo, y que en este
+caso son de tipo \hsCode{Int}.
 
 \section{Probando las implementaciones}
 
-% TODO: ver si quito esto
-Es aquí cuando las versiones naïve y las obtenidadas por medio de razonamiento ecuacional,
-tanto en la \hyperlink{funcional:funcion_error}{versión de error} como en
+Es aquí cuando las versiones \emph{naïve} y las obtenidadas por medio de razonamiento ecuacional,
+tanto en la \hyperlink{funcional:funcion_error}{función de error} como en
 \hyperlink{funcional:kmp}{\textit{Knuth-Morris-Pratt}} son probadas uno a uno con diferentes casos
-prueba. % TODO: poner algo más aquí.
+prueba en Haskell.
 
-\subsection{Mónada \texttt{Gen}: un combinador para construir generadores aleatorios}
+Al hacer los casos prueba usando el tipo \hsCode{String} es poco probables tener
+\textit{una buena disctribución} de los caracteres que comprende la cadena y, en especial en probar
+el algoritmo KMP con las cadenas del patrón y texto. Si por ejemplo restringimos las cadenas
+a que solo contengan caracteres ASCII aún así no serían muy útiles en las pruebas. Consideremos
+el siguiente ejemplo.
 
-\subsection{Definiendo un generador}
+\begin{minted}{haskell}
+>>> sample $ vectorOf 10 arbitraryASCIIChar
+\end{minted}
+La función \hsCode{sample :: Show a => Gen a -> IO ()} genera algunos valores de ejemplo y los
+imprime en la slaida estándar. Si se toma un valor que se imprimió que por ejemplo sería
+\mintinline{text}|"\t\n]*]i_\fm\SYN"| se ve que no es muy útil para nuestro propósito. Pero
+¿no sería más mejor definir nuestros propios valores aleatorios?
 
-% TODO: explicar mejor esto.
-\hsCode{vectorOf :: Int -> Gen a -> Gen [a]} Genera una lista de una longitud dada.
-\hsCode{chooseInt :: (Int, Int) -> Gen Int} Genera un elemento aleatorio dado un rango inclusivo.
-
-\hsCode{elements :: [a] -> Gen a} Genera un elemento de los valores dados. La lista debe ser no vacía.
-
+Analicemos los generadores para la función de error:
 \newpage
 \inputminted[frame=lines, framesep=10pt, linenos]{haskell}
     {codigo/haskell/test-failure-function.hs}
+
+\begin{itemize}
+\item En la línea \texttt{3} y \texttt{4}
+\item En la línea \texttt{6}
+\item En la línea \texttt{8}
+\item En la línea \texttt{11}
+\item En la línea \texttt{17}
+\item En la línea \texttt{22} y \texttt{23}
+\item \hsCode{vectorOf :: Int -> Gen a -> Gen [a]} Genera una lista de una longitud dada.
+\item \hsCode{chooseInt :: (Int, Int) -> Gen Int} Genera un elemento aleatorio dado un rango inclusivo.
+\item \hsCode{elements :: [a] -> Gen a} Genera un elemento de los valores dados. La lista debe ser no vacía.
+\end{itemize}
+
+% TODO: poner lo que imprimio y poner algun sample de la función de error
+
+% TODO: acabar el ejemplo de abajo
 \newpage
 \inputminted[frame=lines, framesep=10pt, linenos]{haskell}
     {codigo/haskell/test-matching.hs}
+\begin{itemize}
+\item En la línea \texttt{3}, \texttt{4}, \texttt{5} y \texttt{6}
+\item En la línea \texttt{8}
+\item En la línea \texttt{11}
+\item En la línea \texttt{19}
+\item foo %TODO: poner en todos los "prop"
+\end{itemize}
 
-% TODO: explicar aquí porque ttomé lo del ARN
 
-% TODO: completar con información de aquí
-% \footnote{TODO \url{https://en.wikipedia.org/wiki/Nucleic_acid_sequence}.}
-% http://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html
-% https://www.dcc.fc.up.pt/~pbv/aulas/tapf/handouts/quickcheck.html
-% http://www.scs.stanford.edu/11au-cs240h/notes/testing-slides.html#(14)
-% https://hackage.haskell.org/package/QuickCheck-2.14.2/docs/Test-QuickCheck.html#g:5
-% http://matt.might.net/articles/quick-quickcheck/
+% TODO: revisar si lo que escribí hace sentido.
