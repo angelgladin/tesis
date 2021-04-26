@@ -183,24 +183,98 @@ imprime en la slaida estándar. Si se toma un valor que se imprimió que por eje
 \mintinline{text}|"\t\n]*]i_\fm\SYN"| se ve que no es muy útil para nuestro propósito. Pero
 ¿no sería más mejor definir nuestros propios valores aleatorios?
 
-Analicemos los generadores para la función de error:
+\hfill \break
+En los generadores presentados a continuación en la función de error y el algoritmo KMP es
+bastante usual que se trabaje sobre alfabeto finito $\Sigma$; puede ser sobre las letras del
+alfabeto $\Sigma = \{ \texttt{a} \ldots \texttt{z} \}$, un alfabeto binario $\Sigma = \{ 0, 1 \}$
+o un alfabeto de ADN donde $\Sigma = \{ \texttt{A,C,G,T} \}$.
+
 \newpage
 \inputminted[frame=lines, framesep=10pt, linenos]{haskell}
     {codigo/haskell/test-failure-function.hs}
 
 \begin{itemize}
-\item En la línea \texttt{3} y \texttt{4}
-\item En la línea \texttt{6}
-\item En la línea \texttt{8}
-\item En la línea \texttt{11}
-\item En la línea \texttt{17}
-\item En la línea \texttt{22} y \texttt{23}
-\item \hsCode{vectorOf :: Int -> Gen a -> Gen [a]} Genera una lista de una longitud dada.
-\item \hsCode{chooseInt :: (Int, Int) -> Gen Int} Genera un elemento aleatorio dado un rango inclusivo.
-\item \hsCode{elements :: [a] -> Gen a} Genera un elemento de los valores dados. La lista debe ser no vacía.
+\item En la línea \texttt{3} y \texttt{4} se importan los módulo de la versión de error, tanto
+la versión que tiene complejidad $O(n^3)$ y $\Theta(n)$ respectivamente que proveerán la función
+\hsCode{ptable} que es la función de error.
+\item En la línea \texttt{6} del módulo \hsCode{Data.Array} solo se importa la función\\
+\hsCode{elems :: Array i e -> [e]} para obtener una lista de elementos del arreglos en el orden
+indexado.
+\item En la línea \texttt{8} se hace una envoltura (\emph{wrapper}) para un \hsCode{String} con el
+constructor \hsCode{S}. Éste será usado para poder usar la instancia de \hsCode{Arbitrary}.
+
+Mucho mejor definir un nuevo tipo isomorfo a (en este caso) \hsCode{String} y así poder definir
+su generador por defecto para éste para usos específicos.
+\item En la línea \texttt{11} a \texttt{15}, para poder usar \hsCode{arbitrary} es el tipo
+\hsCode{Pattern} definido por nosotros, se necesita declar como instancia de \hsCode{Arbitrary}.
+En la línea \texttt{12} por medio de la notación \hsCode{do} cada línea será un valor monádico,
+primero se liga el valor \hsCode{size} a un número aleatorio entre 1 y 1000 con\\
+\hsCode{chooseInt :: (Int, Int) -> Gen Int} que genera un elemento aleatorio dado un rango
+inclusivo, acto seguido se liga la variable \hsCode{text} con una cadea del tamaño de la variable
+\hsCode{size} sobre un alfabeto de la letra \hsCode{'a'} a la \hsCode{'z'} con
+\hsCode{vectorOf :: Int -> Gen a -> Gen [a]} que genera una lista de una longitud dada. Finalmente
+con la función \hsCode{return} pone el resultado en un contexto monádico.
+\item En la línea \texttt{17} no es necesario que sea instancia de \hsCode{Show}, pero con
+\hsCode{verboseCheck} en \hsCode{QuickCheck} es útil para poder mostar los casos prueba.
+\item De la línea \texttt{22} y \texttt{24}
+% TODO: explicarlo propiamente que es eso de que requresa bool y lo que saco del constructor
+% poner como se llama lo que hace let e iin
+en la línea se transforma lo que devuelve la función \hsCode{ptable} a una lista de tipo
+\hsCode{[(Char, Int)]} donde la $i$-ésima posición donde la primera entrada es el $i$-ésimo caracter
+de la cadena de  y la segunda entrada es la $i$-ésima posiición de la función de error.
+En la línea \texttt{23}, lo que regresa \hsCode{FailureFunctionOptimizedp.ptable} regresa
+\hsCode{Array Int (a, Int)} pero con la función \hsCode{A.elems} se obtiene un lista que finalmente
+en la línea \texttt{24} see compara que ambas listas sean iguales.
 \end{itemize}
 
-% TODO: poner lo que imprimio y poner algun sample de la función de error
+% TODO: ver si ocupo esto: \hsCode{elements :: [a] -> Gen a} Genera un elemento de los valores dados. La lista debe ser no vacía.
+
+\texttt{\$ runhaskell test-matching.hs}
+
+\begin{minted}{text}
+Testing NaiveMatching with MP1...
++++ OK, passed 100 tests.
+Testing MP1 with MP2...
++++ OK, passed 100 tests.
+Testing MP2 with KMP...
++++ OK, passed 100 tests.
+Testing NaiveMatching with KMP...
++++ OK, passed 100 tests.
+\end{minted}
+
+\begin{minted}{text}
+Passed:
+jwvtllqfgknosijmqccjmpwrfjjbaxgqakfhkxvhwjgukoeoipneicodymknicywsrwjwiz
+rzoeufakcwyojquaugelxiujdbrexedtmsqhoofquvrucbvvwmjpbeeamiajfrrruvwjixl
+pvrrntqyxyopxyoynhpghrknnrikcukgyjamnngkytmqmdmydzqeendgktbltsfdqwhjfhn
+cnroyrelnsskwereataldovaxpneqmvnjaxengwvlknppfzrlmvpyeatvhvbatesajcfpcf
+upltdezxedaggbhavklpiyjzwk
+
+Passed:
+ovfpnmsesopulhcnpjzhsubeuwfsrvcrktozf
+
+Passed:
+lgcnmiwzyvtlkpsuukuemwawrdptrulmchwmtqkknymyfnyurmobjhgkpcfrxbxfxhjerks
+mehenlcjjwbbkzhxdotgxwasmxgwpmsnhlsoyfshqclxscaxytdwywxozhvqpbkshf
+
+Passed:
+wmdtscgkwkkuuxwqmmvdexwvtdplthvgtjbcacxmnncqlnzhfnskrfaynnvcogyqllfkzcc
+gwtuyjxlstlrvphafeajgjwwahyqnqgfutvtsfqeqiulljouzkjgvtwgrrnhfpznugyawox
+ypqwiubmkylfhrwnbdfkhbnnqpnrmebivpbypkswtnrrmitdgxwqjmfoetqhwuqbbghvmko
+wscxbzdl
+
+Passed:
+ruhtwpwesozzglmsvzzshonujhutwjkagfhzbdvsdiczpeuzxgwmkugjgpbynlp
+
+...
+...
+...
+
++++ OK, passed 100 tests.
+
+\end{minted}
+
+% TODO: poner que cambié a verboseCheck
 
 % TODO: acabar el ejemplo de abajo
 \newpage
@@ -214,5 +288,91 @@ Analicemos los generadores para la función de error:
 \item foo %TODO: poner en todos los "prop"
 \end{itemize}
 
+\begin{minted}{text}
+Testing NaiveMatching with MP1...
+Passed:
+Pattern:GCCGAACCATCGAGTGTATC
+Text:TAAGACAATTCAACTCCGAGCTGCGCGGCGCAGTTTGTCACAGTGTGGGGGTGGCAGCTACCCCCTAAG
+CGTTATTTATTGGTGTACGCTGAGTATCACAATATTCCACCACCCTCCGTTATGGTTAGTTGATAGAAATTCGA
+CCGATGTTTGATTCTTCTAAAGCCAGTGTAACTGCGGATAAGCTGGCTTGG
+
+Passed:
+Pattern:CCA
+Text:TGCATTAGCGGGTGAGGAGCTCTACGCTTCGCTTTCAGCTTTAAACGATTATGTGCGGTCACCCCAATT
+GTCTTATGATGGCCAATATTTCGTCAGTACCACTTCAGTGGCATGACTGAGTGACGCA
+
+Passed:
+Pattern:C
+Text:CACCACGCCGATTCCTGGTCGTTACCTTAGCCAAATAGACTTAAGTGTTGCTTGACCTGTC
+
+Passed:
+Pattern:CGTTGTG
+Text:GGGTATCATGACTCCGAAGGATTTGTGACGTTGTGAGGATTTACACCCCGTGAGTCGATCTTTCCTGGT
+CTTGATGATGAGATGCGGCACGAAGGTAGGGACTACTTAAGAGGGTCGCTCAAGTAGGATCTGGACGTGTACAG
+ACTATCACACCTCTCGCGCCGTACTACTGTTAATCCCCTCTCTCTTGCCATCTGAGCTAGCGCTCAGCTCGATA
+TTTGTTTTATA
+
+Passed:
+Pattern:AG
+Text:AAAAGCGGAACTCAATCTGCCAAGCGCCCGAGCACCTGTGGCCTCGCACTGTGGTGGCGAAGTGTTAAG
+GCATGAACCTTATGCCGTAGCAACTTGCACACATACTTTGCATCTAACCTCCACTTAATCCGCGGCGATTGCAT
+
+...
+...
+...
+
++++ OK, passed 100 tests.
+
+Testing MP1 with MP2...
+Passed:
+Pattern:TACGCTTCCGCCTCGTAT
+Text:GGTTGCTACACCCCGTCTGCCACCGATACATGGTAGCACTACTTAGCTATGGAGTCCGAAAGAAACCAG
+GTATCCGGTAGAATGGATTTAGCGAGGTAATAGGGTCCAGCTTTCAAGCTCAACCCATC
+
+Passed:
+Pattern:AGG
+Text:CCCGGCTATTGTCCCAAAGCATGATCATAACTTCAAGCTGTGTCCCCTTCTCAGTCGGACAGCGCTAGA
+ATCCGCCCGTAGGCAGAACGAAGTGATCGATTTACAGTGTTTTGAAAAGGCCGTCCTGAAACACGCGTCTGTTA
+TGTAATTGTGGTATCTTCTACTAGATTTGTGTCATCA
+
+...
+...
+...
+
++++ OK, passed 100 tests.
+
+Testing MP2 with KMP...
+Passed:
+Pattern:CCC
+Text:CCTCGACAACAGGTATTCAAGTGTGCATCCATCTTATAGAAGTACATTCAATAACCGTCTAAGCTGCTG
+
+Passed:
+Pattern:CGG
+Text:AGGCCAGAGCCATTGAACTGAAGAAATAAAGCGTGGCACGACGCACCACCTGCCGCATCTCTCGGCGCA
+CACGTTGTGTCTGTGTCCGGTAAAAAATACATATAATCCATACATGTT
+
+...
+...
+...
+
++++ OK, passed 100 tests.
+
+Testing NaiveMatching with KMP...
+Passed:
+Pattern:CCGCATCTGGAGTGG
+Text:TCCTGACGGATGAATAGTCTGCCCGACGATTCTTGCTTGACTGCTTATGGTGGTACACTCGTAGAGGGT
+GGGGACGTGCTTCAGACCTTAACAGCTTATCGTCTCTGTGTGAACGGTACACGCGACGATACATCGTCCGTAGG
+ATTTGCACGGGCGTTCCGCATCTGGAGTGGCTAGATTCAGTTGTAA
+
+Passed:
+Pattern:TCA
+Text:TCGGAAGGCGACGAGTGCGATAAGAGTCAGCAATAGTTGTGCCTAAGCCATATGATGCCAGACCGCCGTCATCACTCTCGTAGTCAGGCACTTGAGCTTAAGGTTATCAATTTATCGGGTATTTTTGACATGGCAGGTAAGGGGGATCGCTTTAGCATGTTAGTAACCCGAAAGACATGATTTTGACATCTCACACGTAGTTATGGAAGCAACTGCCCTACGGCTCCAGGCGAGCCAACTGCGCCTAGTGGGTGTGCCTGCGCTTAACGACCACTGATTGGTTAGTCTGATCCACGAGGGCGGCCAAGGACAAGCATAGACCTGGGCCCCCCTCGGTGCGGCACTAAGATATATCCTGATGGACCACCGATATTTTAATGTGGGCACCTACAGGATTCATATGTCAATTATACGATAGATAAAGGATGACCGGGACACACATCGA
+
+...
+...
+...
+
++++ OK, passed 100 tests.
+\end{minted}
 
 % TODO: revisar si lo que escribí hace sentido.
