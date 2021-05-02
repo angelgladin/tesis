@@ -1,5 +1,4 @@
 import           Test.QuickCheck
-
 import qualified KMP
 import qualified MP1
 import qualified MP2
@@ -10,10 +9,10 @@ data TextPattern =
 
 instance Arbitrary TextPattern where
   arbitrary = do
-    textSize <- chooseInt (1, 1000)
+    textSize    <- chooseInt (1, 1000)
     patternSize <- chooseInt (1, 20)
-    text <- vectorOf textSize $ elements "GACT"
-    pattern_ <- vectorOf patternSize $ elements "GACT"
+    text        <- vectorOf textSize $ elements "GACT"
+    pattern_    <- vectorOf patternSize $ elements "GACT"
     return (S pattern_ text)
 
 instance Show TextPattern where

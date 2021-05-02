@@ -35,7 +35,7 @@ sigue funcionando como se debe.
 
 A continuación se muestra un conjunto de aserciones (\texttt{assert}) en Java para ejemplificar
 la idea. Una aserción puede ser utilizada para verificar si una suposición hecha durante la
-implementación del programa se mántiene válida cuando el programa es ejecutado.
+implementación del programa se mantiene válida cuando el programa es ejecutado.
 
 \begin{minted}[frame=lines, framesep=10pt, linenos]{java}
 class TestAdder {
@@ -81,24 +81,21 @@ aún usar un asistente de pruebas. Pero \textbf{es muy práctico}.
 
 \section{Uso básico}
 
-Consideremos la siguiente propiedad de la función \hsCode{reverse} para \textit{listas finitas}.
+Consideremos la siguiente propiedad para \textit{listas finitas} que es una función.
 \begin{minted}{haskell}
-import Test.QuickCheck
-
 prop_rev_rev :: [Int] -> Bool
 prop_rev_rev xs = reverse (reverse xs) == xs
 \end{minted}
 
-Después de haber importado el módulo \hsCode{Test.QuickCheck}, se cargan las funciones en 
-\texttt{ghci} para después invocarlas. Es ente caso se usará la función\\
-\hsCode{quickCheck :: Testable prop => prop -> IO ()}.
+Después de haber importado el módulo \hsCode{Test.QuickCheck} en \texttt{ghci}, se prueba con 100
+listas aleatorias con \hsCode{quickCheck :: Testable prop => prop -> IO ()}.
 \begin{minted}{text}
 >>> quickCheck prop_rev_rev
 +++ OK, passed 100 tests.
 \end{minted}
 
 Y aunque esta propiedad es verdadera (y que se demostrará enseguida) se puede ver lo útil y
-práctico que es.
+práctico que es \QuickCheck en este ejemplo.
 
 \begin{proof}
 Por inducción estructural sobre listas. Demostrar que,\\
@@ -218,7 +215,7 @@ precondición.
 
 Cuando se escriben propiedades:
 \begin{itemize}
-\item Las propiedades simples funciones booleanas.
+\item Las propiedades son simples funciones booleanas.
 \item La conveción es que los nombres de las propiedades tienen el prefijo \hsCode{prop_}.
 \item Los parámetros están ímplicitamente cuantificados con un cuantificador universal $\forall$ y
 la última y, más importante es que las funciones polimórficas deben de estar restringidas a un tipo
@@ -228,7 +225,7 @@ en específico.
 \section{Generadores}
 
 Aunque \QuickCheck puede generar algunos valores aleatorios para algún tipo ímplicitamente, hay
-ocaciones que se necesita nuestros propios valores aleatorios. Es aquí cuando se debe escribir
+ocaciones que se necesitan nuestros propios valores aleatorios. Es aquí cuando se debe escribir
 una instancia de \hsCode{Arbitrary} para esto. Los valores que se ocupan en la pruebas son
 producidos por los \textit{generadores de valores}.
 
@@ -264,13 +261,13 @@ Al hacer los casos prueba usando el tipo \hsCode{String} es poco probables tener
 \textit{una buena disctribución} de los caracteres que comprende la cadena y, en especial en probar
 el algoritmo KMP con las cadenas del patrón y texto. Si por ejemplo restringimos las cadenas
 a que solo contengan caracteres ASCII aún así no serían muy útiles en las pruebas. Consideremos
-la siguiente muestra.
+el siguiente muestreo.
 
 \begin{minted}{haskell}
 >>> sample $ vectorOf 10 arbitraryASCIIChar
 \end{minted}
 La función \hsCode{sample :: Show a => Gen a -> IO ()} genera algunos valores de ejemplo y los
-imprime en la salida estándar. Si se toma algún valor que se imprimió que por ejemplo sería
+imprime en la salida estándar. Si se toma algún valor que se imprimió, que por ejemplo sería
 \mintinline{text}|"\t\n]*]i_\fm\SYN"| se ve que no es muy útil para nuestro propósito. Pero
 ¿no sería más mejor definir nuestros propios valores aleatorios?
 
@@ -278,11 +275,12 @@ imprime en la salida estándar. Si se toma algún valor que se imprimió que por
 En los generadores presentados a continuación en la función de error y el algoritmo KMP es
 bastante usual que se trabaje sobre alfabeto finito $\Sigma$; puede ser sobre las letras del
 alfabeto inglés $\Sigma = \{ \texttt{a} \ldots \texttt{z} \}$, un alfabeto binario
-$\Sigma = \{ 0, 1 \}$ o un alfabeto de ADN donde $\Sigma = \{ \texttt{A,C,G,T} \}$.
-De esta manera, se restringen los caracteres tomados con respecto a algún alfabeto.
+$\Sigma = \{ 0, 1 \}$ o un alfabeto de ADN donde $\Sigma = \{ \texttt{A,C,G,T} \}$ por mencionar
+algunos. De esta manera, se restringen los caracteres tomados con respecto a algún alfabeto
+definida por nosotros.
 
-A continuación se mostrará como restringir las cadenas generadas sobre algún alfabeto, así como
-su longitud e implementación.
+A continuación se mostrará como restringir las cadenas generadas sobre algún alfabeto y su
+su longitud, con su respectiva implementación.
 
 \newpage
 \subsubsection{Función de error}
@@ -294,14 +292,14 @@ su longitud e implementación.
 la versión que tiene complejidad $O(n^3)$ y $\Theta(n)$ respectivamente, que proveerán la función
 \hsCode{ptable} que es la función de error.
 \item En la línea \texttt{6} del módulo \hsCode{Data.Array} solo se importa la función\\
-\hsCode{elems :: Array i e -> [e]} para obtener una lista de elementos del arreglos en el orden
+\hsCode{elems :: Array i e -> [e]} para obtener una lista de elementos del arreglo en el orden
 indexado.
-\item En la línea \texttt{8} se hace una envoltura (\emph{wrapper}) para un \hsCode{String} con el
+\item En la línea \texttt{8} se hace un \emph{wrapper} para \hsCode{String} con el
 constructor \hsCode{S}. Éste será usado para poder usar la instancia de \hsCode{Arbitrary}.
 Es mucho mejor definir un nuevo tipo isomorfo a (en este caso) \hsCode{String} y así poder definir
 su generador para este caso en específico.
-\item En la línea \texttt{11} a \texttt{15}, para poder usar \hsCode{arbitrary} es el tipo
-\hsCode{Pattern} definido por nosotros, se necesita declar como instancia de \hsCode{Arbitrary}.
+\item En la línea \texttt{11} a \texttt{15}, para poder usar \hsCode{arbitrary} en el tipo
+\hsCode{Pattern} definido por nosotros, se necesita declarar como instancia de \hsCode{Arbitrary}.
 En la línea \texttt{12} por medio de la notación \hsCode{do} cada línea será un valor monádico,
 primero se liga el valor \hsCode{size} a un número aleatorio entre 1 y 1000 con\\
 \hsCode{chooseInt :: (Int, Int) -> Gen Int} que genera un elemento aleatorio dado un rango
@@ -311,16 +309,16 @@ inclusivo, acto seguido se liga la variable \hsCode{text} con una cadena del tam
 ser no vacía), y así con\\
 \hsCode{vectorOf :: Int -> Gen a -> Gen [a]} que genera una lista de una longitud dada. Finalmente
 con la función \hsCode{return} pone el resultado en un contexto monádico.
-\item En la línea \texttt{17} no es necesario que sea instancia de \hsCode{Show}, pero con
+\item En la línea \texttt{17} no es necesario que sea instancia de \hsCode{Show}, pero cuando se usa
 \hsCode{verboseCheck} en \hsCode{QuickCheck} es útil para poder mostar los casos prueba.
 \item De la línea \texttt{20} a la \texttt{24} primero se extrae la cadena \hsCode{as} del
-constructor \hsCode{S}. Después en la expresión \hsCode{let ... in ...} primero en la línea
+constructor \hsCode{S}. Después en la expresión \hsCode{let ... in ...} en la línea
 \texttt{22} se transforma lo que devuelve la función \hsCode{ptable} a una lista de tipo
 \hsCode{[(Char, Int)]} donde la $i$-ésima posición donde la primera entrada es el $i$-ésimo
 caracter de la cadena y la segunda entrada es la $i$-ésima posición de la función de error.
 En la línea \texttt{23}, lo que regresa \hsCode{FailureFunctionOptimizedp.ptable} regresa
-\hsCode{Array Int (a, Int)} pero con la función \hsCode{A.elems} se obtiene un lista que finalmente
-en la línea \texttt{24} see compara que ambas listas sean iguales.
+\hsCode{Array Int (a, Int)} pero con la función \hsCode{A.elems} se obtiene un lista, que
+finalmente en la línea \texttt{24} se compara que ambas listas sean iguales.
 \item Finalmente en la función \hsCode{main} es donde con ayuda de la función \hsCode{quickCheck}
 se hará la prueba de las propiedades y se mostrará el resultado en la salida estándar.
 \end{itemize}
@@ -332,7 +330,7 @@ se utilizará \texttt{runhaskell} de la siguiente manera:
 
 \noindent\rule{\textwidth}{1pt}
 Para poder visualizar algunos valores con los que fueron probadas ambas funciones, en vez de
-usar \hsCode{quickCheck} se utiliza \hsCode{verboseCheck}.
+usar \hsCode{quickCheck} se utilizó \hsCode{verboseCheck}.
 
 \begin{minted}{text}
 Running failure function tests...
@@ -372,11 +370,15 @@ ruhtwpwesozzglmsvzzshonujhutwjkagfhzbdvsdiczpeuzxgwmkugjgpbynlp
     {codigo/haskell/test-matching.hs}
 % TODO: ya solo me falta explicar esto
 \begin{itemize}
-\item En la línea \texttt{3}, \texttt{4}, \texttt{5} y \texttt{6}
-\item En la línea \texttt{8}
-\item En la línea \texttt{11}
-\item En la línea \texttt{19}
-\item XDDDD
+\item En la línea \texttt{7} se declara un nuevo tipo de dato \hsCode{TextPattern} que encapsulará
+el texto y el patrón a buscar.
+\item De la línea \texttt{10} a la \texttt{16} se declara como una instancia de \hsCode{Arbitrary}.
+La diferencia a notar con el código anterior, es el alfabeto sobre el cual se generarán las cadenas
+que aquí es $\Sigma = \{ \texttt{A,C,G,T} \}$. Y que son dos cadenas las generadas.
+\item En cada una de las funciones que su nombre tiene de prefijo \hsCode{prop_matches} se
+compara cada una de las implementaciones de buscar un patrón en un texto, se compara desde la
+versión naïve contra versión Morris-Pratt y Knuth-Morris-Pratt.
+\item Finalmente en la línea \texttt{34} se hace las pruebas de cada una de las funciones. 
 \end{itemize}
 
 Para ejecutar las pruebas se pueden hacer directamente en \texttt{ghci}, pero en este caso
@@ -386,7 +388,7 @@ se utilizará \texttt{runhaskell} de la siguiente manera:
 
 \noindent\rule{\textwidth}{1pt}
 Para poder visualizar algunos valores con los que fueron probadas ambas funciones, en vez de
-usar \hsCode{quickCheck} se utiliza \hsCode{verboseCheck}.
+usar \hsCode{quickCheck} se utilizó \hsCode{verboseCheck}.
 
 \begin{minted}{text}
 Testing NaiveMatching with MP1...
