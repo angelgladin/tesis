@@ -21,7 +21,6 @@ clean:
 	-rm -f *.bcf
 	-rm -f *.blg
 	-rm -f *.out
-	-rm -f make/bib
 
 deep-clean: clean
 	-rm -fr _minted-${TEX_MAIN_FILE}
