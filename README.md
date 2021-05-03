@@ -20,8 +20,9 @@ TODO
 
 ### Ambiente
 
+* [LaTeX](https://www.latex-project.org/get/)
+* [latexmk](https://mg.readthedocs.io/latexmk.html): `Latexmk, John Collins, 17 Jan. 2018. Version 4.55`
 * [pygmentize](https://pygments.org/): `Pygments version 2.2.0, (c) 2006-2017 by Georg Brandl.`
-* [pdfTeX](https://www.latex-project.org/get/): `3.14159265-2.6-1.40.19 (TeX Live 2018)`
 
 > :warning: Como se hace uso del paquete de 
 > [minted](https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted) en LaTeX, es
@@ -52,6 +53,9 @@ reglas para compilar y limpiar el proyecto.
 > [LaTeX Workshop](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop) 
 > (la cual creo que es la manera más sencilla y útil) ya que no lo tengo que estar compilando de 
 > manera manual con `make`.
+>
+> Algunas veces al usar LaTeX Workshop hay problemas al utilizar `minted` pero
+> [aquí](https://wusun.name/blog/2019-01-17-minted-vscode/) explica cómo resolverlo.
 
 ### Estilo del código
 

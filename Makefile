@@ -1,8 +1,7 @@
-TEX := pdflatex
+TEX := latexmk
 
 TEX_MAIN_FILE := tesis
-TEX_FLAGS := --shell-escape -synctex=1 -interaction=nonstopmode -file-line-error -recorder
-
+TEX_FLAGS := --shell-escape -synctex=1 -interaction=nonstopmode -file-line-error -pdf 
 
 all: compile
 
@@ -21,7 +20,8 @@ clean:
 	-rm -f *.bcf
 	-rm -f *.blg
 	-rm -f *.out
+	-rm -f *.fdb_latexmk
 
 deep-clean: clean
-	-rm -fr _minted-${TEX_MAIN_FILE}
+	-rm -rf _minted-${TEX_MAIN_FILE}
 	-rm ${TEX_MAIN_FILE}.pdf
