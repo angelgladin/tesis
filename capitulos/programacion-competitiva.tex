@@ -1,21 +1,114 @@
-\label{chap:jueces}
+\label{chap:prog_competitiva}
+\epigraph{\itshape Talk is cheap. Show me the code.}{Linus Torvalds}
 
-En esta sección se resolverán 2 problemas relacionados con \textit{string matching} usando el
-algoritmo KMP y la función de error de la que se habló en el capítulo 4. Se resolverán los
-problemas usando C++ y Haskell y se compararán ambas versiones.
+Cuando se habla acerca del término `programación competitiva' se refiere a: ``Dados problemas
+bien conocidos en Ciencias de la Computación, ¡resolverlos tan pronto como sea posible!''.
+\cite{halim2013competitive} Otras personas suelen llamarlo un deporte mental.
 
-Es un estándar que las especifiaciones del problema estén en inglés.
+Desglosemos el significado término por término. El término `problemas bien conocidos en Ciencias de
+la Computación', implica que en programación competitiva se está trantando con problemas que
+ya han sido resultos y \textbf{no} con problemas de investigación o abiertos (donde las
+soluciones siguen siendo desconocidas). El término `resolverlos' implica que se debe usar nuestro
+conocimiento en Ciencias de la Computación a un nivel en el que se produzca código que funcione y
+que resuelva el problema también, al menos en el contexto de obtener la misma \textit{salida} que
+el autor del problema, usando el conjunto de información secreta\footnote{
+    Se refiere a que se esconde cierta información de la especificación del problema. La
+    programación competitiva fomenta a quienes resuelven los problemas ejercitar su fortaleza
+    mental en pensar en todos los posibles casos extremos en sus problemas y probar sus programas
+    con ésos casos}
+de entrada de prueba, dentro de un tiempo estipulado. La necesidad de resolver el problema `tan
+pronto como sea posible' es donde entra el elemento de competitividad ``la velocidad es un
+meta muy natural en el comporamiento humano''. \par
 
-%% TODO: Explicar los constraints
+En concursos de la ICPC\footnote{
+    \say{La Competición Internacional Universitaria de Programación (en inglés International
+    Collegiate Programming Contest, abreviado \textbf{ICPC}) es una competición anual de
+    programación y algorítmica entre universidades de todo el mundo, donde prima el trabajo en
+    equipo, el análisis de problemas y el desarrollo rápido de software.}\cite{eswiki:135765381}
+} o IOI\footnote{
+    \say{La Olimpiada Internacional de Informática es una más de las Olimpiadas Internacionales
+    de Ciencias, que tiene como objetivo potenciar el aprendizaje de la informática en alumnos de
+    secundaria y preparatoria (nivel medio y medio superior). Los problemas de esta competición
+    están orientados a los algoritmos.}\cite{eswiki:125950903}
+} (por mencionar algunos de los concursos más importantes) a los concursantes se les da un conjunto
+de problemas entre 5 a 12 problemas de diferentes tipos; \emph{ad hoc}, búsqueda
+completa, \emph{divide y vencerás}, \emph{greedy}, \textbf{programación dinámica}, teoría
+de gráficas, matemáticas (teoría de números, probabilidad, teoría de juegos, etc), procesamiento
+de cadenas, geometría computacional y algunos tópicos raros/avanzados (en general problemas NP).
+Y esto por mencionar alguna clasificación, que sin dudarlo se podrían agregar más o entrar más a
+detalle.
 
-\section{SPOJ}
+% TODO revisar: Análisis del algoritmo
+\section{Análisis del algoritmo}
+Siempre que se diseña el algoritmo para un problema en particular de una competencia uno debe
+preguntarse lo siguiente: dados los límites de los datos de entrada, el algoritmo que se diseñó
+¿pasará las restricciones de tiempo y espacio dados?
+Esto es porque puede que haya varias formas de atacar el problem, desde hacerlo de una manera
+incorrecta, hasta resolverlo de una manera óptima o que solo sea lo ``suficientemente buena''.
+Una buena estrategia a seguir es \textbf{tomar la solución más simple que funcione}, es decir,
+lo ``suficientemente buena'' para que solucione (y se acepte) el problema.
+
+Una regla empírica que usada, es que las computadoras de hoy en día pueden procesar hasta cien
+millones de operaciones (ó $10^8$) en \textit{unos pocos segundos}. Y justo esa información es la
+que se usa para saber si el algoritmo diseñado se ejecutará en ese tiempo.
+
+Por ejemplo, si el tamaño $n$ máximo de la entrada es $100K$ (ó $10^5$), y el algoritmo que fue
+diseñado o usado tiene una complejidad de $O(n^2)$, entonces se tendría que $10^{10}$ es un número
+\emph{muy grande} y que el algoritmo tardaría cientos de segundos para acabar. Entonces es aquí
+cuando uno debe de idear un algoritmo más rápido (y también correcto) que resuelva el problema.
+Supóngase que se encontró un algoritmo con complejidad en tiempo de $O(n \log_2 n)$, lo cual
+es $\approx 1.6 \times 10^6$ que bastante seguro será capaz de pasar el tiempo límite.
+
+Las \emph{cotas} (\emph{constraints}) del problema son tan importantes como la complejidad del
+tiempo del algoritmo para determinar si su solución es apropiada. Supongamos que se propone un
+algoritmo bastante sencillo de implementar que se ejecuta con una complejidad de $O(n^4)$. A pesar
+de que parezca una solución muy mala, si se tiene que $n \leq 50$ es ``lo suficientemente buena''
+para que resuelva el problema.
+
+Una buena heurística a seguir en este mundo de la programación competitiva es tomar la tabla de
+abajo para tener en cuenta la complejidad del algoritmo propuesto y el tiempo que tomará\footnote{
+    Se asume que una CPU puede ejecutar alrededor de $100M$ de operaciones en 3 segundos.
+}.
+\begin{table}[H]
+\centering
+\begin{tabular}{l|l}
+\hline
+$n$                   & Pero caso en el que se acepta el algoritmo  \\ \hline
+$\leq [10 \ldots 11]$ & $O(n!), \; O(n^6)$                          \\
+$\leq [15 \ldots 18]$ & $O(2^n \times n^2)$                         \\
+$\leq [18 \ldots 22]$ & $O(2^n \times n)$                           \\
+$\leq 100$            & $O(n^4)$                                    \\
+$\leq 400$            & $O(n^3)$                                    \\
+$\leq 2K$             & $O(n^2 \log_2 n)$                           \\
+$\leq 10K$            & $O(n^2)$                                    \\
+$\leq 1M$             & $O(n \log_2 n)$                             \\
+$\leq 100M$           & $O(n), \; O(\log_2 n), \; O(1)$             \\ \hline
+\end{tabular}
+\end{table}
+
+\section{Anatomía de los problemas}
+
+% TODO
+
+\section{Presentación (I/O)}
+
+% TODO
+
+\section{Jueces en línea}
+
+% TODO
+ 
+\subsection{\fontfamily{lmss}\selectfont SPOJ}
 SPOJ (Sphere Online Judge)
+% TODO
 % https://wiki.haskell.org/SPOJ
-% Tomar algo del competitive aquí
+
+% TODO: Dar una revisada a todo lo que está abajo
 
 \section{Problemas}
-
-% TODO: poner aquí la motivación.
+En esta sección se resolverán 4 problemas relacionados con \textit{string matching} usando el
+algoritmo KMP y la función de error de la que se habló en el capítulo 4. Se resolverán los
+problemas usando C++ y Haskell.
 
 \subsection{Encontrar el factor de repetición de una cadena}
 Recordemos en el \hyperlink{repetition_factor}{capítulo 3 el problema 32.1}, es aquí cuando lo
@@ -631,5 +724,3 @@ de la lista y concatena el resultado, pone un salto de línea entre cada índice
 \includegraphics[width=\textwidth]{spoj/NHAY-accepted-cpp-haskell}
 \caption{El código fue aceptado por el juez en Haskell y C++}
 \end{figure}
-
-% TODO: poner que puedo optimizar la entrada con Data.ByteString.Char8

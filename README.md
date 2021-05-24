@@ -80,7 +80,6 @@ Si te es útil mi tesis y quieres citarla, lo puedes hacer con
 	year         = 2021,
 	journal      = {GitHub repository},
 	publisher    = {GitHub},
-	howpublished = {GitHub},
 	howpublished = {\url{https://github.com/angelgladin/tesis}}
 }
 ```
