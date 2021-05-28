@@ -73,7 +73,7 @@ abajo para tener en cuenta la complejidad del algoritmo propuesto y el tiempo qu
 \centering
 \begin{tabular}{l|l}
 \hline
-$n$                   & Pero caso en el que se acepta el algoritmo  \\ \hline
+$n$                   & Peor caso en el que se acepta el algoritmo  \\ \hline
 $\leq [10 \ldots 11]$ & $O(n!), \; O(n^6)$                          \\
 $\leq [15 \ldots 18]$ & $O(2^n \times n^2)$                         \\
 $\leq [18 \ldots 22]$ & $O(2^n \times n)$                           \\
@@ -88,24 +88,72 @@ $\leq 100M$           & $O(n), \; O(\log_2 n), \; O(1)$             \\ \hline
 
 \section{Anatomía de los problemas}
 
-% TODO
+En las competencias de programación la mayoría de los problemas tienen los siguientes componentes:
+
+\begin{itemize}
+\item \textbf{Historia de fondo o descripción del problema.} Por lo general los problemas más
+fáciles estás escritos de una manera \emph{engañosa} para parecer más difíciles de lo que son en
+los concursos, por ejemplo agregando mucha información innecesaria. Los concursantes deben de
+ser capaces de saber distiguir qué información es la útil para la resolución del problema. Sin
+embargo, los problemas difíciles están escritos de la manera más sencilla posible, porque ya
+son lo suficientemente difíciles como para que llegara a haber aún más ambigüedades.
+
+\item \textbf{Descripción del I/O.} Aquí es cuando se dan detalles de como será el formato de la
+entrada y como se debe de presentar la salida. En la gran mayoría de veces están escrita de la
+manera más formal posible. Un \emph{buen problema} debe indicar de manera \textbf{clara} las cotas 
+(en la literatura en inglés se le conoce como \emph{constraints}) de la entrada para así poder
+tener en cuenta la complejidad del algoritmo a usar.
+
+\item \textbf{Muestra del I/O.} Los autores del problema simpre dan casos de prueba triviales. Esto
+se hace para que los concursantes vean si se entendió el problema y verificar si su código puedo
+procesar la entrada dada y producir la salida deseada.
+
+\item \textbf{Pistas.} En algunos casos el autor del problema llegan a dar pistas para resolver
+el problema.
+
+\end{itemize}
 
 \section{Presentación (I/O)}
 
-% TODO
+En las competencias de programación, la correctud del código está determinada en ser probado
+sobre muchos casos prueba. Muchos casos de prueba vienen incluidos en un solo archivo. A
+continuación se muestran los tres formatos de I/O más usados:
 
-\section{Jueces en línea}
+\begin{itemize}
+% TODO: poner el código de haskell y c++, pag.42 CP3
+\item El número de casos prueba está dado en la primer línea de la entrada.
 
-% TODO
- 
-\subsection{\fontfamily{lmss}\selectfont SPOJ}
-SPOJ (Sphere Online Judge)
-% TODO
-% https://wiki.haskell.org/SPOJ
+% TODO: arreglar la posición de la figura
+\begin{figure}[!h]
+% TODO: hacer esto en macros
+\begin{minipage}{0.5\textwidth}
+    \centering
+    \inputminted[frame=lines, framesep=10pt, fontsize=\scriptsize]{haskell}
+{codigo/cpp/sample-input-output-1.cpp}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+    \centering
+    \inputminted[frame=lines, framesep=10pt, fontsize=\scriptsize]{cpp}
+{codigo/cpp/sample-input-output-2.cpp}
+\end{minipage}
+\end{figure}
 
-% TODO: Dar una revisada a todo lo que está abajo
+\inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-1.txt}
+
+\item Múltiples casos prueba, son terminados con caracteres especiales.
+\inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-2.txt}
+
+\item Múltiples casos prueba, son terminados por la señal de EOF (\emph{End Of File}).
+\inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-3.txt}
+
+\end{itemize}
+
 
 \section{Problemas}
+% TODO: poner que saquè los probles de spoj y decir qué es
+% https://wiki.haskell.org/SPOJ
+{\fontfamily{lmss}\selectfont SPOJ}
+
 En esta sección se resolverán 4 problemas relacionados con \textit{string matching} usando el
 algoritmo KMP y la función de error de la que se habló en el capítulo 4. Se resolverán los
 problemas usando C++ y Haskell.

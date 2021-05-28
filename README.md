@@ -66,7 +66,10 @@ reglas para compilar y limpiar el proyecto.
     * Code pritifier: [stylish-haskell](https://github.com/haskell/stylish-haskell)
 * C++
     * [LLVM Coding Standards](https://llvm.org/docs/CodingStandards.html)
-
+* Archivos
+    * Convensión de nombres: [Kebab Case](https://en.wikipedia.org/wiki/Naming_convention_(programming)#Multiple-word_identifiers)
+    * _Character Encoding_: `UTF-8`
+    * [_Line Ending_](https://stackoverflow.com/questions/1552749/difference-between-cr-lf-lf-and-cr-line-break-types): `LF`
 
 ### Citar
 
@@ -74,7 +77,7 @@ Si te es útil mi tesis y quieres citarla, lo puedes hacer con
 [BibTeX](https://www.overleaf.com/learn/latex/bibliography_management_with_bibtex):
 
 ```bibtex
-@misc{kmp-analisis-gladin,
+@misc{kmp-func-analisis-gladin,
 	title        = {Análisis del algoritmo Knuth-Morris-Pratt con énfasis en la programación funcional},
 	author       = {Ángel Iván Gladín García},
 	year         = 2021,
