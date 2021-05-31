@@ -1,16 +1,12 @@
+#include <iostream>
+
+using namespace std;
+
 int main() {
-  int t;
-  string p, q;
-  cin >> t;
-  while (t--) {
-    cin >> p;
-    cin >> q;
-    string s = q + q;
-    vector<int> occurrences = kmp(s, p);
-    if (occurrences.empty())
-      cout << "No" << endl;
-    else
-      cout << "Si" << endl;
+  int a, b;
+  // stop when both integers are 0
+  while (cin >> a >> b && (a || b)) {
+    cout << a + b << endl; // compute on the fly
   }
   return 0;
 }

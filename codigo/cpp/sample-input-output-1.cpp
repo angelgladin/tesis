@@ -1,14 +1,13 @@
-main :: IO ()
-main = do
-  t <- read <$> getLine
-  inputs <- replicateM t $ replicateM 2 getLine
-  let answers = proccess <$> inputs
-  sequence_ $ putStrLn <$> answers
-  where
-    proccess :: [String] -> String
-    proccess [p, q] =
-      let s = q ++ q
-          occurences = matches p s
-       in if null occurences
-            then "No"
-            else "Si"
+#include <iostream>
+
+using namespace std;
+
+int main() {
+  int test_cases, a, b;
+  cin >> test_cases;       // number of cases
+  while (test_cases--) {   // repeat until 0
+    cin >> a >> b;         // read the values
+    cout << a + b << endl; // compute on the fly
+  }
+  return 0;
+}

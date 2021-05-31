@@ -120,31 +120,73 @@ sobre muchos casos prueba. Muchos casos de prueba vienen incluidos en un solo ar
 continuación se muestran los tres formatos de I/O más usados:
 
 \begin{itemize}
-% TODO: poner el código de haskell y c++, pag.42 CP3
+% TODO: Organizar código de pruebas y este código XD
 \item El número de casos prueba está dado en la primer línea de la entrada.
 
-% TODO: arreglar la posición de la figura
-\begin{figure}[!h]
-% TODO: hacer esto en macros
-\begin{minipage}{0.5\textwidth}
-    \centering
-    \inputminted[frame=lines, framesep=10pt, fontsize=\scriptsize]{haskell}
-{codigo/cpp/sample-input-output-1.cpp}
+\begin{figure}[H]
+\begin{minipage}{0.6\textwidth}
+\centering
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{haskell}
+    {codigo/haskell/sample-input-output-1.hs}
 \end{minipage}
-\begin{minipage}{0.5\textwidth}
-    \centering
-    \inputminted[frame=lines, framesep=10pt, fontsize=\scriptsize]{cpp}
-{codigo/cpp/sample-input-output-2.cpp}
+\begin{minipage}{0.6\textwidth}
+\centering
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{cpp}
+    {codigo/cpp/sample-input-output-1.cpp}
 \end{minipage}
 \end{figure}
 
-\inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-1.txt}
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.5\textwidth}
+    \inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-1.txt}
+\end{minipage}
+\end{figure}
 
 \item Múltiples casos prueba, son terminados con caracteres especiales.
-\inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-2.txt}
+
+\begin{figure}[H]
+\begin{minipage}{0.6\textwidth}
+\centering
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{haskell}
+    {codigo/haskell/sample-input-output-2.hs}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+\centering
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{cpp}
+    {codigo/cpp/sample-input-output-2.cpp}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.5\textwidth}
+        \inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-2.txt}
+    \end{minipage}
+    \end{figure}
 
 \item Múltiples casos prueba, son terminados por la señal de EOF (\emph{End Of File}).
-\inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-3.txt}
+
+\begin{figure}[H]
+\begin{minipage}{0.6\textwidth}
+\centering
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{haskell}
+    {codigo/haskell/sample-input-output-3.hs}
+\end{minipage}
+\begin{minipage}{0.6\textwidth}
+\centering
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{cpp}
+    {codigo/cpp/sample-input-output-3.cpp}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.5\textwidth}
+    \inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-3.txt}
+\end{minipage}
+\end{figure}
+
 
 \end{itemize}
 
@@ -152,6 +194,9 @@ continuación se muestran los tres formatos de I/O más usados:
 \section{Problemas}
 % TODO: poner que saquè los probles de spoj y decir qué es
 % https://wiki.haskell.org/SPOJ
+
+% TODO: optimizar EC_WORLD.hs
+% TODO: juntar la lògica de leer archivos con lo que escribí arriba XDDD
 {\fontfamily{lmss}\selectfont SPOJ}
 
 En esta sección se resolverán 4 problemas relacionados con \textit{string matching} usando el
