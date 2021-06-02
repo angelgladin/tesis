@@ -117,85 +117,105 @@ el problema.
 
 En las competencias de programación, la correctud del código está determinada en ser probado
 sobre muchos casos prueba. Muchos casos de prueba vienen incluidos en un solo archivo. A
-continuación se muestran los tres formatos de I/O más usados:
+continuación\footnote{
+    Se exhibirán dos pedazos de código; en el lado izquierdo se mostrará cómo hacerlo en Haskell
+    y del lado derecho en C++. Posteriormente se muestra cómo debe ser la entrada y salida.
+} se muestran los tres formatos de I/O más usados:
 
 \begin{itemize}
-% TODO: Organizar código de pruebas y este código XD
+\pagebreak
 \item El número de casos prueba está dado en la primer línea de la entrada.
 
 \begin{figure}[H]
 \begin{minipage}{0.6\textwidth}
 \centering
-\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{haskell}
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize, linenos, numbersep=-10pt, framesep=18pt]{haskell}
     {codigo/haskell/sample-input-output-1.hs}
 \end{minipage}
 \begin{minipage}{0.6\textwidth}
 \centering
-\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{cpp}
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize, linenos, numbersep=-10pt, framesep=18pt]{cpp}
     {codigo/cpp/sample-input-output-1.cpp}
 \end{minipage}
 \end{figure}
-
 \begin{figure}[H]
 \centering
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}{0.2\textwidth}
     \inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-1.txt}
 \end{minipage}
 \end{figure}
 
+% TODO: agregar aquí lo que explico en los problemas de haskell para no ser tan repetitivo.
+\begin{itemize}
+\item TODO
+\end{itemize}
+
+
+\pagebreak
 \item Múltiples casos prueba, son terminados con caracteres especiales.
 
 \begin{figure}[H]
 \begin{minipage}{0.6\textwidth}
 \centering
-\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{haskell}
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize, linenos, numbersep=-10pt, framesep=18pt]{haskell}
     {codigo/haskell/sample-input-output-2.hs}
 \end{minipage}
 \begin{minipage}{0.6\textwidth}
 \centering
-\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{cpp}
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize, linenos, numbersep=-10pt, framesep=18pt]{cpp}
     {codigo/cpp/sample-input-output-2.cpp}
 \end{minipage}
 \end{figure}
-
 \begin{figure}[H]
-    \centering
-    \begin{minipage}{0.5\textwidth}
-        \inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-2.txt}
-    \end{minipage}
-    \end{figure}
+\centering
+\begin{minipage}{0.3\textwidth}
+    \inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-2.txt}
+\end{minipage}
+\end{figure}
 
+% TODO: agregar aquí lo que explico en los problemas de haskell para no ser tan repetitivo.
+\begin{itemize}
+\item TODO
+\end{itemize}
+
+
+\pagebreak
 \item Múltiples casos prueba, son terminados por la señal de EOF (\emph{End Of File}).
 
 \begin{figure}[H]
 \begin{minipage}{0.6\textwidth}
 \centering
-\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{haskell}
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize, linenos, numbersep=-10pt, framesep=18pt]{haskell}
     {codigo/haskell/sample-input-output-3.hs}
 \end{minipage}
 \begin{minipage}{0.6\textwidth}
 \centering
-\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize]{cpp}
+\inputminted[frame=single, framesep=10pt, fontsize=\scriptsize, linenos, numbersep=-10pt, framesep=18pt]{cpp}
     {codigo/cpp/sample-input-output-3.cpp}
 \end{minipage}
 \end{figure}
-
 \begin{figure}[H]
 \centering
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}{0.2\textwidth}
     \inputminted[fontsize=\small]{text}{codigo/txt/sample-input-output-3.txt}
 \end{minipage}
 \end{figure}
+
+% TODO: agregar aquí lo que explico en los problemas de haskell para no ser tan repetitivo.
+\begin{itemize}
+\item TODO
+\end{itemize}
 
 
 \end{itemize}
 
 
+% TODO: juntar lo del código de arriba con el còdigo de haskell de los proeblas
+
 \section{Problemas}
 % TODO: poner que saquè los probles de spoj y decir qué es
 % https://wiki.haskell.org/SPOJ
 
-% TODO: optimizar EC_WORLD.hs
 % TODO: juntar la lògica de leer archivos con lo que escribí arriba XDDD
 {\fontfamily{lmss}\selectfont SPOJ}
 

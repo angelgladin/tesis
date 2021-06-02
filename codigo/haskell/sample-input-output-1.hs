@@ -1,4 +1,4 @@
-import    Control.Monad (replicateM_, guard)
+import           Control.Monad (guard, replicateM_)
 
 main :: IO ()
 main = do
@@ -9,7 +9,7 @@ main = do
     do
       input <- parse <$> getLine
       guard $ (length input) == 2
-      let result = sum input 
+      let result = sum input
       putStrLn $ show result
       where
         parse :: String -> [Int]
