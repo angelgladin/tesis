@@ -38,17 +38,16 @@ de cadenas, geometría computacional y algunos tópicos raros/avanzados (en gene
 Y esto por mencionar alguna clasificación, que sin dudarlo se podrían agregar más o entrar más a
 detalle.
 
-% TODO revisar: Análisis del algoritmo
 \section{Análisis del algoritmo}
 Siempre que se diseña el algoritmo para un problema en particular de una competencia uno debe
 preguntarse lo siguiente: dados los límites de los datos de entrada, el algoritmo que se diseñó
 ¿pasará las restricciones de tiempo y espacio dados?
-Esto es porque puede que haya varias formas de atacar el problem, desde hacerlo de una manera
+Esto es porque puede que haya varias formas de atacar el problema, desde hacerlo de una manera
 incorrecta, hasta resolverlo de una manera óptima o que solo sea lo ``suficientemente buena''.
 Una buena estrategia a seguir es \textbf{tomar la solución más simple que funcione}, es decir,
 lo ``suficientemente buena'' para que solucione (y se acepte) el problema.
 
-Una regla empírica que usada, es que las computadoras de hoy en día pueden procesar hasta cien
+Una regla empírica que es usada, es que las computadoras de hoy en día pueden procesar hasta cien
 millones de operaciones (ó $10^8$) en \textit{unos pocos segundos}. Y justo esa información es la
 que se usa para saber si el algoritmo diseñado se ejecutará en ese tiempo.
 
@@ -57,7 +56,7 @@ diseñado o usado tiene una complejidad de $O(n^2)$, entonces se tendría que $1
 \emph{muy grande} y que el algoritmo tardaría cientos de segundos para acabar. Entonces es aquí
 cuando uno debe de idear un algoritmo más rápido (y también correcto) que resuelva el problema.
 Supóngase que se encontró un algoritmo con complejidad en tiempo de $O(n \log_2 n)$, lo cual
-es $\approx 1.6 \times 10^6$ que bastante seguro será capaz de pasar el tiempo límite.
+es $\approx 1.6 \times 10^6$ que bastante seguro que será capaz de pasar el tiempo límite.
 
 Las \emph{cotas} (\emph{constraints}) del problema son tan importantes como la complejidad del
 tiempo del algoritmo para determinar si su solución es apropiada. Supongamos que se propone un
@@ -119,12 +118,15 @@ En las competencias de programación, la correctud del código está determinada
 sobre muchos casos prueba. Muchos casos de prueba vienen incluidos en un solo archivo. A
 continuación\footnote{
     Se exhibirán dos pedazos de código; en el lado izquierdo se mostrará cómo hacerlo en Haskell
-    y del lado derecho en C++. Posteriormente se muestra cómo debe ser la entrada y salida.
+    y del lado derecho en C++. 
+    En Haskell se excplicará la anatomía del código.
+
+    Posteriormente se muestra cómo debe ser la entrada y salida.
 } se muestran los tres formatos de I/O más usados:
 
-\begin{itemize}
+\begin{enumerate}
 \pagebreak
-\item El número de casos prueba está dado en la primer línea de la entrada.
+\item \label{io:1} El número de casos prueba está dado en la primer línea de la entrada.
 
 \begin{figure}[H]
 \begin{minipage}{0.6\textwidth}
@@ -145,18 +147,61 @@ continuación\footnote{
 \end{minipage}
 \end{figure}
 
-% TODO: agregar aquí lo que explico en los problemas de haskell para no ser tan repetitivo.
 \begin{itemize}
-\item TODO
+
+\item En la línea \texttt{1} del módulo \hsCode{Control.Monad} se importan las funciones\\
+\hsCode{replicateM_ :: Applicative m => Int -> m a -> m ()} y\\
+\hsCode{guard :: Alternative f => Bool -> f ()}.\\
+Donde \hsCode{replicateM_ n act} lleva a cabo una acción $n$ veces descartando los
+resultados\footnote{
+    En Haskell es una convención que cuando se descartan los resultados de una función que está
+    envuelta en unn contexto monádico, el nombre de la función tiene de sufijo un guión bajo. Esto
+    es útil cuando solo es importante los \emph{efectos secundarios} del cómputo monádico en
+    vez de su resultado \emph{per se}.
+}. Y \hsCode{guard} es utilizada como una condicional de fallo.
+
+\item De la línea \texttt{3} a \texttt{25} empieza el bloque \hsCode{do} utilizado para las
+operaciones de entrada y salida.
+
+\item En la línea \texttt{8} se lee una línea de la entrada estándar; que es el número de casos,
+que a su vez es es transformado a un tipo de dato \hsCode{IO Int}.
+
+La función \hsCode{fmap :: (a -> b) -> f a -> f b}\\ tranforma el contenido del tipo envuelto en un
+contexto monádico dada una función. Se ocupa el sinónimo infijo \texttt{<\$>} de \hsCode{fmap}.
+Con ayuda de la función \hsCode{read :: Read a => String -> a} se parsea a un tipo de
+dato \hsCode{Int} el \hsCode{String} leído.
+
+\item En la línea \texttt{10} la función \hsCode{replicateM_} ejecuta la mónada de abajo $n$ veces
+descartando el resultado, esto se hace como una ligera optimización.
+
+\item En la línea \texttt{14} se lee una línea de la entrada estándar, y con la función auxiliar
+\hsCode{parse} se transforma la cadena de números separada por espacios en una lista de tipo
+\hsCode{[Int]}. La función \hsCode{parse} es la composición de dos funciones, primero
+\hsCode{words :: String -> [String]} que separa una cadena en una lista de palabras donde los
+`delimitadores' son espacios en blanco, después cada cadena se convierte a un tipo de dato
+\hsCode{Int}.
+
+\item En la línea \texttt{17} la función \hsCode{guard :: Alternative f => Bool -> f ()} se usa
+para señalar un posible error en la mónada \hsCode{IO} en el caso de que sean más de dos números
+en la línea leída.
+
+\item En la línea \texttt{19} en la expresión \hsCode{let} se usa para tener la suma de los valores
+de entrada en la asignación \hsCode{result}.
+
+\item Finalmente en la línea \texttt{22} se imprime en la salida estándar con\\
+\hsCode{putStrLn :: String -> IO ()} el resultado, pero primero con la función \hsCode{show :: a -> String}
+se transforma el valor de \texttt{result} a \hsCode{String}.
+
 \end{itemize}
 
 
 \pagebreak
-\item Múltiples casos prueba, son terminados con caracteres especiales.
+\item \label{io:2}Múltiples casos prueba, son terminados con caracteres especiales.
 
 \begin{figure}[H]
 \begin{minipage}{0.6\textwidth}
 \centering
+% TODO: documentar código de haskell
 \inputminted[frame=single, framesep=10pt, fontsize=\scriptsize, linenos, numbersep=-10pt, framesep=18pt]{haskell}
     {codigo/haskell/sample-input-output-2.hs}
 \end{minipage}
@@ -185,6 +230,7 @@ continuación\footnote{
 \begin{figure}[H]
 \begin{minipage}{0.6\textwidth}
 \centering
+% TODO: documentar código de haskell
 \inputminted[frame=single, framesep=10pt, fontsize=\scriptsize, linenos, numbersep=-10pt, framesep=18pt]{haskell}
     {codigo/haskell/sample-input-output-3.hs}
 \end{minipage}
@@ -207,29 +253,37 @@ continuación\footnote{
 \end{itemize}
 
 
-\end{itemize}
+\end{enumerate}
 
-
-% TODO: juntar lo del código de arriba con el còdigo de haskell de los proeblas
-
+\pagebreak
 \section{Problemas}
-% TODO: poner que saquè los probles de spoj y decir qué es
-% https://wiki.haskell.org/SPOJ
-
-% TODO: juntar la lògica de leer archivos con lo que escribí arriba XDDD
-{\fontfamily{lmss}\selectfont SPOJ}
-
 En esta sección se resolverán 4 problemas relacionados con \textit{string matching} usando el
 algoritmo KMP y la función de error de la que se habló en el capítulo 4. Se resolverán los
 problemas usando C++ y Haskell.
 
+Los problemas que se presentan a continuación se obtuvieron de un juez en línea\footnote{
+    Los jueces en línea (\textit{online judges}) son ambientes en línea en donde se prueba el
+    código del problema a resolver. Cuando hay un concurso, los jueces muestran listado de
+    clasificación en tiempo real donde aparecen los usuarios que tengan el mayor número de
+    problemas aceptados y tengan el menor tiempo de ejecución del problema en particular.
+} llamado {\fontfamily{lmss}\selectfont SPOJ}.
+
+{\fontfamily{lmss}\selectfont SPOJ}
+\textit{(Sphere Online Judge)} es un sitio web de concursos de programación automatizado. Cuenta
+con un gran número de problemas para entrenar y hacer concursos locales, además de que acepta las
+soluciones en varios lenguajes de programación (incluyendo Haskell). Resolver los problemas en
+Haskell puede llegar a ser un reto. Por lo general los problemas son resultos en Java, C y C++.
+
+% TODO: juntar la lògica de leer archivos con lo que escribí arriba XDDD
 \subsection{Encontrar el factor de repetición de una cadena}
 Recordemos en el \hyperlink{repetition_factor}{capítulo 3 el problema 32.1}, es aquí cuando lo
 bonito de la programación competitiva y resolver ejercicios teóricamente se juntan. Ése problema
 es lo mismo a resolver el siguiente, y aún mejor, en un juez en línea que puede ``probar'' la
 implementación considerando ciertas restricciones.
 
-La especificación del problema dice lo siguiente: 
+La especificación del problema dice lo siguiente:
+
+% TODO: usar lo de arriba.
 
 \includepdf[pages=-]{problemas/pdf/FINDSR.pdf}
 
@@ -461,38 +515,14 @@ que sea 0 y como cualquier valor no cero en \texttt{while} lo toma como falso pa
 \subsubsection{Implementación en Haskell}
 \inputminted[linenos, frame=lines]{haskell}{problemas/haskell/EC_WORLD.hs}
 
-Muchas veces algunos jueces no aceptan cierto lenguaje, y en este caso el que diseñó el problema y
-lo subió en SPOJ, no puso a Haskell para este problema. Pero aún así se hará.
+Muchas veces algunos jueces (o problemas) no aceptan ciertos lenguaje, y en este caso el que
+diseñó el problema y lo subió en SPOJ, no puso a Haskell para este problema. Pero aún así se hará.
 
-Dado que el tipo de entrada, que es por casos es diferente al problema anterior, la naturaleza de
-la entrada y salida será diferente.
+Recordando la primera primera forma en leer la entrada\ref{io:1}, se seguirá ese camino.
 
 \begin{itemize}
-\item En la línea \texttt{1} del módulo \hsCode{Control.Monad} se importa la función\\
-\hsCode{replicateM :: Applicative m => Int -> m a -> m [a]}, donde\\ \hsCode{replicateM n act}
-lleva a cabo una acción $n$ veces, juntando los resultados.
 
-\item De la línea \texttt{4} a \texttt{8} empieza el bloque \hsCode{do} utilizado para las
-operaciones de entrada y salida como secuencia.
-
-En la línea \texttt{5} lee una línea, que es el número de casos de la entrada estándar y eso es
-transformado con \hsCode{fmap :: (a -> b) -> f a -> f b} a un entero con la función
-\hsCode{read :: Read a => String -> a}. Se ocupa el sinónimo infijo \texttt{<\$>} de \hsCode{fmap}.
-
-En la línea \texttt{6} es cuando se lee la entrada de cada caso, primero \hsCode{replicateM t}
-ejecuta la acción \hsCode{replicateM 2 getLine} $t$ veces, donde cada una lee de la entrada
-estándar 2 veces.
-
-En la línea \texttt{7} como la expresión \hsCode{let} está en el bloque \hsCode{do} se omite el
-\hsCode{in} después. Dado que \hsCode{inputs} tiene ligado los valores de la entrada, cada caso que
-consiste de una lista de dos elementos es transformado con \texttt{<\$>} por la función
-\hsCode{process} que hace el ``algoritmo'' descrito en el análisis.
-
-En la línea \texttt{8} en la función\\
-\hsCode{sequence_ :: (Foldable t, Monad m) => t (m a) -> m ()}, que evalúa cada acción monádica de
-la estructura plegable de iquierda a derecha e ignora sus resultados, los hacemos porque serán
-puras acciones \hsCode{IO ()}, \hsCode{sequence_} recibe como argumento acciones monádicas donde
-cada \texttt{answer} se imprime en la salida estándar con \hsCode{putStrLn :: String -> IO ()}. 
+\item TODO
 
 \item De la línea \texttt{10} a \texttt{16} es see crea la función
 \hsCode{process :: [String] -> String}, donde por medio de caza de patrones se trabaja con una

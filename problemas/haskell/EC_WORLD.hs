@@ -7,14 +7,14 @@ main = do
     do
       answer <- liftM2 process getLine getLine
       putStrLn answer
-  where
-    process :: String -> String -> String
-    process p q =
-      let s = q ++ q
-          occurences = matches p s
-       in if null occurences
-            then "No"
-            else "Si"
+      where
+        process :: String -> String -> String
+        process p q =
+          let s = q ++ q
+              occurences = matches p s
+          in if null occurences
+                then "No"
+                else "Si"
 
 
 data Rep a
