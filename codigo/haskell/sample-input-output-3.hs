@@ -1,8 +1,10 @@
 main :: IO ()
 main = interact $
          unlines
-         . map process
+         . map parse
          . lines
   where
-    process xs = show . sum $
-                   [read x :: Int | x <- words xs]
+    parse :: String -> String
+    parse = show . process
+    process :: String -> Int
+    process xs = sum $ [read x :: Int | x <- words xs]

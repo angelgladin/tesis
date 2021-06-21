@@ -83,6 +83,7 @@ $\leq 10K$            & $O(n^2)$                                    \\
 $\leq 1M$             & $O(n \log_2 n)$                             \\
 $\leq 100M$           & $O(n), \; O(\log_2 n), \; O(1)$             \\ \hline
 \end{tabular}
+\label{cap5:tabla:complejidades}
 \end{table}
 
 \section{Anatomía de los problemas}
@@ -147,6 +148,7 @@ continuación\footnote{
 \end{minipage}
 \end{figure}
 
+\newpage
 \begin{itemize}
 
 \item En la línea \texttt{1} del módulo \hsCode{Control.Monad} se importan las funciones\\
@@ -172,7 +174,8 @@ Con ayuda de la función \hsCode{read :: Read a => String -> a} se parsea a un t
 dato \hsCode{Int} el \hsCode{String} leído.
 
 \item En la línea \texttt{10} la función \hsCode{replicateM_} ejecuta la mónada de abajo $n$ veces
-descartando el resultado, esto se hace como una ligera optimización.
+descartando el resultado, esto se hace como una ligera optimización ya que solo nos interesan
+los efectos secundarios (IO).
 
 \item En la línea \texttt{14} se lee una línea de la entrada estándar, y con la función auxiliar
 \hsCode{parse} se transforma la cadena de números separada por espacios en una lista de tipo
@@ -182,26 +185,25 @@ descartando el resultado, esto se hace como una ligera optimización.
 \hsCode{Int}.
 
 \item En la línea \texttt{17} la función \hsCode{guard :: Alternative f => Bool -> f ()} se usa
-para señalar un posible error en la mónada \hsCode{IO} en el caso de que sean más de dos números
+para señalar un posible error en la mónada \hsCode{IO} en el caso de que no sean dos números
 en la línea leída.
 
 \item En la línea \texttt{19} en la expresión \hsCode{let} se usa para tener la suma de los valores
 de entrada en la asignación \hsCode{result}.
 
 \item Finalmente en la línea \texttt{22} se imprime en la salida estándar con\\
-\hsCode{putStrLn :: String -> IO ()} el resultado, pero primero con la función \hsCode{show :: a -> String}
-se transforma el valor de \texttt{result} a \hsCode{String}.
+\hsCode{putStrLn :: String -> IO ()} el resultado, pero primero con la función
+\hsCode{show :: a -> String} se transforma el valor de \texttt{result} a \hsCode{String}.
 
 \end{itemize}
 
 
 \pagebreak
-\item \label{io:2}Múltiples casos prueba, son terminados con caracteres especiales.
+\item \label{io:2} Múltiples casos prueba, son terminados con caracteres especiales.
 
 \begin{figure}[H]
 \begin{minipage}{0.6\textwidth}
 \centering
-% TODO: documentar código de haskell
 \inputminted[frame=single, framesep=10pt, fontsize=\scriptsize, linenos, numbersep=-10pt, framesep=18pt]{haskell}
     {codigo/haskell/sample-input-output-2.hs}
 \end{minipage}
@@ -218,19 +220,47 @@ se transforma el valor de \texttt{result} a \hsCode{String}.
 \end{minipage}
 \end{figure}
 
-% TODO: agregar aquí lo que explico en los problemas de haskell para no ser tan repetitivo.
-\begin{itemize}
-\item TODO
-\end{itemize}
+\newpage
+Se tratará la entrada y salida \textit{orientada a líneas} con la función \hsCode{interact}.
+
+Analicemos parte por parte las líneas \texttt{3} a \texttt{12}.\\
+La función \hsCode{interact :: (String -> String) -> IO ()} toma una función de
+tipo \hsCode{(String -> String)} como argumento, la \textit{entrada} estándar es pasada a ésa
+función como argumento, y la cadena resultante es pasada a la salida estándar.
+
+Acto seguido, se tiene la función \texttt{(\$)} que es un operador infijo con asociatividad
+izquierda, esto para tener mejor legibilidad cuando se tienen argumentos largos.
+
+Dado que se procesará linea por línea de la entrada, es bastante común tratar el flujo de la
+entrada como una lista de líneas, así que para hacer eso se divirá todo la cadena de entrada en
+líneas\footnote{Donde `lìneas' es un sinónimo de \hsCode{[String].}}.
+Consideremos las funciones\\ \hsCode{lines :: String -> [String]} y
+\hsCode{unlines :: [String] -> String}, donde\\ \hsCode{lines} divide la cadena en una lista de
+cadenas cuando se encuentra un caracter de salto de línea, \hsCode{unlines} es la operación inversa
+de \hsCode{lines}, une líneas y después añade un caracter de salto de línea a cada cadena.
+
+Pongamos total atención a la siguiente composición de funciones\\
+\hsCode{unlines . map parse . takeWhile (/= "0 0") . lines}.\\
+La función \hsCode{map parse} será la responsable de que la cadena en turno la tranformará a la
+`respuesta' del problema.
+
+Mientras que \hsCode{takeWhile (/= "0 0")} indica que se seguirá procesado hasta que la cadena
+leída sea diferente de \texttt{"0 0"}.
+
+El patrón \hsCode{unlines . f . lines} es un patrón bastamte común donde \hsCode{f} puede ser una
+función o composición de funciones donde\\ \hsCode{f :: [String] -> [String]}.
+
+En la línea \texttt{16} solamente es la composición de funciones donde \hsCode{process} es
+la encargada del `cálculo' o `algoritmo', y \hsCode{show} tranforma el tipo de dato
+a \hsCode{String}.
 
 
 \pagebreak
-\item Múltiples casos prueba, son terminados por la señal de EOF (\emph{End Of File}).
+\item \label{io:3}Múltiples casos prueba, son terminados por la señal de EOF (\emph{End Of File}).
 
 \begin{figure}[H]
 \begin{minipage}{0.6\textwidth}
 \centering
-% TODO: documentar código de haskell
 \inputminted[frame=single, framesep=10pt, fontsize=\scriptsize, linenos, numbersep=-10pt, framesep=18pt]{haskell}
     {codigo/haskell/sample-input-output-3.hs}
 \end{minipage}
@@ -247,19 +277,15 @@ se transforma el valor de \texttt{result} a \hsCode{String}.
 \end{minipage}
 \end{figure}
 
-% TODO: agregar aquí lo que explico en los problemas de haskell para no ser tan repetitivo.
-\begin{itemize}
-\item TODO
-\end{itemize}
-
+De manera análoga al inciso anterior \ref{io:2}, la única diferecia es que se procesará de manera
+\textit{infinita}, es decir hasta que se dé la señal de EOF.
 
 \end{enumerate}
 
 \pagebreak
 \section{Problemas}
 En esta sección se resolverán 4 problemas relacionados con \textit{string matching} usando el
-algoritmo KMP y la función de error de la que se habló en el capítulo 4. Se resolverán los
-problemas usando C++ y Haskell.
+algoritmo KMP y la función de error. Se resolverán los problemas usando C++ y Haskell.
 
 Los problemas que se presentan a continuación se obtuvieron de un juez en línea\footnote{
     Los jueces en línea (\textit{online judges}) son ambientes en línea en donde se prueba el
@@ -267,41 +293,58 @@ Los problemas que se presentan a continuación se obtuvieron de un juez en líne
     clasificación en tiempo real donde aparecen los usuarios que tengan el mayor número de
     problemas aceptados y tengan el menor tiempo de ejecución del problema en particular.
 } llamado {\fontfamily{lmss}\selectfont SPOJ}.
+{\fontfamily{lmss}\selectfont SPOJ} \textit{(Sphere Online Judge)} es un sitio web de concursos
+de programación automatizado. Cuenta con un gran número de problemas para entrenar y hacer
+concursos locales, además de que acepta las soluciones en varios lenguajes de programación
+(incluyendo Haskell). Resolver los problemas en Haskell puede llegar a ser un reto.
 
-{\fontfamily{lmss}\selectfont SPOJ}
-\textit{(Sphere Online Judge)} es un sitio web de concursos de programación automatizado. Cuenta
-con un gran número de problemas para entrenar y hacer concursos locales, además de que acepta las
-soluciones en varios lenguajes de programación (incluyendo Haskell). Resolver los problemas en
-Haskell puede llegar a ser un reto. Por lo general los problemas son resultos en Java, C y C++.
+Por lo general los problemas son resultos en Java, C y C++.
 
-% TODO: juntar la lògica de leer archivos con lo que escribí arriba XDDD
 \subsection{Encontrar el factor de repetición de una cadena}
-Recordemos en el \hyperlink{repetition_factor}{capítulo 3 el problema 32.1}, es aquí cuando lo
-bonito de la programación competitiva y resolver ejercicios teóricamente se juntan. Ése problema
-es lo mismo a resolver el siguiente, y aún mejor, en un juez en línea que puede ``probar'' la
-implementación considerando ciertas restricciones.
+Antes de empezar, se enunciará un problema tomado del
+\emph{Introduction to Algorithms}\cite{cormen_2009} de la página 1012.
+
+\begin{tcolorbox}
+\hypertarget{repetitions-facor}{32-1}   
+\textbf{String matching based on repetition factors.}
+Let $y^i$ denote the concatenation of string $y$ with itself $i$ times. For example,
+$(\texttt{ab})^3 =$ \texttt{ababab}. We say that a string $x \in \Sigma^*$
+\textbf{has repetition factor} $r$ if $x = y^r$ for some string $y \in \Sigma^*$ and some $r > 0$.
+Let $\rho(x)$ denote the largest $r$ such that $x$ has repetition factor $r$.
+Give an efficient algorithm that takes as input a pattern $P[1 \ldots m]$ and computes the value
+$\rho(x)$ for $i = 1,2,\ldots,m$. What is the running time of your algorithm?
+\end{tcolorbox}
+    
+Lo primero que se debe de hacer es calcular la función de error $\pi$ teniendo una complejidad en
+tiempo de $\Theta(m)$ y lineal en espacio. Teniendo calculada $\pi$, consideremos $m$ la longitud
+del patrón y supongamos que $r = m - \pi[m]$ es la longitud de la $i$-esima raíz del patrón y que
+$\pi[i] = i - r$ donde $r \mid m$ es la $\frac{i}{k}$-ésima concatenación de la raíz del patrón
+hasta la $i$-ésima posición. Conlcuyendo así que $\rho(P) = \frac{m}{r}$.
+
+En otro caso, supongamos que no se cumple lo anterior, i.e., que $r \nmid m$ entonces su factor de
+repetición forzosamente debe ser 1. Por contradicción, supongamos que tiene un factor de repetición
+mayor estrico que 1 lo que significaría que tendría que habría una cadena $y^r$ y que
+$\pi[i] \geq \vert x^{r-1} \vert$, pero significaría que podríamos escribir a $x$ concatenada $r$
+veces. $\Rightarrow\!\Leftarrow$.
+
+\noindent\rule{\textwidth}{1pt}
+
+Es aquí cuando lo bonito de la programación competitiva y resolver `ejercicios teóricamente' se
+juntan. Ése problema es lo mismo a resolver el siguiente, y aún mejor, en un juez en línea que
+puede ``probar'' la implementación con múltipleas casos pruebas y, considerando ciertas
+restricciones que nos \textit{forzará a usar} un algoritmo \textit{óptimo}.
+
 
 La especificación del problema dice lo siguiente:
 
-% TODO: usar lo de arriba.
-
 \includepdf[pages=-]{problemas/pdf/FINDSR.pdf}
 
-\subsubsection{Análisis}
-Como se había dicho previamente, ya se había atacado este problema así que se omitirá el análisis
-y la complejidad.
-
 \subsubsection{Entrada}
-Una \textit{heurística} a seguir es que siempre que diga: \textit{``the input contains several test
-cases, each line described in a single line''} es leer hasta el final de archivo (End Of File) cada
-línea. Seguido de esto, dice que cada línea una cadena no vacía de a lo más $10^5$
-caracteres\footnote{Hay lenguajes programación que no tienen implementadas cadenas, y que se debe
-saber de antemano el tamaño, para así tener un arreglo de $n$ caracteres. Es aquí cuando es
-importante saber el tamaño máximo de la entrada.} formada solamente de dígitos y letras en
-minúsculas\footnote{También es sumamente importante saber si las cadenas del lenguaje que se usará
-como son represntadas ya que podrían estar en ASCII o Unicode.}.
-Finalmente dice que la última entrada contiene un solo asterisco \texttt{*} y que no debe ser
-procesado como un caso más.
+La entrada se lee como se indica en el caso \ref{io:2}, la única diferencia es que
+\hsCode{takeWhile} toma de argumento \hsCode{"*"}.
+
+Como cada cadena será de longitud de a lo más $10^5$, según la tabla
+\ref{cap5:tabla:complejidades} es viable resolver el problema usando la función de error.
 
 \subsubsection{Salida}
 Para cada caso prueba \textit{(input)} se debe imprimir en la salida estándar una sola línea con un
@@ -393,36 +436,6 @@ argumentos son los límites inferiores y superiores, y una lista de valores devo
 con un orden indexado,\\
 \hsCode{(!) :: Ix i => Array i e -> i -> e}  regresa el valor de un índice dado en el arreglo.
 
-\item Analicemos parte por partes las líneas \texttt{3, 4}. recordemos la función \\
-\hsCode{interact :: (String -> String) -> IO ()}, la función \hsCode{interact} toma una función de
-tipo \hsCode{(String -> String)} como argumento. La \textit{entrada} entera de la entrada estándar
-es pasada a ésa función como argumento, y la cadena resultante es la \textit{salida} de la
-salida estándar.
-
-Acto seguido, se tiene la función \texttt{\$} que es un operador infijo con asociatividad izquierda,
-esto para tener mejor legibilidad cuando se tienen argumentos largos.
-
-Dado que se procesará linea por línea de la entrada, es bastante común tratar el flujo de la
-entrada como una lista de líneas, así que para hacer eso se divirá todo la cadena de entrada en
-líneas. Consideremos las funciones\\ \hsCode{lines :: String -> [String]} y
-\hsCode{unlines :: [String] -> String}, donde\\ \hsCode{lines} divide la cadena en una lista de
-cadenas cuando se encuentra un caracter de salto de línea, \hsCode{unlines} es la operación inversa
-de \hsCode{lines}, une líneas y después añade un caracter de salto de línea a cada cadena.
-
-Pongamos total atención a la siguiente composición de funciones\\
-\hsCode{unlines . map parse . takeWhile (/= "*") . lines}.\\
-La función \hsCode{map parse} será la responsable de que la cadena en turno la tranformará a la
-respuesta del problema.
-
-La función \hsCode{takeWhile :: (a -> Bool) -> [a] -> [a]}, aplicado a un predicado \hsCode{p} y
-una lista \texttt{xs}, regresa el prefijo más largo (que posiblemente puede ser vacío) de
-\texttt{xs} de los elemetos que satisfacen \hsCode{p}.
-Entonces \hsCode{takeWhile (/= "*")} significa que se seguirá procesanso hasta que la cadena leída
-sea diferente de \texttt{*}.
-
-El patrón \hsCode{unlines . f . lines} es un patrón bastamte común donde \hsCode{f} puede ser una
-función o composición de funciones donde \hsCode{f :: [String] -> [String]}.
-
 \item De la línea \texttt{6, 7} la función \hsCode{parse} será la responsable de tomar la cadena en
 turno, tomar el resultado de \hsCode{process} y convertirlo al tipo \hsCode{String}.
 
@@ -451,25 +464,34 @@ a \texttt{16} es cuando se hace la validación previamente analizada.
 
 
 \subsection{Ver si una cadena es una rotación cíclica de otra}
+El siguientea problema también fue tomado del \emph{Introduction to Algorithms}\cite{cormen_2009}
+de la página 1012.
+\begin{tcolorbox}
+\hypertarget{cyclic_rotation}{32.4-7}
+Give a linear-time algorithm to determine whether a text $T$ is a cyclic rotation of another string
+$T'$ . For example, \texttt{arc} and \texttt{car} are cyclic rotations of each other.
+\end{tcolorbox}
 
-\subsubsection{Análisis}
-De igual manera, el en \hyperlink{cyclic_rotation}{capítulo 3 el problema 32.4-7} se había hecho el
-análisis del problema, y como este problema es resovler exactamente lo mismo se omitirá el análisis
-y su complejidad.
+Descartemos el caso en que la longitud de $T$ y $T'$ sean diferentes porque no podría ser una
+rotación cíclica. Entonces $\vert T \vert = \vert T' \vert$, sea $S = TT$ el texto donde $T$ está
+concatenado dos veces, y $P = T'$ el patrón. Usando el algoritmo de Knuth-Morris-Pratt se buscará
+el patrón $P$ en $S$ en tiempo lineal.
+
+Supongamos que $P$ aparece en $T$ desplazado $s$ posiciones a la izquierda donde
+$0 \leq s < \vert P \vert$. Si $s = 0$ entonces $T = T'$, el caso interesante es cuando $s > 0$,
+teniendo así que $T[0 \ldots s]$ es sufijo de $T'$ y $T[s+1 \ldots m]$ es prefijo de $T$. 
+
+\noindent\rule{\textwidth}{1pt}
 
 \subsubsection{Entrada}
-Este tipo de entrada es la más común que se verá en la programación competitiva; ya que la primera
-línea será un entero con el número de casos a resolver, después caso consistirá de dos líneas.
-
-Igual que el problema anterior (e igual que en la mayoría de los problemas de este índole) la
-entrada será sobre un alfabeto de \texttt{[a-z]} entonces serán representados en ASCII.
+La entrada se lee como se indica en el caso \ref{io:1}.
 
 \subsubsection{Salida}
 Solo se deberá mostrar en la salida estándar \texttt{Si} o \texttt{No} dependiendo si es una
 rotación cíclica.
 
 \subsubsection{Ejemplos}
-Dado que ambas cadenas son de la misma longitud se hará lo siguiente, $s = qq$ donde $s$ será el
+Dado que ambas cadenas son de la misma longitud se hará lo siguiente; $s = qq$ donde $s$ será el
 texto y $p$ el patrón. Entonces con el algoritmo dee Knuth-Morris-Pratt se buscará $p$ en $s$.
 
 \begin{itemize}
@@ -518,11 +540,24 @@ que sea 0 y como cualquier valor no cero en \texttt{while} lo toma como falso pa
 Muchas veces algunos jueces (o problemas) no aceptan ciertos lenguaje, y en este caso el que
 diseñó el problema y lo subió en SPOJ, no puso a Haskell para este problema. Pero aún así se hará.
 
-Recordando la primera primera forma en leer la entrada\ref{io:1}, se seguirá ese camino.
+Recordando la primera manera \ref{io:1} de leer la entrada, se seguirá ese camino.
 
 \begin{itemize}
+\item La única diferencia sería en la línea \texttt{8} con el uso de la función \hsCode{liftM2}.\\
+\hsCode{liftM2 :: Monad m => (a1 -> a2 -> r) -> m a1 -> m a2 -> m r} toma dos valores mónadicos y
+combina sus contenidos usando otra función. Ejemplo:
+\begin{minted}[frame=single]{haskell}
+addM :: Maybe Int -> Maybe Int -> Maybe Int
+addM mx my = do
+    x <- mx
+    y <- my
+    return (x + y)
+\end{minted}
 
-\item TODO
+\begin{minted}[frame=single]{haskell}
+add :: Maybe Int -> Maybe Int -> Maybe Int
+add = liftM2 (+)
+\end{minted}
 
 \item De la línea \texttt{10} a \texttt{16} es see crea la función
 \hsCode{process :: [String] -> String}, donde por medio de caza de patrones se trabaja con una
@@ -530,7 +565,7 @@ lista de dos elementos, acto seguido en la expresión \hsCode{let ... in ..} se 
 del patrón \texttt{p} en \texttt{s} y al final con la función
 \hsCode{null :: Foldable t => t a -> Bool} se verifica si la lista es vacía.  
 
-\item De la línea \texttt{19} a \texttt{24} es la implementación del algoritmo Knuth-Morris-Pratt
+\item De la línea \texttt{20} a \texttt{44} es la implementación del algoritmo Knuth-Morris-Pratt
 funcionalmente.
 \end{itemize}
 
@@ -544,7 +579,7 @@ funcionalmente.
 \newpage
 
 
-\subsection{Extender una cadena a un palíndromo}
+\subsection{Extender una cadena a su palíndromo más corto}
 
 \subsubsection{Análisis}
 En este problema lo \textit{realmente importante} empieza en el tercer párrafo, que resumiendo es:
@@ -561,7 +596,7 @@ problema no se asegura que sea el palíndromo más corto.
 
 Para mostrarlo tomemos una cadena arbitraria $s = $ \texttt{recono} y $s^R =$ \texttt{onocer}
 quedando $t = $ \texttt{reconoonocer} y $t$ es un palíndromo pero hay un palíndromo más corto
-$t' = $ \texttt{reconocer}. Esto fue concatenando \texttt{cer} a \texttt{recono}. 
+$t' = $ \texttt{reconocer}. Esto fue agregando de sufijo \texttt{cer} a \texttt{recono}. 
 Por lo tanto debe de haber una forma mejor de atacar el problema.
 
 Consideremos la función de error utilizada en KMP, como por hipótesis del problema la cadena solo
@@ -580,18 +615,18 @@ La complejidad del algoritmo es $\Theta(m)$ donde $m$ es el tamaño de la cadena
 en espacio y tiempo, esto es por construir la función de error y obtener la reversa de una cadena.
 
 \subsubsection{Entrada}
-Al igual que el primero problema, la entrada será leída línea por línea hasta EOF yla
-entrada será sobre un alfabeto de \texttt{[a-z]|[A-Z]} entonces serán representados en ASCII.
+La entrada será leída línea por línea hasta EOF como se indica en \ref{io:3} y la entrada será
+sobre un alfabeto de \texttt{[a-z]|[A-Z]} entonces serán representados en ASCII.
 
 \subsubsection{Salida}
-Una sola línea que se imprime en la salida estándar con el palíndromo de más corto.
+Una sola línea con el palíndromo de más corto.
 
 \subsubsection{Ejemplos}
 \begin{itemize}
 \item Sea $s = $ \texttt{aaaa}, $s^R =$ \texttt{aaaa} y finalmente
 $r = s^R$\texttt{\$}$s =$ \texttt{aaaa\$aaaa} y se construye la función de error con $r$ quedando,
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \begin{tabular}{c|c|c|c|c|c|c|c|c|c|}
 \cline{2-10}
@@ -607,7 +642,7 @@ $u = s \cdot s^R[4 \ldots] =$ \texttt{aaaa}$\cdot \varepsilon$ = \texttt{aaaa}.
 \item Sea $s = $ \texttt{abba}, $s^R =$ \texttt{abba} y finalmente
 $r = s^R$\texttt{\$}$s =$ \texttt{abba\$abba} y se construye la función de error con $r$ quedando,
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \begin{tabular}{c|c|c|c|c|c|c|c|c|c|}
 \cline{2-10}
@@ -624,7 +659,7 @@ $u = s \cdot s^R[4 \ldots] =$ \texttt{abba}$\cdot \varepsilon$ = \texttt{abba}.
 $r = s^R$\texttt{\$}$s =$ \texttt{lanacanalpanama\$amanaplanacanal} y se construye la función de
 error con $r$ quedando,
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \cline{2-17}
@@ -680,8 +715,6 @@ $u = s \cdot s^R[1 \ldots] =$ \texttt{xyz}$\cdot$\texttt{yx} = \texttt{xyzyx}.
 \inputminted[linenos, frame=lines]{haskell}{problemas/haskell/EPALIN.hs}
 
 \begin{itemize}
-\item Al igual que el primer problema, se tratará la entrada y salida orientada a líneas con
-la función \hsCode{interact} donde la función \hsCode{process} es la que hará \textit{el algorítmo}.
 \item En la línea \texttt{8} se saca la reversa de la cadena de entrada, en la línea \texttt{9}
 se crea la cadena $r$, en la línea \texttt{10} se crea la función de error. Finalmente en la línea
 \texttt{13} con la \hsCode{drop :: Int -> [a] -> [a]} que regresa el sufijo de una lista
@@ -699,7 +732,7 @@ palíndromo y en la línea \texttt{14} se concatena \texttt{xs} la cadena anteri
 \newpage
 
 
-\subsection{Encontrar todas las ocurrencias de un patrón en un texto}
+\subsection{Encontrar las ocurrencias de un patrón en un texto}
 
 \subsubsection{Análisis}
 De los problemas anteriores este es quizás es el uso más \textit{canónico} del algoritmo
@@ -708,11 +741,11 @@ un patrón en un texto. Lo inlcuí porque ``la trampa'' de este problema es que 
 resuelve con el algoritmo \textit{naïve} y simplemente el juez no lo aceptará. La complejidad como
 ya se había comentado enteriormente, es $\Theta(m)$ en tiempo el preprocesamiento del patrón y
 $\Theta(n)$ en encontrar las ocurrencias, en espacio toma complejidad $O(m)$.
-%TODO: poner que está chido porque se pueden encontrar patrones que se overlapean
 
 \subsubsection{Entrada}
-Al igual que el primer problemas se leerá hasta EOF, y cada caso prueba consistirá de 3 líneas;
-la primera será la longitud del patrón, seguida del patrón y después el texo.
+La entrada será leída línea por línea hasta EOF como se indica en \ref{io:3}, cada caso prueba
+consistirá de 3 líneas; la primera será la longitud del patrón, seguida del patrón y después
+el texo.
 
 \subsubsection{Salida}
 Si hubo una(s) aparición(es) cada una será impresa en pantalla línea por línea. Si no, solamente
@@ -746,7 +779,7 @@ patrón.
 \end{table}
 
 \item El patón es \texttt{foobarfoo} y el texto es \texttt{barfoobarfoobarfoobarfoobarfoo}, y
-hubo 4 apariciones del patrónen la posiciones 3, 9, 15 y 21.
+hubo 4 apariciones del patrón la posiciones 3, 9, 15 y 21.
 \begin{table}[H]
 \centering
 \hspace*{-3cm}
@@ -849,6 +882,7 @@ hubo 4 apariciones del patrónen la posiciones 3, 9, 15 y 21.
 \subsubsection{Implementación en Haskell}
 \inputminted[linenos, frame=lines]{haskell}{problemas/haskell/NHAY.hs}
 
+\newpage
 \begin{itemize}
 \item Al ser un programa orientado a líneas, solo se prestará atención a la función
 \hsCode{process} y \hsCode{parse}.
