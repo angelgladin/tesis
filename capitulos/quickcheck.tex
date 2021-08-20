@@ -1,41 +1,48 @@
 \epigraph{\itshape Randomized testing exemplifies the 80/20 rule: it yields 80\% of the benefit
 of formal verification for 20\% of the effort.}{Matt Might}
 
-\QuickCheck es una biblioteca de Haskell para hacer pruebas generadas aleatoriamente que deben
-cumplir ciertas propiedades nuestros programas. El programador provee una especificación de su
-programa en la forma de propiedades las cuales las funciones deben satisfacer y, \QuickCheck prueba
-que esas propiedades se mantengan en un gran número de casos de casos generados aleatoriamente.\\
-Las especificaciones son expresadas en Haskell usando combinadores proporcionados por \QuickCheck.
-\QuickCheck provee combinadores para definir propiedades, observar la disctribución de los casos
+{\QuickCheck} es una biblioteca de Haskell para hacer pruebas generadas 
+aleatoriamente sobre ciertas propiedades que deben cumplir los programas. El 
+programador provee una especificación de su programa mediante propiedades 
+que satisfacen las funciones  y, {\QuickCheck} prueba que esas propiedades se 
+mantengan en un gran número de casos generados aleatoriamente.\\
+Las especificaciones son expresadas en sintaxis de Haskell usando combinadores 
+proporcionados por {\QuickCheck} 
+% {\QuickCheck} provee combinadores 
+para definir propiedades, observar la disctribución de los casos
 de prueba y, definir los generadores de información.\footnote{
-    Descripción de \QuickCheck tomada de la documentación oficial\\
+    Descripción de {\QuickCheck} tomada de la documentación oficial\\
     \url{https://hackage.haskell.org/package/QuickCheck}.
 }
 
 \noindent\rule{\textwidth}{1pt}
 \hfill \break
 
-En esta sección se verá la importancia sobre usar \QuickCheck; tanto como una manera rápida de
-verificar ciertas propiedades que deben cumplirse en alguna implementación que se haya hecho en
-Haskell, ventajas y desventajas sobre su uso. El porqué es útil utilizarlo y qué problemática
-aborda.
+En esta sección se verá la importancia de usar {\QuickCheck}; tanto como una 
+manera rápida de verificar ciertas propiedades que deben cumplirse en alguna 
+implementación que se haya hecho en Haskell, ventajas y desventajas sobre su 
+uso y, el porqué es útil utilizarlo y qué problemática aborda.
 
-Se verá como será utilizado en un ejemplo práctico; en este caso tanto en
+Se verá en un ejemplo práctico, en este caso tanto en
 \hyperlink{funcional:funcion_error}{la función de error} y en
-\hyperlink{funcional:kmp}{\textit{Knuth-Morris-Pratt}} en Haskell. En ambos ejemplos se expondrá la
-versión \textit{naïve} y la versión ``optimizada'' que fue derivada mediante razonamiento
-ecuacional. Y por medio de casos generados aleatoriamente se analizará el resultado que
-\QuickCheck proporciona.
+\hyperlink{funcional:kmp}{\textit{Knuth-Morris-Pratt}}, implementados en 
+Haskell. En ambos ejemplos se expondrá la versión \textit{naïve} y la versión 
+``optimizada'' que fue derivada mediante razonamiento ecuacional. 
+Y por medio de casos generados aleatoriamente se analizará el resultado que
+{\QuickCheck} proporciona.
+
 
 \section{Motivación}
-Hoy en día el estilo de hacer pruebas a nuestro código es mediante \textit{pruebas unitarias (unit
-testing)} en las cuales; se inveta un ``estado del mundo'', se ejecutan la pruebas unitarias, se
-checa si el estado modificado del ``mundo'' hace lo que debería hacer y al final se ve si todo
-sigue funcionando como se debe.
+Hoy en día el estilo de hacer pruebas a nuestro código es mediante 
+\textit{pruebas unitarias (unit testing)} en las cuales; se supone un ``estado 
+del mundo'' o del sistema, se ejecutan la pruebas unitarias, se revisa checa si 
+el estado modificado del ``mundo'' hace lo que debería hacer y al final se 
+confirma que todo el sistema siga funcionando como se debe o como se espera. 
 
-A continuación se muestra un conjunto de aserciones (\texttt{assert}) en Java para ejemplificar
-la idea. Una aserción puede ser utilizada para verificar si una suposición hecha durante la
-implementación del programa se mantiene válida cuando el programa es ejecutado.
+A continuación se muestra un conjunto de aserciones (\texttt{assert}) o 
+afirmaciones en Java para ejemplificar esta idea. Una aserción puede ser 
+utilizada para verificar si una suposición hecha durante la implementación del 
+programa se mantiene válida cuando el programa es ejecutado.
 
 \begin{minted}[frame=lines, framesep=10pt, linenos]{java}
 class TestAdder {
@@ -62,40 +69,47 @@ class AdderImpl implements Adder {
 }
 \end{minted}
 
-En este tipo de pruebas se pueden agregar gran cantidad de objetos que simulan comporamientos 
-(\textit{mock objects}) o, un sinnúmero de casos prueba pero ¿cuál es el problema aquí? El código
-anterior solo tiene 7 pruebas y no es dificil de imaginar que se pueden crear muchos más casos, o
-simplemente si se implementa otra funcionalidad el espacio de búsqueda de posibles \textit{bugs}
+En este tipo de pruebas se pueden agregar gran cantidad de objetos que simulan 
+comporamientos (\textit{mock objects}) o, un sinnúmero de casos prueba pero 
+¿cuál es el problema aquí? El código anterior solo tiene 7 pruebas y no es 
+dificil de imaginar que se pueden crear muchos más casos, o simplemente si se 
+implementa otra funcionalidad el espacio de búsqueda de posibles \textit{bugs}
 crece de forma exponencial.
 
-Claramente hacer pruebas es impráctico, pero ¿por qué usar \QuickCheck?
+Claramente hacer pruebas es impráctico, pero ¿por qué usar {\QuickCheck}?
 \begin{itemize}
-\item Se pueden combinar las pruebas basadas en propiedades (en la siguiente sección se hablará
-de esto) con casos de prueba generados \textit{aleatoriamente}.
-\item El programador escribe propiedades a cumplir en vez de pruebas en específico.
-\item Obviamente no nos puede dar la misma seguridad de hacer pruebas exhaustivamente, o mejor
-aún usar un asistente de pruebas. Pero \textbf{es muy práctico}.
-\item Se puede escoger la cantidad de información que será sometida a nuestras propiedades.
+\item Se pueden combinar las pruebas basadas en propiedades (en la siguiente 
+sección se hablará de esto) con casos de prueba generados 
+\textit{aleatoriamente}.
+\item El programador escribe propiedades a cumplir en vez de pruebas en 
+específico.
+\item Obviamente no nos puede dar la misma seguridad de hacer pruebas 
+exhaustivamente, o mejor aún usar un asistente de pruebas, pero \textbf{es muy 
+práctico}.
+\item Se puede escoger la cantidad de información que será sometida a nuestras 
+propiedades.
 \end{itemize}
 
 
 \section{Uso básico}
 
-Consideremos la siguiente propiedad para \textit{listas finitas} que es una función.
+Consideremos la siguiente propiedad sobre \textit{listas finitas} que usa la 
+función \hsCode{reverse}:
 \begin{minted}{haskell}
 prop_rev_rev :: [Int] -> Bool
 prop_rev_rev xs = reverse (reverse xs) == xs
 \end{minted}
 
-Después de haber importado el módulo \hsCode{Test.QuickCheck} en \texttt{ghci}, se prueba con 100
-listas aleatorias con \hsCode{quickCheck :: Testable prop => prop -> IO ()}.
+Después de haber importado el módulo \hsCode{Test.QuickCheck} en \texttt{ghci}, 
+se prueba con 100 listas aleatorias usando 
+\hsCode{quickCheck :: Testable prop => prop -> IO ()}.
 \begin{minted}{text}
 >>> quickCheck prop_rev_rev
 +++ OK, passed 100 tests.
 \end{minted}
 
-Y aunque esta propiedad es verdadera (y que se demostrará enseguida) se puede ver lo útil y
-práctico que es \QuickCheck en este ejemplo.
+Y aunque esta propiedad es verdadera (que se demostrará enseguida) se puede 
+ver lo útil y práctico que es {\QuickCheck} en este ejemplo.
 
 \begin{proof}
 Por inducción estructural sobre listas. Demostrar que,\\
@@ -137,13 +151,15 @@ x:xs
 
 
 \begin{proof}
-Por demostrar que la distributividad de \hsCode{reverse} sobre listas, pero que el orden de los
-elementos son intercambiados.
+Por demostrar que la distributividad de \hsCode{reverse} sobre la 
+concatenaci´on de listas es válida, pero que el orden de los argumento es 
+intercambiado:
+\hsCode{reverse (xs ++ ys) = reverse ys ++ reverse xs} para toda lista finita 
+\texttt{xs}.
 
-\hsCode{reverse (xs ++ ys) = reverse ys ++ reverse xs} para toda lista finita \texttt{xs}.
-
-Como el operador de concatenación \hsCode{++} está definido con caza de patrones sobre el primer
-argumento, es natural verificar esta propiedad con inducción sobre \texttt{xs}.
+Como el operador de concatenación \hsCode{++} está definido con caza de patrones 
+sobre el primer argumento, es natural verificar esta propiedad con inducción 
+sobre \texttt{xs}.
 Recordando la función \hsCode{(++)} definida como:
 
 \begin{minted}{haskell}
@@ -185,7 +201,8 @@ reverse ys ++ reverse (x:xs)
 Concluyendo así que la función \hsCode{reverse} es su propia inversa.
 \end{proof}
 
-Ahora consideremos un caso donde la propiedad falle en \QuickCheck, y se mostrará un contraejemplo.
+Ahora consideremos un caso donde la propiedad falle en {\QuickCheck}, y se 
+mostrará un contraejemplo.
 \begin{minted}{haskell}
 prop_wrong :: [Int] -> Bool
 prop_wrong xs = reverse xs == xs 
@@ -200,42 +217,51 @@ Mostrando así un caso donde no cumple la propiedad.
 
 \noindent\rule{\textwidth}{1pt}
 
-Veamos otro ejemplo, para todo entero $n$, si $n$ es par entonces $n+1$ es impar. Aunque la
-demostración es trivial, con \QuickCheck se puede validar (mas no verficar formalmente) con
-varios números generados aleatoriamente para probar esta propiedad.
+Veamos otro ejemplo, para todo entero $n$, si $n$ es par entonces $n+1$ es 
+impar. Aunque la demostración es trivial, con {\QuickCheck} se puede validar 
+(mas no verficar formalmente) con varios números generados aleatoriamente para 
+probar esta propiedad.
 \begin{minted}{haskell}
 >>> quickCheck (\n -> even n ==> odd(n + 1))
 +++ OK, passed 100 tests
 \end{minted}
-
-donde \hsCode{==>} es una propiedad condicional que descarta los casos que no satisfacen esa
+donde \hsCode{==>} es una propiedad condicional que descarta los casos que no 
+satisfacen esa
 precondición.
 
 \noindent\rule{\textwidth}{1pt}
 
-Cuando se escriben propiedades:
+Cuando se escriben propiedades se debe tener en cuenta la siguiente información 
+(donde la última es la más importante):
 \begin{itemize}
 \item Las propiedades son simples funciones booleanas.
-\item La conveción es que los nombres de las propiedades tienen el prefijo \hsCode{prop_}.
-\item Los parámetros están ímplicitamente cuantificados con un cuantificador universal $\forall$ y
-la última y, más importante es que las funciones polimórficas deben de estar restringidas a un tipo
+\item La convención es que los nombres de las propiedades tienen el prefijo 
+\hsCode{prop_}.
+\item Los parámetros están ímplicitamente cuantificados con un cuantificador 
+universal ($\forall$).
+\item Las funciones polimórficas deben de estar restringidas a un tipo
 en específico.
 \end{itemize}
 
+
 \section{Generadores}
 
-Aunque \QuickCheck puede generar algunos valores aleatorios para algún tipo ímplicitamente, hay
-ocaciones que se necesitan nuestros propios valores aleatorios. Es aquí cuando se debe escribir
-una instancia de \hsCode{Arbitrary} para esto. Los valores que se ocupan en la pruebas son
-producidos por los \textit{generadores de valores}.
+Aunque {\QuickCheck} puede generar algunos valores aleatorios para algún tipo 
+ímplicitamente, hay ocasiones que es m[as productivo definir valores aleatorios  
+propios. 
+%FIXME falta explicar quien es Arbitrary...
+Es aquí cuando se debe escribir una instancia de \hsCode{Arbitrary} 
+para esto. Los valores que se ocupan en la pruebas son producidos por los 
+\textit{generadores de valores}.
 
-Los Generadores tienen tipos de la forma \hsCode{Gen a}, que es un generador de valores para
-un tipo \hsCode{a}. El tipo \hsCode{Gen} es una mónada, así que se puede utilizar la notación 
-\hsCode{do} y las funciones monádicas pueden ser utilizadas para definir generadores.
+Los Generadores tienen tipos de la forma \hsCode{Gen a}, que es un generador de 
+valores para un tipo \hsCode{a}. El tipo \hsCode{Gen} es una mónada, así que se 
+puede utilizar la notación \hsCode{do} y las funciones monádicas pueden ser 
+utilizadas para definir generadores.
 
-Veamos el siguiente ejemplo; consideremos el tipo de dato algebraico \hsCode{Point} donde
-representa un punto en un espacio bidimensional. Lo que se quiera hacer es generar puntos
-con coordenadas $x$ y $y$ aleatoriamente.
+Veamos el siguiente ejemplo; consideremos el tipo de dato algebraico 
+\hsCode{Point} que representa un punto en un espacio bidimensional. Lo que se 
+quiere hacer es generar puntos con coordenadas $x$ y $y$ aleatoriamente.
 
 \begin{minted}{haskell}
 data Point = Point Int Int
@@ -246,41 +272,46 @@ instance Arbitrary Point where
     y <- arbitrary
     return (Point x y)
 \end{minted}
+donde \hsCode{arbitrary :: Gen a} es un generator para valores de un cierto 
+tipo, y que en este caso son de tipo \hsCode{Int}.
 
-donde \hsCode{arbitrary :: Gen a} es un generator para valores de un cierto tipo, y que en este
-caso son de tipo \hsCode{Int}.
 
 \section{Probando las implementaciones}
 
-Es aquí cuando las versiones \emph{naïve} y las obtenidadas por medio de razonamiento ecuacional,
-tanto en la \hyperlink{funcional:funcion_error}{función de error} como en
-\hyperlink{funcional:kmp}{\textit{Knuth-Morris-Pratt}} son probadas uno a uno con diferentes casos
-prueba en Haskell.
+En esta sección revisaremos las versiones \emph{naïve} y las 
+obtenidadas por medio de razonamiento ecuacional, tanto en la 
+\hyperlink{funcional:funcion_error}{función de error} como en 
+\hyperlink{funcional:kmp}{\textit{Knuth-Morris-Pratt}} son probadas uno a uno 
+con diferentes casos prueba en Haskell.
 
-Al hacer los casos prueba usando el tipo \hsCode{String} es poco probables tener
-\textit{una buena disctribución} de los caracteres que comprende la cadena y, en especial en probar
-el algoritmo KMP con las cadenas del patrón y texto. Si por ejemplo restringimos las cadenas
-a que solo contengan caracteres ASCII aún así no serían muy útiles en las pruebas. Consideremos
+Al hacer los casos prueba usando el tipo \hsCode{String} es poco probable 
+tener \textit{una buena disctribución} de los caracteres que comprende la 
+cadena y, en especial en probar el algoritmo KMP con las cadenas del patrón y 
+texto. Si por ejemplo, restringimos las cadenas a que sólo contengan 
+caracteres ASCII aún así no serían muy útiles en las pruebas. Consideremos
 el siguiente muestreo.
 
 \begin{minted}{haskell}
 >>> sample $ vectorOf 10 arbitraryASCIIChar
 \end{minted}
-La función \hsCode{sample :: Show a => Gen a -> IO ()} genera algunos valores de ejemplo y los
-imprime en la salida estándar. Si se toma algún valor que se imprimió, que por ejemplo sería
-\mintinline{text}|"\t\n]*]i_\fm\SYN"| se ve que no es muy útil para nuestro propósito. Pero
-¿no sería más mejor definir nuestros propios valores aleatorios?
+La función \hsCode{sample :: Show a => Gen a -> IO ()} genera algunos valores de 
+ejemplo y los imprime en la salida estándar. Si se toma algún valor que se 
+imprimió, que por ejemplo sería \mintinline{text}|"\t\n]*]i_\fm\SYN"| se ve que 
+no es muy útil para nuestro propósito. 
+Pero ¿no sería más mejor definir nuestros propios valores aleatorios?
 
 \hfill \break
-En los generadores presentados a continuación en la función de error y el algoritmo KMP es
-bastante usual que se trabaje sobre alfabeto finito $\Sigma$; puede ser sobre las letras del
-alfabeto inglés $\Sigma = \{ \texttt{a} \ldots \texttt{z} \}$, un alfabeto binario
-$\Sigma = \{ 0, 1 \}$ o un alfabeto de ADN donde $\Sigma = \{ \texttt{A,C,G,T} \}$ por mencionar
-algunos. De esta manera, se restringen los caracteres tomados con respecto a algún alfabeto
-definida por nosotros.
+En los generadores presentados a continuación para la función de error y el 
+algoritmo KMP es bastante usual que se trabaje sobre un alfabeto finito 
+$\Sigma$; puede incluir de las letras del alfabeto inglés 
+$\Sigma = \{ \texttt{a} \ldots \texttt{z} \}$, un alfabeto binario
+$\Sigma = \{ 0, 1 \}$ o un alfabeto de ADN donde 
+$\Sigma = \{ \texttt{A,C,G,T} \}$ por mencionar algunos. 
+De esta manera, se restringen los caracteres tomados con respecto a algún 
+alfabeto definida por nosotros.
 
-A continuación se mostrará como restringir las cadenas generadas sobre algún alfabeto y su
-su longitud, con su respectiva implementación.
+A continuación se mostrará como restringir las cadenas generadas sobre algún 
+alfabeto y su su longitud, con su respectiva implementación.
 
 \newpage
 \subsubsection{Función de error}
@@ -288,49 +319,63 @@ su longitud, con su respectiva implementación.
     {codigo/haskell/test-failure-function.hs}
 
 \begin{itemize}
-\item En la línea \texttt{3} y \texttt{4} se importan los módulo de la versión de error, tanto
-la versión que tiene complejidad $O(n^3)$ y $\Theta(n)$ respectivamente, que proveerán la función
-\hsCode{ptable} que es la función de error.
-\item En la línea \texttt{6} del módulo \hsCode{Data.Array} solo se importa la función\\
-\hsCode{elems :: Array i e -> [e]} para obtener una lista de elementos del arreglo en el orden
-indexado.
-\item En la línea \texttt{8} se hace un \emph{wrapper} para \hsCode{String} con el
-constructor \hsCode{S}. Éste será usado para poder usar la instancia de \hsCode{Arbitrary}.
-Es mucho mejor definir un nuevo tipo isomorfo a (en este caso) \hsCode{String} y así poder definir
-su generador para este caso en específico.
-\item En la línea \texttt{11} a \texttt{15}, para poder usar \hsCode{arbitrary} en el tipo
-\hsCode{Pattern} definido por nosotros, se necesita declarar como instancia de \hsCode{Arbitrary}.
-En la línea \texttt{12} por medio de la notación \hsCode{do} cada línea será un valor monádico,
-primero se liga el valor \hsCode{size} a un número aleatorio entre 1 y 1000 con\\
-\hsCode{chooseInt :: (Int, Int) -> Gen Int} que genera un elemento aleatorio dado un rango
-inclusivo, acto seguido se liga la variable \hsCode{text} con una cadena del tamaño de la variable
-\hsCode{size} sobre un alfabeto de la letra \hsCode{'a'} a la \hsCode{'z'} con la ayuda de
-\hsCode{elements :: [a] -> Gen a} que genera un elemento de los valores dados (y que la lista debe
-ser no vacía), y así con\\
-\hsCode{vectorOf :: Int -> Gen a -> Gen [a]} que genera una lista de una longitud dada. Finalmente
-con la función \hsCode{return} pone el resultado en un contexto monádico.
-\item En la línea \texttt{17} no es necesario que sea instancia de \hsCode{Show}, pero cuando se usa
-\hsCode{verboseCheck} en \hsCode{QuickCheck} es útil para poder mostar los casos prueba.
-\item De la línea \texttt{20} a la \texttt{24} primero se extrae la cadena \hsCode{as} del
-constructor \hsCode{S}. Después en la expresión \hsCode{let ... in ...} en la línea
-\texttt{22} se transforma lo que devuelve la función \hsCode{ptable} a una lista de tipo
-\hsCode{[(Char, Int)]} donde la $i$-ésima posición donde la primera entrada es el $i$-ésimo
-caracter de la cadena y la segunda entrada es la $i$-ésima posición de la función de error.
-En la línea \texttt{23}, lo que regresa \hsCode{FailureFunctionOptimizedp.ptable} regresa
-\hsCode{Array Int (a, Int)} pero con la función \hsCode{A.elems} se obtiene un lista, que
-finalmente en la línea \texttt{24} se compara que ambas listas sean iguales.
-\item Finalmente en la función \hsCode{main} es donde con ayuda de la función \hsCode{quickCheck}
-se hará la prueba de las propiedades y se mostrará el resultado en la salida estándar.
+\item En la línea \texttt{3} y \texttt{4} se importan los módulo de la versión 
+de error, tanto la versión que tiene complejidad $O(n^3)$ y $\Theta(n)$ 
+respectivamente, que proveerán la función \hsCode{ptable} que es la función de 
+error.
+\item En la línea \texttt{6} del módulo \hsCode{Data.Array} solo se importa la 
+función\\
+\hsCode{elems :: Array i e -> [e]} para obtener una lista de elementos del 
+arreglo en el orden indexado.
+\item En la línea \texttt{8} se hace un \emph{wrapper} para \hsCode{String} con 
+el constructor \hsCode{S}. Éste será usado para poder usar la instancia de 
+\hsCode{Arbitrary}.
+Es mucho mejor definir un nuevo tipo isomorfo a (en este caso) \hsCode{String} y 
+así poder definir su generador para este caso en específico.
+\item En la línea \texttt{11} a \texttt{15}, para poder usar \hsCode{arbitrary} 
+en el tipo \hsCode{Pattern} definido por nosotros, se necesita declarar como 
+instancia de \hsCode{Arbitrary}.
+En la línea \texttt{12} por medio de la notación \hsCode{do} cada línea será un 
+valor monádico, primero se liga el valor \hsCode{size} a un número aleatorio 
+entre 1 y 1000 con\\
+\hsCode{chooseInt :: (Int, Int) -> Gen Int} que genera un elemento aleatorio 
+dado un rango inclusivo, acto seguido se liga la variable \hsCode{text} con una 
+cadena del tamaño de la variable \hsCode{size} sobre un alfabeto de la letra 
+\hsCode{'a'} a la \hsCode{'z'} con la ayuda de \hsCode{elements :: [a] -> Gen a} 
+que genera un elemento de los valores dados (y que la lista debe ser no vacía), 
+y así con\\
+\hsCode{vectorOf :: Int -> Gen a -> Gen [a]} que genera una lista de una 
+longitud dada. Finalmente con la función \hsCode{return} pone el resultado en un 
+contexto monádico.
+\item En la línea \texttt{17} no es necesario que sea instancia de 
+\hsCode{Show}, pero cuando se usa \hsCode{verboseCheck} en \hsCode{QuickCheck} 
+es útil para poder mostar los casos prueba.
+\item De la línea \texttt{20} a la \texttt{24} primero se extrae la cadena 
+\hsCode{as} del constructor \hsCode{S}. 
+Después en la expresión \hsCode{let ... in ...} en la línea \texttt{22} se 
+transforma lo que devuelve la función \hsCode{ptable} a una lista de tipo
+\hsCode{[(Char, Int)]} donde la $i$-ésima posición donde la primera entrada es 
+el $i$-ésimo caracter de la cadena y la segunda entrada es la $i$-ésima 
+posición de la función de error.
+En la línea \texttt{23}, lo que regresa 
+\hsCode{FailureFunctionOptimizedp.ptable} regresa
+\hsCode{Array Int (a, Int)} pero con la función \hsCode{A.elems} se obtiene un 
+lista, que finalmente en la línea \texttt{24} se compara que ambas listas sean 
+iguales.
+\item Finalmente en la función \hsCode{main} es donde con ayuda de la función 
+\hsCode{quickCheck} se hará la prueba de las propiedades y se mostrará el 
+resultado en la salida estándar.
 \end{itemize}
 
-Para ejecutar las pruebas se pueden hacer directamente en \texttt{ghci}, pero en este caso
-se utilizará \texttt{runhaskell} de la siguiente manera:
+Para ejecutar las pruebas se pueden hacer directamente en \texttt{ghci}, pero en 
+este caso se ejemplificará el comando \texttt{runhaskell} de la siguiente 
+manera:
 
 \texttt{\$ runhaskell test-failure-function.hs}
 
 \noindent\rule{\textwidth}{1pt}
-Para poder visualizar algunos valores con los que fueron probadas ambas funciones, en vez de
-usar \hsCode{quickCheck} se utilizó \hsCode{verboseCheck}.
+Para poder visualizar algunos valores con los que fueron probadas ambas 
+funciones, en vez de usar \hsCode{quickCheck} se utilizó \hsCode{verboseCheck}.
 
 \begin{minted}{text}
 Running failure function tests...
@@ -370,25 +415,29 @@ ruhtwpwesozzglmsvzzshonujhutwjkagfhzbdvsdiczpeuzxgwmkugjgpbynlp
     {codigo/haskell/test-matching.hs}
 % TODO: ya solo me falta explicar esto
 \begin{itemize}
-\item En la línea \texttt{7} se declara un nuevo tipo de dato \hsCode{TextPattern} que encapsulará
-el texto y el patrón a buscar.
-\item De la línea \texttt{10} a la \texttt{16} se declara como una instancia de \hsCode{Arbitrary}.
-La diferencia a notar con el código anterior, es el alfabeto sobre el cual se generarán las cadenas
-que aquí es $\Sigma = \{ \texttt{A,C,G,T} \}$. Y que son dos cadenas las generadas.
-\item En cada una de las funciones que su nombre tiene de prefijo \hsCode{prop_matches} se
-compara cada una de las implementaciones de buscar un patrón en un texto, se compara desde la
-versión naïve contra versión Morris-Pratt y Knuth-Morris-Pratt.
-\item Finalmente en la línea \texttt{34} se hace las pruebas de cada una de las funciones. 
+\item En la línea \texttt{7} se declara un nuevo tipo de dato 
+\hsCode{TextPattern} que encapsulará el texto y el patrón a buscar.
+\item De la línea \texttt{10} a la \texttt{16} se declara como una instancia de 
+\hsCode{Arbitrary}.
+La diferencia a notar con el código anterior, es el alfabeto sobre el cual se 
+generarán las cadenas que aquí es $\Sigma = \{ \texttt{A,C,G,T} \}$. Y que son 
+dos cadenas las generadas.
+\item En cada una de las funciones que su nombre tiene de prefijo 
+\hsCode{prop_matches} se compara cada una de las implementaciones de buscar un 
+patrón en un texto, se compara desde la versión naïve contra versión 
+Morris-Pratt y Knuth-Morris-Pratt.
+\item Finalmente en la línea \texttt{34} se hace las pruebas de cada una de las 
+funciones. 
 \end{itemize}
 
-Para ejecutar las pruebas se pueden hacer directamente en \texttt{ghci}, pero en este caso
-se utilizará \texttt{runhaskell} de la siguiente manera:
+Para ejecutar las pruebas se pueden hacer directamente en \texttt{ghci}, pero en 
+este caso se utilizará \texttt{runhaskell} de la siguiente manera:
 
 \texttt{\$ runhaskell test-matching.hs}
 
 \noindent\rule{\textwidth}{1pt}
-Para poder visualizar algunos valores con los que fueron probadas ambas funciones, en vez de
-usar \hsCode{quickCheck} se utilizó \hsCode{verboseCheck}.
+Para poder visualizar algunos valores con los que fueron probadas ambas 
+funciones, en vez de usar \hsCode{quickCheck} se utilizó \hsCode{verboseCheck}.
 
 \begin{minted}{text}
 Testing NaiveMatching with MP1...
@@ -483,9 +532,10 @@ CATCGA
 +++ OK, passed 100 tests.
 \end{minted}
 
-A pesar de que se pueden hacer cosas más sofisticadas, y aún mejor hasta llegar a utilizar
-la extensión del lenguaje de Haskell (\hsCode{LANGUAGE TemplateHaskell}) para poder probar
-todas las funciones con el prefijo \hsCode{prop_}, por la naturaleza de las pruebas que se
-requieren no se necesita indagar más en las funciones que tiene \QuickCheck.
+A pesar de que se pueden hacer cosas más sofisticadas, y aún mejor hasta llegar 
+a utilizar la extensión del lenguaje de Haskell 
+(\hsCode{LANGUAGE TemplateHaskell}) para poder probar todas las funciones con el 
+prefijo \hsCode{prop_}, por la naturaleza de las pruebas que se requieren no se 
+necesita indagar más en las funciones que tiene {\QuickCheck}.
 
-\QuickCheck es una biblioteca enorme, que sin duda es bastante útil.
+{\QuickCheck} es una biblioteca enorme, que sin duda es bastante útil.
