@@ -1,71 +1,94 @@
 \label{chap:prog_competitiva}
 \epigraph{\itshape Talk is cheap. Show me the code.}{Linus Torvalds}
 
-Cuando se habla acerca del término `programación competitiva' se refiere a: ``Dados problemas
-bien conocidos en Ciencias de la Computación, ¡resolverlos tan pronto como sea posible!''.
-\cite{halim2013competitive} Otras personas suelen llamarlo un deporte mental.
+Cuando se habla acerca del término `programación competitiva' se refiere a: 
+``Dados problemas bien conocidos en Ciencias de la Computación, ¡resolverlos 
+tan pronto como sea posible!''
+\cite{halim2013competitive}. Otras personas suelen llamarlo un deporte mental.
 
-Desglosemos el significado término por término. El término `problemas bien conocidos en Ciencias de
-la Computación', implica que en programación competitiva se está trantando con problemas que
-ya han sido resultos y \textbf{no} con problemas de investigación o abiertos (donde las
+Desglosemos el significado término por término. El término `problemas bien 
+conocidos en Ciencias de la Computación', implica que en programación 
+competitiva se está tratando con problemas que ya han sido resultos y 
+\textbf{no} con problemas de investigación o abiertos (donde las
 soluciones siguen siendo desconocidas). El término `resolverlos' implica que se debe usar nuestro
 conocimiento en Ciencias de la Computación a un nivel en el que se produzca código que funcione y
 que resuelva el problema también, al menos en el contexto de obtener la misma \textit{salida} que
-el autor del problema, usando el conjunto de información secreta\footnote{
-    Se refiere a que se esconde cierta información de la especificación del problema. La
-    programación competitiva fomenta a quienes resuelven los problemas ejercitar su fortaleza
-    mental en pensar en todos los posibles casos extremos en sus problemas y probar sus programas
-    con ésos casos}
+el autor del problema, usando el conjunto de información secreta~\footnote{
+    Se refiere a que se esconde cierta información de la especificación del 
+problema. La programación competitiva fomenta, en quienes resuelven los 
+problemas, a ejercitar su fortaleza mental al pensar en todos los posibles 
+casos extremos en sus problemas y probar sus programas con ésos casos.}
 de entrada de prueba, dentro de un tiempo estipulado. La necesidad de resolver el problema `tan
 pronto como sea posible' es donde entra el elemento de competitividad ``la velocidad es un
 meta muy natural en el comporamiento humano''. \par
 
-En concursos de la ICPC\footnote{
+En concursos de la ICPC~\footnote{
     \say{La Competición Internacional Universitaria de Programación (en inglés International
     Collegiate Programming Contest, abreviado \textbf{ICPC}) es una competición anual de
     programación y algorítmica entre universidades de todo el mundo, donde prima el trabajo en
     equipo, el análisis de problemas y el desarrollo rápido de software.}\cite{eswiki:135765381}
-} o IOI\footnote{
-    \say{La Olimpiada Internacional de Informática es una más de las Olimpiadas Internacionales
-    de Ciencias, que tiene como objetivo potenciar el aprendizaje de la informática en alumnos de
-    secundaria y preparatoria (nivel medio y medio superior). Los problemas de esta competición
-    están orientados a los algoritmos.}\cite{eswiki:125950903}
-} (por mencionar algunos de los concursos más importantes) a los concursantes se les da un conjunto
-de problemas entre 5 a 12 problemas de diferentes tipos; \emph{ad hoc}, búsqueda
-completa, \emph{divide y vencerás}, \emph{greedy}, \textbf{programación dinámica}, teoría
-de gráficas, matemáticas (teoría de números, probabilidad, teoría de juegos, etc), procesamiento
-de cadenas, geometría computacional y algunos tópicos raros/avanzados (en general problemas NP).
-Y esto por mencionar alguna clasificación, que sin dudarlo se podrían agregar más o entrar más a
-detalle.
+} o IOI~\footnote{
+    \say{La Olimpiada Internacional de Informática es una más de las Olimpiadas 
+Internacionales de Ciencias, que tiene como objetivo potenciar el aprendizaje 
+de la informática en alumnos de secundaria y preparatoria (nivel medio y 
+medio superior). Los problemas de esta competición están orientados a los 
+algoritmos.}\cite{eswiki:125950903}} (por mencionar algunos de los concursos más 
+importantes) a los concursantes se les da un conjunto
+de problemas, entre 5 a 12 problemas de diferentes tipos: \emph{ad hoc}, 
+búsqueda completa, \emph{divide y vencerás}, \emph{greedy}, \textbf{programación 
+dinámica}, teoría de gráficas, matemáticas (teoría de números, probabilidad, 
+teoría de juegos, etc), procesamiento de cadenas, geometría computacional y 
+algunos tópicos raros/avanzados (en general problemas NP), etc.
+Lo anterior por mencionar alguna clasificación, que sin dudarlo se podrían 
+agregar más o entrar más a detalle.
+%FIXME aqui falta una frase para cerrar esta introduccion...
+
+%FIXME también falta un esbozo de como viene el capítulo, es decir los 
+% algoritmos, la descripción de los problemas, etc.
 
 \section{Análisis del algoritmo}
-Siempre que se diseña el algoritmo para un problema en particular de una competencia uno debe
-preguntarse lo siguiente: dados los límites de los datos de entrada, el algoritmo que se diseñó
+Siempre que se diseña el algoritmo para un problema en particular de una 
+competencia uno debe preguntarse lo siguiente: dados los límites de los datos de 
+entrada, el algoritmo que se diseñó
 ¿pasará las restricciones de tiempo y espacio dados?
-Esto es porque puede que haya varias formas de atacar el problema, desde hacerlo de una manera
-incorrecta, hasta resolverlo de una manera óptima o que solo sea lo ``suficientemente buena''.
-Una buena estrategia a seguir es \textbf{tomar la solución más simple que funcione}, es decir,
-lo ``suficientemente buena'' para que solucione (y se acepte) el problema.
+%FIXME cuando se define un problema de la competencia, se limita el tiempo y el 
+% espacio de la solución?
+Esto es porque puede que haya varias formas de atacar el problema, desde hacerlo 
+de una manera incorrecta, hasta resolverlo de una manera óptima o que solo sea 
+lo ``suficientemente buena''.
+Una buena estrategia a seguir es \textbf{tomar la solución más simple que 
+funcione}, es decir, lo ``suficientemente buena'' para que solucione (y se 
+acepte) el problema.
 
-Una regla empírica que es usada, es que las computadoras de hoy en día pueden procesar hasta cien
-millones de operaciones (ó $10^8$) en \textit{unos pocos segundos}. Y justo esa información es la
-que se usa para saber si el algoritmo diseñado se ejecutará en ese tiempo.
+Una regla empírica que es usada, es que las computadoras de hoy en día pueden 
+procesar hasta cien millones de operaciones (ó $10^8$) en \textit{unos pocos 
+segundos}. Y justo esa información es la que se usa para saber si el algoritmo 
+diseñado se ejecutará en ese tiempo.
 
-Por ejemplo, si el tamaño $n$ máximo de la entrada es $100K$ (ó $10^5$), y el algoritmo que fue
-diseñado o usado tiene una complejidad de $O(n^2)$, entonces se tendría que $10^{10}$ es un número
-\emph{muy grande} y que el algoritmo tardaría cientos de segundos para acabar. Entonces es aquí
-cuando uno debe de idear un algoritmo más rápido (y también correcto) que resuelva el problema.
-Supóngase que se encontró un algoritmo con complejidad en tiempo de $O(n \log_2 n)$, lo cual
-es $\approx 1.6 \times 10^6$ que bastante seguro que será capaz de pasar el tiempo límite.
+Por ejemplo, si el tamaño $n$ máximo de la entrada es $100K$ (ó $10^5$), y el 
+algoritmo que fue diseñado o seleccionado para implementación tiene una 
+complejidad de $O(n^2)$, entonces se tendría que $10^{10}$ es un número
+\emph{muy grande} y que el algoritmo tardaría cientos de segundos para acabar. 
+Entonces es aquí cuando uno debe de idear un algoritmo más rápido (y también 
+correcto) que resuelva el problema.
 
-Las \emph{cotas} (\emph{constraints}) del problema son tan importantes como la complejidad del
-tiempo del algoritmo para determinar si su solución es apropiada. Supongamos que se propone un
-algoritmo bastante sencillo de implementar que se ejecuta con una complejidad de $O(n^4)$. A pesar
-de que parezca una solución muy mala, si se tiene que $n \leq 50$ es ``lo suficientemente buena''
-para que resuelva el problema.
+Supóngase que se encontró un algoritmo con complejidad en tiempo de 
+$O(n \log_2 n)$, lo cual es $\approx 1.6 \times 10^6$ y %que es bastante seguro 
+que será capaz de %pasar 
+cumplir el tiempo límite.
 
-Una buena heurística a seguir en este mundo de la programación competitiva es tomar la tabla de
-abajo para tener en cuenta la complejidad del algoritmo propuesto y el tiempo que tomará\footnote{
+Las \emph{cotas} (\emph{constraints}) del problema son tan importantes como la 
+complejidad del tiempo del algoritmo para determinar si su solución es 
+apropiada. Supongamos que se propone un algoritmo bastante sencillo de 
+implementar que se ejecuta con una complejidad de $O(n^4)$. A pesar
+de que parezca una solución muy mala, si se tiene que $n \leq 50$ es ``lo 
+suficientemente buena'' para que resuelva el problema.
+
+Una buena heurística a seguir en este mundo de la programación competitiva es 
+considerar la tabla~\ref{cap5:tabla:complejidades}
+%de abajo 
+para tener en cuenta la complejidad del algoritmo propuesto y el tiempo que 
+tomará~\footnote{
     Se asume que una CPU puede ejecutar alrededor de $100M$ de operaciones en 3 segundos.
 }.
 \begin{table}[H]
@@ -91,40 +114,46 @@ $\leq 100M$           & $O(n), \; O(\log_2 n), \; O(1)$             \\ \hline
 En las competencias de programación la mayoría de los problemas tienen los siguientes componentes:
 
 \begin{itemize}
-\item \textbf{Historia de fondo o descripción del problema.} Por lo general los problemas más
-fáciles estás escritos de una manera \emph{engañosa} para parecer más difíciles de lo que son en
-los concursos, por ejemplo agregando mucha información innecesaria. Los concursantes deben de
-ser capaces de saber distiguir qué información es la útil para la resolución del problema. Sin
-embargo, los problemas difíciles están escritos de la manera más sencilla posible, porque ya
-son lo suficientemente difíciles como para que llegara a haber aún más ambigüedades.
+\item \textbf{Historia de fondo o descripción del problema.} 
+Por lo general los problemas más fáciles estás escritos de una manera 
+\emph{engañosa} para parecer más difíciles de lo que son en realidad,
+% los concursos, 
+por ejemplo agregando mucha información innecesaria. Los concursantes deben de
+ser capaces de saber distiguir qué información es útil para la resolución del 
+problema. Sin embargo, los problemas difíciles están escritos de la manera más 
+sencilla posible, porque ya son lo suficientemente difíciles como para que 
+llegara a haber aún más ambigüedades.
 
-\item \textbf{Descripción del I/O.} Aquí es cuando se dan detalles de como será el formato de la
-entrada y como se debe de presentar la salida. En la gran mayoría de veces están escrita de la
-manera más formal posible. Un \emph{buen problema} debe indicar de manera \textbf{clara} las cotas 
-(en la literatura en inglés se le conoce como \emph{constraints}) de la entrada para así poder
+\item \textbf{Descripción del I/O.} Aquí es cuando se dan detalles de como será 
+el formato de la entrada y como se debe de presentar la salida. En la gran 
+mayoría de veces están escrita de la manera más formal posible. Un \emph{buen 
+problema} debe indicar de manera \textbf{clara} las cotas (en la literatura en 
+inglés se le conoce como \emph{constraints}) de la entrada para así poder
 tener en cuenta la complejidad del algoritmo a usar.
 
-\item \textbf{Muestra del I/O.} Los autores del problema simpre dan casos de prueba triviales. Esto
-se hace para que los concursantes vean si se entendió el problema y verificar si su código puedo
-procesar la entrada dada y producir la salida deseada.
+\item \textbf{Muestra del I/O.} Los autores del problema siempre dan casos de 
+prueba triviales. Esto se hace para que los concursantes comprueben si se 
+entendió el problema y verificar si su código puede procesar la entrada dada y 
+producir la salida deseada.
 
-\item \textbf{Pistas.} En algunos casos el autor del problema llegan a dar pistas para resolver
-el problema.
+\item \textbf{Pistas.} En algunos casos, el autor del problema llega a dar 
+pistas para resolver el problema.
 
 \end{itemize}
 
 \section{Presentación (I/O)}
 
-En las competencias de programación, la correctud del código está determinada en ser probado
-sobre muchos casos prueba. Muchos casos de prueba vienen incluidos en un solo archivo. A
-continuación\footnote{
-    Se exhibirán dos pedazos de código; en el lado izquierdo se mostrará cómo hacerlo en Haskell
-    y del lado derecho en C++. 
-    En Haskell se excplicará la anatomía del código.
+En las competencias de programación, la correctud del código está determinada 
+al probar el código sobre muchos casos prueba. Muchos casos de prueba vienen 
+incluidos en un solo archivo. A continuación~\footnote{
+    Se exhibirán dos pedazos de código; en el lado izquierdo se mostrará cómo 
+    hacerlo en Haskell y del lado derecho en C++. 
+    En Haskell se explicará la anatomía del código.
 
     Posteriormente se muestra cómo debe ser la entrada y salida.
 } se muestran los tres formatos de I/O más usados:
 
+%FIXME no me queda clara la presentación, habra que discutirlo en persona
 \begin{enumerate}
 \pagebreak
 \item \label{io:1} El número de casos prueba está dado en la primer línea de la entrada.
@@ -157,8 +186,10 @@ continuación\footnote{
 Donde \hsCode{replicateM_ n act} lleva a cabo una acción $n$ veces descartando los
 resultados\footnote{
     En Haskell es una convención que cuando se descartan los resultados de una función que está
-    envuelta en unn contexto monádico, el nombre de la función tiene de sufijo un guión bajo. Esto
-    es útil cuando solo es importante los \emph{efectos secundarios} del cómputo monádico en
+    envuelta en un contexto monádico, el nombre de la función tiene de sufijo un 
+guión bajo. Esto
+    es útil cuando solo son importantes los \emph{efectos secundarios} del 
+cómputo monádico en
     vez de su resultado \emph{per se}.
 }. Y \hsCode{guard} es utilizada como una condicional de fallo.
 
@@ -225,15 +256,18 @@ Se tratará la entrada y salida \textit{orientada a líneas} con la función \hs
 
 Analicemos parte por parte las líneas \texttt{3} a \texttt{12}.\\
 La función \hsCode{interact :: (String -> String) -> IO ()} toma una función de
-tipo \hsCode{(String -> String)} como argumento, la \textit{entrada} estándar es pasada a ésa
-función como argumento, y la cadena resultante es pasada a la salida estándar.
+tipo \hsCode{(String -> String)} como argumento, la \textit{entrada} estándar es 
+pasada a esa función como argumento, y la cadena resultante es pasada a la 
+salida estándar.
 
-Acto seguido, se tiene la función \texttt{(\$)} que es un operador infijo con asociatividad
-izquierda, esto para tener mejor legibilidad cuando se tienen argumentos largos.
+Acto seguido, se tiene la función \texttt{(\$)} que es un operador infijo con 
+asociatividad izquierda, esto para tener mejor legibilidad cuando se tienen 
+argumentos largos.
 
-Dado que se procesará linea por línea de la entrada, es bastante común tratar el flujo de la
-entrada como una lista de líneas, así que para hacer eso se divirá todo la cadena de entrada en
-líneas\footnote{Donde `lìneas' es un sinónimo de \hsCode{[String].}}.
+Dado que se procesará linea por línea de la entrada, es bastante común tratar el 
+flujo de la entrada como una lista de líneas, así que para hacer eso se divirá 
+todo la cadena de entrada en
+líneas~\footnote{Donde `lìneas' es un sinónimo de \hsCode{[String].}}.
 Consideremos las funciones\\ \hsCode{lines :: String -> [String]} y
 \hsCode{unlines :: [String] -> String}, donde\\ \hsCode{lines} divide la cadena en una lista de
 cadenas cuando se encuentra un caracter de salto de línea, \hsCode{unlines} es la operación inversa
@@ -247,7 +281,8 @@ La función \hsCode{map parse} será la responsable de que la cadena en turno la
 Mientras que \hsCode{takeWhile (/= "0 0")} indica que se seguirá procesado hasta que la cadena
 leída sea diferente de \texttt{"0 0"}.
 
-El patrón \hsCode{unlines . f . lines} es un patrón bastamte común donde \hsCode{f} puede ser una
+El patrón \hsCode{unlines . f . lines} es un patrón bastate común donde 
+\hsCode{f} puede ser una
 función o composición de funciones donde\\ \hsCode{f :: [String] -> [String]}.
 
 En la línea \texttt{16} solamente es la composición de funciones donde \hsCode{process} es
@@ -277,10 +312,13 @@ a \hsCode{String}.
 \end{minipage}
 \end{figure}
 
-De manera análoga al inciso anterior \ref{io:2}, la única diferecia es que se procesará de manera
-\textit{infinita}, es decir hasta que se dé la señal de EOF.
+De manera análoga al inciso anterior \ref{io:2}, la única diferencia es que se 
+procesará de manera \textit{infinita}, es decir hasta que se dé la señal de EOF.
 
 \end{enumerate}
+
+%FIXME falta una frase o miniparrafo para ligar o preparar al lector a la 
+% siguiente seccion 
 
 \pagebreak
 \section{Problemas}
@@ -289,7 +327,8 @@ algoritmo KMP y la función de error. Se resolverán los problemas usando C++ y 
 
 Los problemas que se presentan a continuación se obtuvieron de un juez en línea\footnote{
     Los jueces en línea (\textit{online judges}) son ambientes en línea en donde se prueba el
-    código del problema a resolver. Cuando hay un concurso, los jueces muestran listado de
+    código del problema a resolver. Cuando hay un concurso, los jueces muestran 
+un listado de
     clasificación en tiempo real donde aparecen los usuarios que tengan el mayor número de
     problemas aceptados y tengan el menor tiempo de ejecución del problema en particular.
 } llamado {\fontfamily{lmss}\selectfont SPOJ}.
@@ -297,7 +336,7 @@ Los problemas que se presentan a continuación se obtuvieron de un juez en líne
 de programación automatizado. Cuenta con un gran número de problemas para entrenar y hacer
 concursos locales, además de que acepta las soluciones en varios lenguajes de programación
 (incluyendo Haskell). Resolver los problemas en Haskell puede llegar a ser un reto.
-
+%FIXME porqué es un reto usar Haskell?
 Por lo general los problemas son resultos en Java, C y C++.
 
 \subsection{Encontrar el factor de repetición de una cadena}
@@ -323,17 +362,19 @@ hasta la $i$-ésima posición. Conlcuyendo así que $\rho(P) = \frac{m}{r}$.
 
 En otro caso, supongamos que no se cumple lo anterior, i.e., que $r \nmid m$ entonces su factor de
 repetición forzosamente debe ser 1. Por contradicción, supongamos que tiene un factor de repetición
-mayor estrico que 1 lo que significaría que tendría que habría una cadena $y^r$ y que
-$\pi[i] \geq \vert x^{r-1} \vert$, pero significaría que podríamos escribir a $x$ concatenada $r$
+mayor estrico que 1 lo que significaría que tendría que haber una cadena $y^r$ 
+y que $\pi[i] \geq \vert x^{r-1} \vert$, pero significaría que podríamos 
+escribir a $x$ concatenada $r$
 veces. $\Rightarrow\!\Leftarrow$.
-
+% FIXME qué significan las flechas encontradas?
 \noindent\rule{\textwidth}{1pt}
 
 Es aquí cuando lo bonito de la programación competitiva y resolver `ejercicios teóricamente' se
-juntan. Ése problema es lo mismo a resolver el siguiente, y aún mejor, en un juez en línea que
-puede ``probar'' la implementación con múltipleas casos pruebas y, considerando ciertas
-restricciones que nos \textit{forzará a usar} un algoritmo \textit{óptimo}.
-
+juntan. Ese problema es lo mismo a resolver el siguiente, y aún mejor, en un 
+juez en línea que puede ``probar'' la implementación con múltipleas casos 
+pruebas y, considerando ciertas restricciones que nos \textit{forzará a usar} 
+un algoritmo \textit{óptimo}.
+%FIXME esa última observación no la entendí
 
 La especificación del problema dice lo siguiente:
 
@@ -344,7 +385,9 @@ La entrada se lee como se indica en el caso \ref{io:2}, la única diferencia es 
 \hsCode{takeWhile} toma de argumento \hsCode{"*"}.
 
 Como cada cadena será de longitud de a lo más $10^5$, según la tabla
-\ref{cap5:tabla:complejidades} es viable resolver el problema usando la función de error.
+\ref{cap5:tabla:complejidades} es viable resolver el problema usando la función 
+de error. 
+%FIXME poner la referencia a la sección previa donde se discute esta función
 
 \subsubsection{Salida}
 Para cada caso prueba \textit{(input)} se debe imprimir en la salida estándar una sola línea con un
@@ -400,7 +443,8 @@ $\pi[i]$ & 0          & 1          & 2          & 3          & 4          & 5   
 
 Siendo $\vert x \vert = 10$ y el último elemento de la función de error es $\pi[m] = 9$ y sea
 $r = 10 - 9 = 1$. Se conluye que la raíz de la cadena es de longitud \textbf{1} y su factor de
-repetición es $\rho(x) = \frac{10}{1} =$ \textbf{1}. Concluyendo así que
+repetición es $\rho(x) = \frac{10}{1} =$ \textbf{1}. %FIXME ¿10/1 = 1? 
+Concluyendo así que
 \texttt{(a)}$^{10} = $ \texttt{aaaaaaaaaa}.
 \end{itemize}
 \newpage
@@ -464,7 +508,8 @@ a \texttt{16} es cuando se hace la validación previamente analizada.
 
 
 \subsection{Ver si una cadena es una rotación cíclica de otra}
-El siguientea problema también fue tomado del \emph{Introduction to Algorithms}\cite{cormen_2009}
+El siguiente problema también fue tomado del \emph{Introduction to 
+Algorithms}\cite{cormen_2009}
 de la página 1012.
 \begin{tcolorbox}
 \hypertarget{cyclic_rotation}{32.4-7}
@@ -492,7 +537,8 @@ rotación cíclica.
 
 \subsubsection{Ejemplos}
 Dado que ambas cadenas son de la misma longitud se hará lo siguiente; $s = qq$ donde $s$ será el
-texto y $p$ el patrón. Entonces con el algoritmo dee Knuth-Morris-Pratt se buscará $p$ en $s$.
+texto y $p$ el patrón. Entonces con el algoritmo de Knuth-Morris-Pratt se 
+buscará $p$ en $s$.
 
 \begin{itemize}
 \item \texttt{abc} es una rotación cíclica de \texttt{cab} porque \texttt{cab} $\mapsto$
@@ -515,7 +561,7 @@ texto y $p$ el patrón. Entonces con el algoritmo dee Knuth-Morris-Pratt se busc
 \end{tabular}
 \end{table}
 \end{itemize}
-
+La especificación del problema dice lo siguiente:
 \includepdf[pages=-]{problemas/pdf/EC_WORLD.pdf}
 
 \subsubsection{Implementación en C++}
@@ -559,14 +605,15 @@ add :: Maybe Int -> Maybe Int -> Maybe Int
 add = liftM2 (+)
 \end{minted}
 
-\item De la línea \texttt{10} a \texttt{16} es see crea la función
-\hsCode{process :: [String] -> String}, donde por medio de caza de patrones se trabaja con una
-lista de dos elementos, acto seguido en la expresión \hsCode{let ... in ..} se busca la ocurrencia
+\item De la línea \texttt{10} a \texttt{16} se crea la función 
+\hsCode{process :: [String] -> String}, donde por medio de caza de patrones se 
+trabaja con una lista de dos elementos, acto seguido en la expresión 
+\hsCode{let ... in ..} se busca la ocurrencia
 del patrón \texttt{p} en \texttt{s} y al final con la función
 \hsCode{null :: Foldable t => t a -> Bool} se verifica si la lista es vacía.  
 
-\item De la línea \texttt{20} a \texttt{44} es la implementación del algoritmo Knuth-Morris-Pratt
-funcionalmente.
+\item De la línea \texttt{20} a \texttt{44} es la implementación del algoritmo 
+Knuth-Morris-Pratt funcionalmente.
 \end{itemize}
 
 \subsubsection{Resultado del juez}
@@ -582,7 +629,8 @@ funcionalmente.
 \subsection{Extender una cadena a su palíndromo más corto}
 
 \subsubsection{Análisis}
-En este problema lo \textit{realmente importante} empieza en el tercer párrafo, que resumiendo es:
+En este problema, lo \textit{realmente importante} empieza en el tercer párrafo, 
+que resumiendo es:
 
 \begin{tcolorbox}
 Dada una cadena, producir el palíndromo\footnote{Un palíndromo es una palabra o frase que se lee
@@ -605,7 +653,8 @@ siguiente; sea $r = s^R$\texttt{\$}$s$ donde $r$ es la concatenación de la reve
 entrada concatenada con el símbolo \texttt{\$} como separador, y la cadena original.
 
 Entonces se procesará $r$ con la función de error, y ésta indicará el prefijo más largo de $s^R$
-que es sufijo de $s$, denominemos a tal la subcadena como $s'$ tal que $s' \sqsubset s^R$ y
+que es sufijo de $s$, denominemos a tal subcadena como $s'$ donde 
+$s' \sqsubset s^R$ y
 $s' \sqsupset s$, esto para saber de antemano la subcadena que se traslapa en $s$ y $s^R$. Para
 obtener $s'$ tomemos $n = \vert t \vert$ y $\pi$ la función de error donde $\pi[n] = k$ es la 
 longitud de $s'$. Para finalmente tener el palíndromo más pequeño se toma la cadena original $s$
@@ -700,6 +749,7 @@ $u = s \cdot s^R[1 \ldots] =$ \texttt{xyz}$\cdot$\texttt{yx} = \texttt{xyzyx}.
 
 \end{itemize}
 
+La especificación del problema dice lo siguiente:
 \includepdf[pages=-]{problemas/pdf/EPALIN.pdf}
 
 \subsubsection{Implementación en C++}
@@ -735,21 +785,23 @@ palíndromo y en la línea \texttt{14} se concatena \texttt{xs} la cadena anteri
 \subsection{Encontrar las ocurrencias de un patrón en un texto}
 
 \subsubsection{Análisis}
-De los problemas anteriores este es quizás es el uso más \textit{canónico} del algoritmo
-Knuth-Morris-Pratt per se, ya que solo se pide encontrar todas las posiciones 0-indexadas de
-un patrón en un texto. Lo inlcuí porque ``la trampa'' de este problema es que mucha gente lo
+De los problemas anteriores, este es quizás el de uso más \textit{canónico} del 
+algoritmo Knuth-Morris-Pratt per se, ya que solo se pide encontrar todas las 
+posiciones 0-indexadas de un patrón en un texto. Lo inlcuí porque ``la trampa'' 
+de este problema es que mucha gente lo
 resuelve con el algoritmo \textit{naïve} y simplemente el juez no lo aceptará. La complejidad como
-ya se había comentado enteriormente, es $\Theta(m)$ en tiempo el preprocesamiento del patrón y
+ya se había comentado anteriormente, es $\Theta(m)$ en tiempo el 
+preprocesamiento del patrón y
 $\Theta(n)$ en encontrar las ocurrencias, en espacio toma complejidad $O(m)$.
 
 \subsubsection{Entrada}
-La entrada será leída línea por línea hasta EOF como se indica en \ref{io:3}, cada caso prueba
-consistirá de 3 líneas; la primera será la longitud del patrón, seguida del patrón y después
-el texo.
+La entrada será leída línea por línea hasta EOF como se indica en \ref{io:3}, 
+cada caso prueba consistirá de 3 líneas; la primera será la longitud del patrón, 
+seguida del patrón y después el texo.
 
 \subsubsection{Salida}
-Si hubo una(s) aparición(es) cada una será impresa en pantalla línea por línea. Si no, solamente
-se imprirá un salto de línea.
+Si hubo una(s) aparición(es) cada una será impresa en pantalla línea por línea. 
+Si no, solamente se imprirá un salto de línea.
 
 \subsubsection{Ejemplos}
 \begin{itemize}
@@ -872,8 +924,9 @@ hubo 4 apariciones del patrón la posiciones 3, 9, 15 y 21.
 \end{tabular}
 \end{table}
 
-\end{itemize}
+\end{itemize} 
 
+La especificación del problema dice lo siguiente:
 \includepdf[pages=-]{problemas/pdf/NHAY.pdf}
 
 \subsubsection{Implementación en C++}
@@ -901,3 +954,8 @@ de la lista y concatena el resultado, pone un salto de línea entre cada índice
 \includegraphics[width=\textwidth]{spoj/NHAY-accepted-cpp-haskell}
 \caption{El código fue aceptado por el juez en Haskell y C++}
 \end{figure}
+
+
+%FIXME falta agregar un miniparrafo para cerrar el capítulo
+
+
